@@ -1,0 +1,11 @@
+Build/
+*.sdf
+*.suo
+*.v12.suo
+*.VC.db
+*.VC.VC.opendb
+*.vcxproj.user
+Game/Bin/
+Source/.vs/
+.vs/
+Scripts/log.txt
