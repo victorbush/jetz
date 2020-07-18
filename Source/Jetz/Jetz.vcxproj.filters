@@ -1,14 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="main">
+      <UniqueIdentifier>{fcc66c1e-1ae1-40aa-bd0a-970cb61069ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty">
+      <UniqueIdentifier>{2c269bf2-0182-4c71-a18e-b1dcf28d234a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\glfw">
+      <UniqueIdentifier>{6159c254-e153-4cf7-995f-584fc1ea98c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="..\thirdparty\glfw\glfw.h">
+      <Filter>thirdparty\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="main\build_config.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\window.h">
+      <Filter>main</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main\main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\window.cpp">
+      <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -11,24 +11,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Vulkan\imgui.frag">
+    <CustomBuild Include="vulkan\imgui.frag">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Vulkan\imgui.vert">
+    <CustomBuild Include="vulkan\imgui.vert">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Vulkan\shader.frag">
+    <CustomBuild Include="vulkan\shader.frag">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Vulkan\shader.vert">
+    <CustomBuild Include="vulkan\shader.vert">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Vulkan\plane.frag">
+    <CustomBuild Include="vulkan\plane.frag">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Vulkan\plane.vert">
+    <CustomBuild Include="vulkan\plane.vert">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
@@ -65,12 +65,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)..\Build\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)..\Game\Bin\Shaders\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\game\bin\shaders\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)..\Build\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)..\Game\Bin\Shaders\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\game\bin\shaders\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -93,7 +93,7 @@
     </CustomBuildStep>
     <CustomBuild>
       <Message>Compiling Shaders</Message>
-      <Command>$(SolutionDir)..\Scripts\compile-shader.py %(FullPath) $(OutputPath)%(Filename)%(Extension).spv</Command>
+      <Command>$(SolutionDir)..\scripts\compile-shader.py %(FullPath) $(OutputPath)%(Filename)%(Extension).spv</Command>
       <Outputs>$(OutDir)%(Filename)%(Extension).spv;%(Outputs)</Outputs>
       <LinkObjects>false</LinkObjects>
       <TreatOutputAsContent>
@@ -130,7 +130,7 @@
     </CustomBuildStep>
     <CustomBuild>
       <Message>Compiling Shaders</Message>
-      <Command>$(SolutionDir)..\Scripts\compile-shader.py %(FullPath) $(OutputPath)%(Filename)%(Extension).spv</Command>
+      <Command>$(SolutionDir)..\scripts\compile-shader.py %(FullPath) $(OutputPath)%(Filename)%(Extension).spv</Command>
       <Outputs>$(OutDir)%(Filename)%(Extension).spv;%(Outputs)</Outputs>
       <LinkObjects>false</LinkObjects>
       <TreatOutputAsContent>
