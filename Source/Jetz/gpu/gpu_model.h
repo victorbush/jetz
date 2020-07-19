@@ -1,5 +1,5 @@
 /*=============================================================================
-window.h
+gpu_model.h
 =============================================================================*/
 
 #pragma once
@@ -8,49 +8,32 @@ window.h
 INCLUDES
 =============================================================================*/
 
-#include "thirdparty/glfw/glfw.h"
-
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
 
 namespace jetz {
+	
+/*=============================================================================
+CLASS
+=============================================================================*/
 
-struct GLFWUserData {
-
-	int temp;
-};
-
-class window {
+class gpu_model {
 
 public:
-	
+
+	gpu_model();
+	virtual ~gpu_model() = 0;
+
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
 
-	/**
-	Creates a new window.
-
-	@param width The width of the window.
-	@param height The height of the window.
-	*/
-	window(int width, int height);
-	~window();
-
-	/**
-	Gets the GLFW window handle for this window.
-	*/
-	GLFWwindow*						get_hndl();
-
 private:
-
 
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	GLFWUserData					_glfw_user_data;
-	GLFWwindow*						_hndl;
 
 	/*-----------------------------------------------------
 	Private Methods

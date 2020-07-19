@@ -10,6 +10,18 @@
     <Filter Include="thirdparty\glfw">
       <UniqueIdentifier>{6159c254-e153-4cf7-995f-584fc1ea98c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gpu">
+      <UniqueIdentifier>{e89c9dd2-4cbb-4a00-add2-05d3a2a6aa3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpu\vlk">
+      <UniqueIdentifier>{ac42e06d-b520-45ff-9d79-8c01776dacd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\vma">
+      <UniqueIdentifier>{d5d4e737-bbc0-40d2-a606-3b1644a288a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\fmt">
+      <UniqueIdentifier>{08353166-0e61-4a4b-82d8-b9c2bc0c2a42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -21,6 +33,39 @@
     <ClInclude Include="main\window.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\gpu.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\gpu_texture.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\gpu_material.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\gpu_model.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_device.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_gpu.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h">
+      <Filter>thirdparty\vma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\vma\vma.h">
+      <Filter>thirdparty\vma</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_util.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="main\log.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -28,6 +73,33 @@
     </ClCompile>
     <ClCompile Include="main\window.cpp">
       <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_material.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_model.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_texture.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\vma\vma.cpp">
+      <Filter>thirdparty\vma</Filter>
+    </ClCompile>
+    <ClCompile Include="main\log.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\fmt\src\format.cc">
+      <Filter>thirdparty\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_util.cpp">
+      <Filter>gpu\vlk</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

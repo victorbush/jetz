@@ -18,32 +18,6 @@ NAMESPACE
 namespace jetz {
 
 /*=============================================================================
-PUBLIC STATIC FUNCTIONS
-=============================================================================*/
-
-window* window::create(int width, int height)
-{
-	window* w = new window();
-
-	/* create the GLFW window */
-	w->_hndl = glfwCreateWindow(width, height, "Vulkan", nullptr, nullptr);
-
-	/* setup user data pointer for the window */
-	memset(&w->_glfw_user_data, 0, sizeof(w->_glfw_user_data));
-	glfwSetWindowUserPointer(w->_hndl, &w->_glfw_user_data);
-
-	/* set GLFW window callbacks */
-	glfwSetFramebufferSizeCallback(w->_hndl, framebufferResizeCallback);
-	glfwSetKeyCallback(w->_hndl, keyCallback);
-	glfwSetCursorPosCallback(w->_hndl, cursorPosCallback);
-	glfwSetMouseButtonCallback(w->_hndl, mouseButtonCallback);
-	glfwSetCharCallback(w->_hndl, charCallback);
-	glfwSetScrollCallback(w->_hndl, scrollCallback);
-
-	return w;
-}
-
-/*=============================================================================
 STATIC FUNCTIONS
 =============================================================================*/
 
@@ -141,9 +115,24 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 PUBLIC METHODS
 =============================================================================*/
 
-/**
-Destrcutor
-*/
+window::window(int width, int height)
+{
+	/* create the GLFW window */
+	_hndl = glfwCreateWindow(width, height, "Vulkan", nullptr, nullptr);
+
+	/* setup user data pointer for the window */
+	memset(&_glfw_user_data, 0, sizeof(_glfw_user_data));
+	glfwSetWindowUserPointer(_hndl, &_glfw_user_data);
+
+	/* set GLFW window callbacks */
+	glfwSetFramebufferSizeCallback(_hndl, framebufferResizeCallback);
+	glfwSetKeyCallback(_hndl, keyCallback);
+	glfwSetCursorPosCallback(_hndl, cursorPosCallback);
+	glfwSetMouseButtonCallback(_hndl, mouseButtonCallback);
+	glfwSetCharCallback(_hndl, charCallback);
+	glfwSetScrollCallback(_hndl, scrollCallback);
+}
+
 window::~window()
 {
 	/* cleanup window */
@@ -159,12 +148,5 @@ GLFWwindow * window::get_hndl()
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
-
-/**
-Constructor
-*/
-window::window()
-{
-}
 
 }   /* namespace Klink */

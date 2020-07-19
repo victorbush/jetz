@@ -10,11 +10,13 @@ INCLUDES
 
 //#include <cstdlib>
 //#include <functional>
-//#include <iostream>
+#include <iostream>
 //#include <stdexcept>
 #include <string>
 #include <vector>
 
+#include "jetz/gpu/vlk/vlk.h"
+#include "jetz/main/log.h"
 #include "jetz/main/window.h"
 #include "thirdparty/glfw/glfw.h"
 
@@ -78,24 +80,41 @@ argv: array of the arguments
 */
 int main(int argc, char* argv[])
 {
-	/* Parse command line args */
+	/*
+	Parse command line args 
+	*/
 	std::vector<std::string> args(argv + 1, argv + argc);
 	parse_cmd_line(args);
 
-	/* Setup window */
-	auto* window = jetz::window::create(800, 600);
+	/* 
+	Seutp logging
+	*/
+	auto* log = new jetz::log();
+	jetz::log::logger = log;
 
-	///* Create engine */
-	//Engine = new Klink::Engine(Klink::RendererType::VULKAN);
+	/* Add simple logging target */
+	log->register_target([](const std::string& msg) {
+		std::cout << msg;
+	});
 
-	///* Create editor */
-	//Editor = new KlinkEditor::EditorApp(*Engine);
+	LOG_INFO("Logger initialized.");
 
-	///* Run the main loop */
-	//Engine->Run(*Editor);
+	/* 
+	Setup window 
+	*/
+	auto* window = new jetz::window(800, 600);
 
-	/* Cleanup */
+	/* 
+	Setup renderer 
+	*/
+	auto* gpu = new jetz::vlk();
+
+	/* 
+	Cleanup 
+	*/
+	delete gpu;
 	delete window;
+	delete log;
 
 	return EXIT_SUCCESS;
 }
