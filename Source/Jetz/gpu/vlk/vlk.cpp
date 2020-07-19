@@ -66,6 +66,17 @@ void vlk::create_requirement_lists()
 	Required instance layers
 	-----------------------------------------------------*/
 
+	/* add validation layers */
+	if (enable_validation)
+	{
+		required_instance_layers.push_back("VK_LAYER_LUNARG_standard_validation");
+	}
+
+	if (!vlk_util::are_instance_layers_available(required_instance_layers))
+	{
+		LOG_FATAL("Required instance layers are not available.");
+	}
+
 	/*-----------------------------------------------------
 	Required instance extensions
 	-----------------------------------------------------*/
