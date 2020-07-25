@@ -8,6 +8,7 @@ window.h
 INCLUDES
 =============================================================================*/
 
+#include "jetz/gpu/gpu_window.h"
 #include "thirdparty/glfw/glfw.h"
 
 /*=============================================================================
@@ -39,9 +40,24 @@ public:
 	~window();
 
 	/**
+	Creates a Vulkan surface.
+
+	@param surface The surface pointer to populate with the new surface.
+	*/
+	VkResult create_surface(VkInstance instance, VkSurfaceKHR* surface) const;
+
+	/**
 	Gets the GLFW window handle for this window.
 	*/
-	GLFWwindow*						get_hndl();
+	GLFWwindow* get_hndl() const;
+
+	uint32_t get_width() const;
+	uint32_t get_height() const;
+
+	/**
+	Sets the GPU window to use for rendering. The GPU window handles swapchains, rendering, etc.
+	*/
+	void set_gpu_window(gpu_window* window);
 
 private:
 
@@ -49,8 +65,8 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	GLFWUserData					_glfw_user_data;
-	GLFWwindow*						_hndl;
+	GLFWUserData					glfw_user_data;
+	GLFWwindow*						hndl;
 
 	/*-----------------------------------------------------
 	Private Methods

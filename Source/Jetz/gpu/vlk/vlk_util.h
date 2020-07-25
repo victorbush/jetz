@@ -30,6 +30,16 @@ public:
 	-----------------------------------------------------*/
 
 	/**
+	Checks if a specified list of device extensions are available for the
+	specified physical device.
+	*/
+	static bool are_device_extensions_available
+		(
+		const std::vector<const char*>&		extensions,		/* list of extension names to check */
+		vlk_gpu&							gpu				/* GPU to check                     */
+		);
+
+	/**
 	Checks if a specified list of instance extensions are available.
 	*/
 	static bool are_instance_extensions_available(const std::vector<const char*>& extensions);

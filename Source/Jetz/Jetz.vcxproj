@@ -15,26 +15,46 @@
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
     <ClInclude Include="gpu\gpu.h" />
+    <ClInclude Include="gpu\gpu_frame.h" />
     <ClInclude Include="gpu\gpu_material.h" />
     <ClInclude Include="gpu\gpu_model.h" />
     <ClInclude Include="gpu\gpu_texture.h" />
+    <ClInclude Include="gpu\gpu_window.h" />
     <ClInclude Include="gpu\vlk\vlk.h" />
+    <ClInclude Include="gpu\vlk\vlk_buffer.h" />
     <ClInclude Include="gpu\vlk\vlk_device.h" />
+    <ClInclude Include="gpu\vlk\vlk_frame.h" />
     <ClInclude Include="gpu\vlk\vlk_gpu.h" />
+    <ClInclude Include="gpu\vlk\vlk_swapchain.h" />
     <ClInclude Include="gpu\vlk\vlk_util.h" />
+    <ClInclude Include="gpu\vlk\vlk_window.h" />
+    <ClInclude Include="main\app.h" />
     <ClInclude Include="main\build_config.h" />
+    <ClInclude Include="main\camera.h" />
+    <ClInclude Include="main\common.h" />
     <ClInclude Include="main\log.h" />
     <ClInclude Include="main\window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\thirdparty\fmt\src\format.cc" />
+    <ClCompile Include="..\thirdparty\glm\glm.cpp" />
     <ClCompile Include="..\thirdparty\vma\vma.cpp" />
     <ClCompile Include="gpu\gpu.cpp" />
+    <ClCompile Include="gpu\gpu_frame.cpp" />
     <ClCompile Include="gpu\gpu_material.cpp" />
     <ClCompile Include="gpu\gpu_model.cpp" />
     <ClCompile Include="gpu\gpu_texture.cpp" />
+    <ClCompile Include="gpu\gpu_window.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_buffer.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_frame.cpp" />
     <ClCompile Include="gpu\vlk\vlk.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_device.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_gpu.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_swapchain.cpp" />
     <ClCompile Include="gpu\vlk\vlk_util.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_window.cpp" />
+    <ClCompile Include="main\app.cpp" />
+    <ClCompile Include="main\camera.cpp" />
     <ClCompile Include="main\log.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="main\window.cpp" />
@@ -88,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)thirdparty\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)thirdparty\fmt\include;$(SolutionDir)thirdparty\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -103,7 +123,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)thirdparty\fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)thirdparty\fmt\include;$(SolutionDir)thirdparty\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

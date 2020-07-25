@@ -17,30 +17,59 @@ NAMESPACE
 
 namespace jetz {
 
+/* Default to double buffering. */
+int vlk::num_frame_buf = 2;
+
+/*=============================================================================
+STATIC FUNCTIONS
+=============================================================================*/
+
+/**
+Vulkan debug callback.
+*/
+static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback
+	(
+	VkDebugReportFlagsEXT flags,
+	VkDebugReportObjectTypeEXT objType,
+	uint64_t obj,
+	size_t location,
+	int32_t code,
+	const char *layerPrefix,
+	const char *msg,
+	void *userData
+	)
+{
+	LOG_ERROR(msg);
+	return VK_FALSE;
+}
+
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
 
-vlk::vlk()
+vlk::vlk(window& app_window) : app_window(app_window)
 {
 	enable_validation = true;
 
 	create_requirement_lists();
-	//create_instance();
-	//create_dbg_callbacks();
-	//create_device();
+	create_instance();
+	create_dbg_callbacks();
+	create_device();
 }
 
 vlk::~vlk()
 {
+	destroy_device();
+	destroy_dbg_callbacks();
+	destroy_instance();
+	destroy_requirement_lists();
 }
 
 void vlk::wait_idle() const
 {
-	LOG_FATAL("NOT IMPLEMENTED");
 	/* wait for device to finsih current operations. example usage is at
 	application exit - wait until current ops finish, then do cleanup. */
-	//vkDeviceWaitIdle(TODO);
+	vkDeviceWaitIdle(dev->get_handle());
 }
 
 /*=============================================================================
@@ -50,6 +79,97 @@ PROTECTED METHODS
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
+
+void vlk::create_device()
+{
+	/* Create a surface - destroyed by vlk_window */
+	glfwCreateWindowSurface(instance, glfw_window, NULL, &surface);
+
+	/* Select a physical device */
+	select_physical_device();
+
+	/* Create logical device */
+	dev = new jetz::vlk_device(*gpu, required_device_ext, required_instance_layers);
+
+	/* Create window */
+	vlk_window = new jetz::vlk_window(surface, app_window);
+}
+
+void vlk::create_dbg_callbacks()
+{
+	/* only do this if validation layers are enabled*/
+	if (!enable_validation)
+	{
+		return;
+	}
+
+	/* setup the create info */
+	VkDebugReportCallbackCreateInfoEXT create_info = {};
+	create_info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+	create_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+	create_info.pfnCallback = debug_callback;
+
+	/*
+	Get address to the create callback function. In order for this to work,
+	VK_EXT_DEBUG_REPORT_EXTENSION_NAME must be added to the list of required
+	extensions when the Vulkan instance is created.
+	*/
+	PFN_vkCreateDebugReportCallbackEXT func;
+	func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+	VkResult result = VK_SUCCESS;
+
+	/* create the callback */
+	if (func != NULL)
+	{
+		result = func(instance, &create_info, NULL, &dbg_callback_hndl);
+	}
+
+	if (func == NULL || result != VK_SUCCESS)
+	{
+		LOG_FATAL("Failed to create Vulkan debug callback.");
+	}
+}
+
+void vlk::create_instance()
+{
+	// Can be used if Steam validation layers cause issues
+	//_putenv("DISABLE_VK_LAYER_VALVE_steam_overlay_1=1");
+
+	/*
+	Build instance creation data
+	*/
+
+	/* build app info */
+	VkApplicationInfo app_info = {};
+	app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	app_info.pApplicationName = "Jetz";
+	app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	app_info.pEngineName = "Jetz Engine";
+	app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	app_info.apiVersion = VK_API_VERSION_1_0;
+
+	/* build create info */
+	VkInstanceCreateInfo create_info = {};
+	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	create_info.pApplicationInfo = &app_info;
+
+	/* get required Vulkan extensions */
+	create_info.enabledExtensionCount = required_instance_ext.size();
+	create_info.ppEnabledExtensionNames = required_instance_ext.data();
+
+	/* get validation layers */
+	create_info.enabledLayerCount = required_instance_layers.size();
+	create_info.ppEnabledLayerNames = required_instance_layers.data();
+
+	/*
+	* Create the instance
+	*/
+	VkResult result = vkCreateInstance(&create_info, NULL, &instance);
+	if (result != VK_SUCCESS)
+	{
+		LOG_FATAL("Failed to create Vulkan instance.");
+	}
+}
 
 void vlk::create_requirement_lists()
 {
@@ -103,6 +223,176 @@ void vlk::create_requirement_lists()
 	{
 		LOG_FATAL("Required instance extensions are not available.");
 	}
+}
+
+void vlk::destroy_device()
+{
+	delete vlk_window;
+	delete dev;
+	delete gpu;
+}
+
+void vlk::destroy_dbg_callbacks()
+{
+	/* only do this if validation layers are enabled*/
+	if (!enable_validation)
+	{
+		return;
+	}
+
+	/* get address to the create callback function*/
+	PFN_vkDestroyDebugReportCallbackEXT func;
+	func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+
+	/* destroy the callback */
+	if (func != NULL)
+	{
+		func(instance, dbg_callback_hndl, NULL);
+	}
+	else
+	{
+		LOG_FATAL("Failed to destroy Vulkan debug callback.");
+	}
+}
+
+void vlk::destroy_instance()
+{
+	vkDestroyInstance(instance, NULL);
+}
+
+void vlk::destroy_requirement_lists()
+{
+	/* Nothing to do */
+}
+
+void vlk::select_physical_device()
+{
+	std::vector<VkPhysicalDevice>	devices;
+	std::vector<vlk_gpu*>			gpus;
+	std::vector<const char*>		device_ext;		/* required device extensions */
+
+	/* check assumptions */
+	if (instance == VK_NULL_HANDLE)
+	{
+		LOG_FATAL("Vulkan instance must be created before selecting a phyiscal device.");
+	}
+
+	if (surface == VK_NULL_HANDLE)
+	{
+		LOG_FATAL("Vulkan surface must be created before selecting a phyiscal device.");
+	}
+
+	/*
+	Device extensions
+	*/
+
+	/* swap chain support is required */
+	device_ext.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
+	/*
+	Enumerate physical devices
+	*/
+
+	/* get number of GPUs */
+	uint32_t num_gpus = 0;
+	vkEnumeratePhysicalDevices(instance, &num_gpus, NULL);
+	if (num_gpus == 0)
+	{
+		LOG_FATAL("No GPU found with Vulkan support.");
+	}
+
+	/* get the list of devices */
+	devices.resize(num_gpus);
+	vkEnumeratePhysicalDevices(instance, &num_gpus, devices.data());
+
+	/* allocate mem for GPU info */
+	gpus.resize(num_gpus);
+
+	/* get info for each physical device */
+	for (uint32_t i = 0; i < num_gpus; i++)
+	{
+		gpus[i] = new vlk_gpu(devices[i], surface);
+	}
+
+	/*
+	Select a physical device
+	*/
+	
+	/* inspect the physical devices and select one */
+	for (uint32_t i = 0; i < num_gpus; ++i)
+	{
+		vlk_gpu* gpu = gpus[i];
+		
+		/*
+		* Check required extensions
+		*/
+		if (!vlk_util::are_device_extensions_available(device_ext, *gpu))
+		{
+			continue;
+		}
+
+		/*
+		* Check surface formats
+		*/
+		if (gpu->avail_surface_formats.size() == 0)
+		{
+			/* no surface formats */
+			continue;
+		}
+
+		/*
+		* Check presentation modes
+		*/
+		if (gpu->avail_present_modes.size() == 0)
+		{
+			/* no presentation modes */
+			continue;
+		}
+
+		/*
+		* Check queue families
+		*/
+		vlk_gpu_qfi* qfi = &gpu->queue_family_indices;
+
+		/* graphics */
+		if (qfi->graphics_families.size() == 0)
+		{
+			/* no graphics queue families */
+			continue;
+		}
+
+		/* presentation */
+		if (qfi->present_families.size() == 0)
+		{
+			/* no present queue families */
+			continue;
+		}
+
+		/*
+		* This GPU meets our requirements, use it
+		*/
+
+		/* init new gpu info for selected GPU and destroy the temp array */
+		gpu = new jetz::vlk_gpu(gpu->get_handle(), surface);
+		break;
+	}
+
+	/* verify a physical device was selected */
+	if (gpu == nullptr) 
+	{
+		LOG_FATAL("Failed to find a suitable GPU.");
+	}
+
+	/* Cleanup temp GPU info array */
+	for (uint32_t i = 0; i < num_gpus; i++)
+	{
+		delete gpus[i];
+	}
+
+	gpus.clear();
+
+	/* Cleanup temp surface */
+	vkDestroySurfaceKHR(instance, surface, NULL);
 }
 
 }   /* namespace jetz */

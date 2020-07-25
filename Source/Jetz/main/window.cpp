@@ -118,31 +118,37 @@ PUBLIC METHODS
 window::window(int width, int height)
 {
 	/* create the GLFW window */
-	_hndl = glfwCreateWindow(width, height, "Vulkan", nullptr, nullptr);
+	hndl = glfwCreateWindow(width, height, "Jetz", nullptr, nullptr);
 
 	/* setup user data pointer for the window */
-	memset(&_glfw_user_data, 0, sizeof(_glfw_user_data));
-	glfwSetWindowUserPointer(_hndl, &_glfw_user_data);
+	memset(&glfw_user_data, 0, sizeof(glfw_user_data));
+	glfwSetWindowUserPointer(hndl, &glfw_user_data);
 
 	/* set GLFW window callbacks */
-	glfwSetFramebufferSizeCallback(_hndl, framebufferResizeCallback);
-	glfwSetKeyCallback(_hndl, keyCallback);
-	glfwSetCursorPosCallback(_hndl, cursorPosCallback);
-	glfwSetMouseButtonCallback(_hndl, mouseButtonCallback);
-	glfwSetCharCallback(_hndl, charCallback);
-	glfwSetScrollCallback(_hndl, scrollCallback);
+	glfwSetFramebufferSizeCallback(hndl, framebufferResizeCallback);
+	glfwSetKeyCallback(hndl, keyCallback);
+	glfwSetCursorPosCallback(hndl, cursorPosCallback);
+	glfwSetMouseButtonCallback(hndl, mouseButtonCallback);
+	glfwSetCharCallback(hndl, charCallback);
+	glfwSetScrollCallback(hndl, scrollCallback);
 }
 
 window::~window()
 {
 	/* cleanup window */
-	glfwDestroyWindow(_hndl);
-	_hndl = nullptr;
+	glfwDestroyWindow(hndl);
+	hndl = nullptr;
 }
 
-GLFWwindow * window::get_hndl()
+VkResult window::create_surface(VkInstance instance, VkSurfaceKHR* surface) const
 {
-	return _hndl;
+	/* Caller is responsible for destorying the surface when they are done. */
+	return glfwCreateWindowSurface(instance, hndl, NULL, surface);
+}
+
+GLFWwindow* window::get_hndl() const
+{
+	return hndl;
 }
 
 /*=============================================================================

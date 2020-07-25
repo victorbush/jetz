@@ -64,19 +64,31 @@ PRIVATE METHODS
 
 void gpu::unload_materials()
 {
-	// Destructors of elements are called by clear()
+	for (auto mat : materials)
+	{
+		delete mat.second;
+	}
+
 	materials.clear();
 }
 
 void gpu::unload_models()
 {
-	// Destructors of elements are called by clear()
+	for (auto model : models)
+	{
+		delete model.second;
+	}
+
 	models.clear();
 }
 
 void gpu::unload_textures()
 {
-	// Destructors of elements are called by clear()
+	for (auto tex : textures)
+	{
+		delete tex.second;
+	}
+
 	textures.clear();
 }
 

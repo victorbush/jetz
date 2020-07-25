@@ -15,6 +15,8 @@ INCLUDES
 #include <string>
 #include <vector>
 
+#include "jetz/main/app.h"
+#include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk.h"
 #include "jetz/main/log.h"
 #include "jetz/main/window.h"
@@ -31,6 +33,11 @@ TYPES
 /*=============================================================================
 VARIABLES
 =============================================================================*/
+
+jetz::app*			s_app;
+jetz::log*			s_log;
+jetz::gpu*			s_gpu;
+jetz::window*		s_window;
 
 /*=============================================================================
 METHODS
@@ -51,25 +58,56 @@ static void parse_cmd_line(const std::vector<std::string>& args)
 	}
 }
 
-/**
-
-*/
 static void shutdown()
 {
+	delete s_app;
+	delete s_gpu;
+	delete s_window;
+	delete s_log;
 	glfwTerminate();
 }
 
-/**
-
-*/
 static void startup()
 {
-	glfwInit();
+	/*
+	Seutp logging
+	*/
+	s_log = new jetz::log();
+	jetz::log::logger = s_log;
+
+	/* Add simple logging target */
+	s_log->register_target([](const std::string& msg) {
+		std::cout << msg;
+	});
+
+	LOG_INFO("Logger initialized.");
+
+	/*
+	Setup GLFW
+	*/
+	if (glfwInit() != GLFW_TRUE)
+	{
+		LOG_FATAL("Failed to initialize GLFW.");
+	}
 
 	/* For Vulkan, use GLFW_NO_API */
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+	/*
+	Setup window
+	*/
+	s_window = new jetz::window(800, 600);
+
+	/*
+	Setup renderer
+	*/
+	s_gpu = (jetz::gpu*)new jetz::vlk(s_window->get_hndl());
+
+	/*
+	Setup app
+	*/
+	s_app = new jetz::app();
 }
 
 /**
@@ -80,41 +118,22 @@ argv: array of the arguments
 */
 int main(int argc, char* argv[])
 {
-	/*
-	Parse command line args 
-	*/
+	/* Parse command line args */
 	std::vector<std::string> args(argv + 1, argv + argc);
 	parse_cmd_line(args);
 
-	/* 
-	Seutp logging
-	*/
-	auto* log = new jetz::log();
-	jetz::log::logger = log;
+	/* Startup */
+	startup();
 
-	/* Add simple logging target */
-	log->register_target([](const std::string& msg) {
-		std::cout << msg;
-	});
+	/* Main loop */
+	while (!s_app->should_exit())
+	{
+		glfwPollEvents();
+		s_app->run_frame();
+	}
 
-	LOG_INFO("Logger initialized.");
-
-	/* 
-	Setup window 
-	*/
-	auto* window = new jetz::window(800, 600);
-
-	/* 
-	Setup renderer 
-	*/
-	auto* gpu = new jetz::vlk();
-
-	/* 
-	Cleanup 
-	*/
-	delete gpu;
-	delete window;
-	delete log;
+	/* Shutdown */
+	shutdown();
 
 	return EXIT_SUCCESS;
 }

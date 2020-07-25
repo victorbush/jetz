@@ -8,6 +8,7 @@ INCLUDES
 
 #include <memory.h>
 
+#include "jetz/gpu/vlk/vlk_gpu.h"
 #include "jetz/gpu/vlk/vlk_util.h"
 #include "jetz/main/log.h"
 
@@ -20,6 +21,43 @@ namespace jetz {
 /*=============================================================================
 PUBLIC STATIC METHODS
 =============================================================================*/
+
+bool vlk_util::are_device_extensions_available
+	(
+	const std::vector<const char*>&		extensions,		/* list of extension names to check */
+	vlk_gpu&							gpu				/* GPU to check                     */
+	)
+{
+	uint32_t i, j;
+	bool desired_ext_avail = true;
+
+	/* check if specified extensions are available */
+	for (i = 0; i < extensions.size(); ++i)
+	{
+		const char* ext_name = extensions[i];
+		bool found = false;
+
+		/* look for this layer in the available layers */
+		for (j = 0; j < gpu.ext_properties.count; ++j)
+		{
+			VkExtensionProperties ext = gpu.ext_properties.data[j];
+
+			if (!strncmp(ext_name, ext.extensionName, sizeof(ext.extensionName)))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+			desired_ext_avail = false;
+			break;
+		}
+	}
+
+	return (desired_ext_avail);
+}
 
 bool vlk_util::are_instance_extensions_available
 	(

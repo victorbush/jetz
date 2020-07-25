@@ -22,6 +22,9 @@
     <Filter Include="thirdparty\fmt">
       <UniqueIdentifier>{08353166-0e61-4a4b-82d8-b9c2bc0c2a42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="thirdparty\glm">
+      <UniqueIdentifier>{dc6e6d31-527f-4328-8d72-88180a4e6dc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -66,6 +69,33 @@
     <ClInclude Include="main\log.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_window.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_frame.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\gpu_frame.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="main\app.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\gpu_window.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="main\common.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_buffer.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="main\camera.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_swapchain.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -99,6 +129,39 @@
       <Filter>thirdparty\fmt</Filter>
     </ClCompile>
     <ClCompile Include="gpu\vlk\vlk_util.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_device.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_window.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_frame.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_frame.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="main\app.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_window.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_gpu.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_buffer.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="main\camera.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\glm\glm.cpp">
+      <Filter>thirdparty\glm</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_swapchain.cpp">
       <Filter>gpu\vlk</Filter>
     </ClCompile>
   </ItemGroup>
