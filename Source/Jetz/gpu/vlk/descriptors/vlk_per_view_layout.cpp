@@ -38,6 +38,25 @@ vlk_per_view_layout::~vlk_per_view_layout()
 PUBLIC METHODS
 =============================================================================*/
 
+VkDescriptorSetLayout vlk_per_view_layout::get_handle() const
+{
+	return handle;
+}
+
+vlk_device& vlk_per_view_layout::get_device() const
+{
+	return dev;
+}
+
+VkDescriptorPool vlk_per_view_layout::get_pool_handle() const
+{
+	return pool_handle;
+}
+
+/*=============================================================================
+PRIVATE METHODS
+=============================================================================*/
+
 void vlk_per_view_layout::create_descriptor_pool()
 {
 	VkDescriptorPoolSize pool_sizes[1];
@@ -83,8 +102,14 @@ void vlk_per_view_layout::create_layout()
 	}
 }
 
-/*=============================================================================
-PRIVATE METHODS
-=============================================================================*/
+void vlk_per_view_layout::destroy_descriptor_pool()
+{
+	vkDestroyDescriptorPool(dev.get_handle(), pool_handle, NULL);
+}
+
+void vlk_per_view_layout::destroy_layout()
+{
+	vkDestroyDescriptorSetLayout(dev.get_handle(), handle, NULL);
+}
 
 }   /* namespace jetz */

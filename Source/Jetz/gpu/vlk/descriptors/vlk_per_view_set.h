@@ -1,5 +1,5 @@
 /*=============================================================================
-vlk_per_view_layout.h
+vlk_per_view_set.h
 =============================================================================*/
 
 #pragma once
@@ -8,10 +8,13 @@ vlk_per_view_layout.h
 INCLUDES
 =============================================================================*/
 
-#include <glm/glm.hpp>
+#include <vector>
 #include <vulkan/vulkan.h>
 
-#include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/vlk_frame.h"
+#include "jetz/gpu/vlk/vlk_buffer.h"
+#include "jetz/gpu/vlk/descriptors/vlk_per_view_layout.h"
+#include "jetz/main/camera.h"
 
 /*=============================================================================
 NAMESPACE
@@ -23,30 +26,40 @@ namespace jetz {
 CLASS
 =============================================================================*/
 
-struct vlk_per_view_ubo {
-	glm::mat4 view;
-	glm::mat4 proj;
-	glm::vec3 camera_pos;
-};
-
-class vlk_per_view_layout {
+class vlk_per_view_set {
 
 public:
 
-	vlk_per_view_layout
+	vlk_per_view_set
 		(
-		vlk_device& dev
+		vlk_per_view_layout& layout
 		);
 
-	~vlk_per_view_layout();
+	~vlk_per_view_set();
 
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
 
-	VkDescriptorSetLayout	get_handle() const;
-	vlk_device&				get_device() const;
-	VkDescriptorPool		get_pool_handle() const;
+	/**
+	Binds the descriptor set for the specified frame.
+	*/
+	void _vlk_per_view_set__bind
+		(
+		VkCommandBuffer					cmd_buf,
+		const vlk_frame&				frame,
+		VkPipelineLayout				pipelineLayout
+		);
+
+	/**
+	Updates data in the per-view UBO for the specified frame.
+	*/
+	void _vlk_per_view_set__update
+		(
+		const vlk_frame&				frame,
+		const camera&					camera,
+		VkExtent2D						extent
+		);
 
 private:
 
@@ -54,17 +67,17 @@ private:
 	Private methods
 	-----------------------------------------------------*/
 
-	/** Creates a descriptor pool for this layout. Descriptor sets are allocated from the pool. */
-	void create_descriptor_pool();
+	/** Creates buffers for the set. */
+	void create_buffers();
 
-	/** Creates the descriptor set layout. */
-	void create_layout();
+	/** Creates the descriptor sets. */
+	void create_sets();
 
-	/** Destroys the descriptor pool. */
-	void destroy_descriptor_pool();
+	/** Destroys buffers for the set. */
+	void destroy_buffers();
 
-	/** Destroys the descriptor set layout. */
-	void destroy_layout();
+	/** Destroys the descriptor sets. */
+	void destroy_sets();
 
 	/*-----------------------------------------------------
 	Private variables
@@ -73,13 +86,13 @@ private:
 	/*
 	Dependencies
 	*/
-	vlk_device&					dev;
+	vlk_per_view_layout&			layout;
 
 	/*
 	Create/destroy
 	*/
-	VkDescriptorSetLayout		handle;
-	VkDescriptorPool			pool_handle;
+	std::vector<vlk_buffer*>		buffers;
+	std::vector<VkDescriptorSet>	sets;
 };
 
 }   /* namespace jetz */

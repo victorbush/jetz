@@ -102,6 +102,9 @@
     <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_layout.h">
       <Filter>gpu\vlk\descriptors</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_set.h">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -171,6 +174,9 @@
       <Filter>gpu\vlk</Filter>
     </ClCompile>
     <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_layout.cpp">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_set.cpp">
       <Filter>gpu\vlk\descriptors</Filter>
     </ClCompile>
   </ItemGroup>
