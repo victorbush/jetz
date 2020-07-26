@@ -20,6 +20,7 @@
     <ClInclude Include="gpu\gpu_model.h" />
     <ClInclude Include="gpu\gpu_texture.h" />
     <ClInclude Include="gpu\gpu_window.h" />
+    <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_layout.h" />
     <ClInclude Include="gpu\vlk\vlk.h" />
     <ClInclude Include="gpu\vlk\vlk_buffer.h" />
     <ClInclude Include="gpu\vlk\vlk_device.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="gpu\gpu_model.cpp" />
     <ClCompile Include="gpu\gpu_texture.cpp" />
     <ClCompile Include="gpu\gpu_window.cpp" />
+    <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_layout.cpp" />
     <ClCompile Include="gpu\vlk\vlk_buffer.cpp" />
     <ClCompile Include="gpu\vlk\vlk_frame.cpp" />
     <ClCompile Include="gpu\vlk\vlk.cpp" />

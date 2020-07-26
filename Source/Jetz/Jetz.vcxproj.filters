@@ -25,6 +25,9 @@
     <Filter Include="thirdparty\glm">
       <UniqueIdentifier>{dc6e6d31-527f-4328-8d72-88180a4e6dc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gpu\vlk\descriptors">
+      <UniqueIdentifier>{1b08cc35-8a14-469f-b6e4-a7ccb3fc1c8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -96,6 +99,9 @@
     <ClInclude Include="gpu\vlk\vlk_swapchain.h">
       <Filter>gpu\vlk</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_layout.h">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -163,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\vlk_swapchain.cpp">
       <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_layout.cpp">
+      <Filter>gpu\vlk\descriptors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
