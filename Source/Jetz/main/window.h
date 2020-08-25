@@ -66,7 +66,11 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 	GLFWUserData					glfw_user_data;
+	gpu_window*						gpu_window;
 	GLFWwindow*						hndl;
+
+	uint32_t						height;
+	uint32_t						width;
 
 	/*-----------------------------------------------------
 	Private Methods

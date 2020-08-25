@@ -44,7 +44,7 @@ public:
 	/**
 	Binds the descriptor set for the specified frame.
 	*/
-	void _vlk_per_view_set__bind
+	void bind
 		(
 		VkCommandBuffer					cmd_buf,
 		const vlk_frame&				frame,
@@ -54,7 +54,7 @@ public:
 	/**
 	Updates data in the per-view UBO for the specified frame.
 	*/
-	void _vlk_per_view_set__update
+	void update
 		(
 		const vlk_frame&				frame,
 		const camera&					camera,

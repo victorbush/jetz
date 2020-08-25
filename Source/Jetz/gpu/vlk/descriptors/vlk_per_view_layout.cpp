@@ -22,7 +22,7 @@ CONSTRUCTORS
 =============================================================================*/
 
 vlk_per_view_layout::vlk_per_view_layout(vlk_device& dev)
-	: dev(dev)
+	: vlk_descriptor_layout(dev)
 {
 	create_descriptor_pool();
 	create_layout();
@@ -30,28 +30,11 @@ vlk_per_view_layout::vlk_per_view_layout(vlk_device& dev)
 
 vlk_per_view_layout::~vlk_per_view_layout()
 {
-	destroy_layout();
-	destroy_descriptor_pool();
 }
 
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
-
-VkDescriptorSetLayout vlk_per_view_layout::get_handle() const
-{
-	return handle;
-}
-
-vlk_device& vlk_per_view_layout::get_device() const
-{
-	return dev;
-}
-
-VkDescriptorPool vlk_per_view_layout::get_pool_handle() const
-{
-	return pool_handle;
-}
 
 /*=============================================================================
 PRIVATE METHODS
@@ -100,16 +83,6 @@ void vlk_per_view_layout::create_layout()
 	{
 		LOG_FATAL("Failed to create descriptor set layout.");
 	}
-}
-
-void vlk_per_view_layout::destroy_descriptor_pool()
-{
-	vkDestroyDescriptorPool(dev.get_handle(), pool_handle, NULL);
-}
-
-void vlk_per_view_layout::destroy_layout()
-{
-	vkDestroyDescriptorSetLayout(dev.get_handle(), handle, NULL);
 }
 
 }   /* namespace jetz */

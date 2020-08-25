@@ -8,10 +8,13 @@ vlk_device.h
 INCLUDES
 =============================================================================*/
 
+#include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
 
 #include "jetz/gpu/vlk/vlk_gpu.h"
+#include "jetz/gpu/vlk/descriptors/vlk_material_layout.h"
+#include "jetz/gpu/vlk/descriptors/vlk_per_view_layout.h"
 #include "thirdparty/vma/vma.h"
 
 /*=============================================================================
@@ -93,10 +96,13 @@ public:
 	/* Gets the render pass handle for the picker buffer rendering. */
 	VkRenderPass get_picker_render_pass() const;
 
-	int get_gfx_family_idx() const;
-	VkQueue get_gfx_queue() const;
-	int get_present_family_idx() const;
-	VkQueue get_present_queue() const;
+	int									get_gfx_family_idx() const;
+	VkQueue								get_gfx_queue() const;
+	vlk_material_layout&				get_material_layout() const;
+	vlk_per_view_layout&				get_per_view_layout() const;
+	int									get_present_family_idx() const;
+	VkQueue								get_present_queue() const;
+	VkSampler							get_texture_sampler() const;
 
 	void transition_image_layout
 	(
@@ -179,8 +185,8 @@ private:
 	VkRenderPass					render_pass;
 	VkRenderPass					picker_render_pass;
 
-	//_vlk_descriptor_layout_t		material_layout;
-	//_vlk_descriptor_layout_t		per_view_layout;
+	vlk_material_layout*			material_layout;
+	vlk_per_view_layout*			per_view_layout;
 
 	/*
 	Queues and families

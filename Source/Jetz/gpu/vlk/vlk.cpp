@@ -7,7 +7,9 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/gpu/vlk/vlk.h"
+#include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/vlk_util.h"
+#include "jetz/main/window.h"
 #include "jetz/main/log.h"
 #include "thirdparty/glfw/glfw.h"
 
@@ -19,6 +21,8 @@ namespace jetz {
 
 /* Default to double buffering. */
 int vlk::num_frame_buf = 2;
+
+int vlk::max_num_materials = 100;
 
 /*=============================================================================
 STATIC FUNCTIONS
@@ -47,7 +51,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback
 PUBLIC METHODS
 =============================================================================*/
 
-vlk::vlk(window& app_window) : app_window(app_window)
+vlk::vlk(window& app_window) : _app_window(app_window)
 {
 	enable_validation = true;
 
@@ -65,11 +69,16 @@ vlk::~vlk()
 	destroy_requirement_lists();
 }
 
+vlk_device& vlk::get_device() const
+{
+	return *_dev;
+}
+
 void vlk::wait_idle() const
 {
 	/* wait for device to finsih current operations. example usage is at
 	application exit - wait until current ops finish, then do cleanup. */
-	vkDeviceWaitIdle(dev->get_handle());
+	vkDeviceWaitIdle(_dev->get_handle());
 }
 
 /*=============================================================================
@@ -83,16 +92,28 @@ PRIVATE METHODS
 void vlk::create_device()
 {
 	/* Create a surface - destroyed by vlk_window */
-	glfwCreateWindowSurface(instance, glfw_window, NULL, &surface);
+	if (glfwCreateWindowSurface(_instance, _app_window.get_hndl(), NULL, &_surface) != VK_SUCCESS)
+	{
+		LOG_FATAL("Failed to create window surface.");
+	}
 
-	/* Select a physical device */
+	/* Select a physical device - the surface we created helps determine what device to use */
 	select_physical_device();
 
 	/* Create logical device */
-	dev = new jetz::vlk_device(*gpu, required_device_ext, required_instance_layers);
+	_dev = new jetz::vlk_device(*_gpu, _required_device_ext, _required_instance_layers);
 
-	/* Create window */
-	vlk_window = new jetz::vlk_window(surface, app_window);
+	/* Must check to make sure surface supports presentation */
+	VkBool32 supported = 0;
+	VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(_gpu->get_handle(), _dev->get_present_family_idx(), _surface, &supported);
+	if (result != VK_SUCCESS || !supported)
+	{
+		LOG_FATAL("Surface not supported for this GPU.");
+	}
+
+	/* Create gpu window */
+	_vlk_window = new jetz::vlk_window(*_dev, _instance, _surface, _app_window.get_width(), _app_window.get_height());
+	_app_window.set_gpu_window((gpu_window*)_vlk_window);
 }
 
 void vlk::create_dbg_callbacks()
@@ -115,13 +136,13 @@ void vlk::create_dbg_callbacks()
 	extensions when the Vulkan instance is created.
 	*/
 	PFN_vkCreateDebugReportCallbackEXT func;
-	func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+	func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkCreateDebugReportCallbackEXT");
 	VkResult result = VK_SUCCESS;
 
 	/* create the callback */
 	if (func != NULL)
 	{
-		result = func(instance, &create_info, NULL, &dbg_callback_hndl);
+		result = func(_instance, &create_info, NULL, &_dbg_callback_hndl);
 	}
 
 	if (func == NULL || result != VK_SUCCESS)
@@ -154,17 +175,17 @@ void vlk::create_instance()
 	create_info.pApplicationInfo = &app_info;
 
 	/* get required Vulkan extensions */
-	create_info.enabledExtensionCount = required_instance_ext.size();
-	create_info.ppEnabledExtensionNames = required_instance_ext.data();
+	create_info.enabledExtensionCount = (uint32_t)_required_instance_ext.size();
+	create_info.ppEnabledExtensionNames = _required_instance_ext.data();
 
 	/* get validation layers */
-	create_info.enabledLayerCount = required_instance_layers.size();
-	create_info.ppEnabledLayerNames = required_instance_layers.data();
+	create_info.enabledLayerCount = (uint32_t)_required_instance_layers.size();
+	create_info.ppEnabledLayerNames = _required_instance_layers.data();
 
 	/*
 	* Create the instance
 	*/
-	VkResult result = vkCreateInstance(&create_info, NULL, &instance);
+	VkResult result = vkCreateInstance(&create_info, NULL, &_instance);
 	if (result != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to create Vulkan instance.");
@@ -178,7 +199,7 @@ void vlk::create_requirement_lists()
 	-----------------------------------------------------*/
 	
 	/* swap chain support is required */
-	required_device_ext.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+	_required_device_ext.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
 	/* device extensions aren't validated here since a phyiscal device is required */
 
@@ -189,10 +210,10 @@ void vlk::create_requirement_lists()
 	/* add validation layers */
 	if (enable_validation)
 	{
-		required_instance_layers.push_back("VK_LAYER_LUNARG_standard_validation");
+		_required_instance_layers.push_back("VK_LAYER_LUNARG_standard_validation");
 	}
 
-	if (!vlk_util::are_instance_layers_available(required_instance_layers))
+	if (!vlk_util::are_instance_layers_available(_required_instance_layers))
 	{
 		LOG_FATAL("Required instance layers are not available.");
 	}
@@ -208,18 +229,18 @@ void vlk::create_requirement_lists()
 	/* add glfw extensions */
 	for (uint32_t i = 0; i < num_glfw_extensions; ++i)
 	{
-		required_instance_ext.push_back(glfw_extensions[i]);
+		_required_instance_ext.push_back(glfw_extensions[i]);
 	}
 
 	/* determine other extensions needed */
 	if (enable_validation)
 	{
 		/* debug report extension is required to use validation layers */
-		required_instance_ext.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+		_required_instance_ext.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 	}
 
 	/* throw error if the desired extensions are not available */
-	if (!vlk_util::are_instance_extensions_available(required_instance_ext))
+	if (!vlk_util::are_instance_extensions_available(_required_instance_ext))
 	{
 		LOG_FATAL("Required instance extensions are not available.");
 	}
@@ -227,9 +248,9 @@ void vlk::create_requirement_lists()
 
 void vlk::destroy_device()
 {
-	delete vlk_window;
-	delete dev;
-	delete gpu;
+	delete _vlk_window;
+	delete _dev;
+	delete _gpu;
 }
 
 void vlk::destroy_dbg_callbacks()
@@ -242,12 +263,12 @@ void vlk::destroy_dbg_callbacks()
 
 	/* get address to the create callback function*/
 	PFN_vkDestroyDebugReportCallbackEXT func;
-	func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+	func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkDestroyDebugReportCallbackEXT");
 
 	/* destroy the callback */
 	if (func != NULL)
 	{
-		func(instance, dbg_callback_hndl, NULL);
+		func(_instance, _dbg_callback_hndl, NULL);
 	}
 	else
 	{
@@ -257,7 +278,7 @@ void vlk::destroy_dbg_callbacks()
 
 void vlk::destroy_instance()
 {
-	vkDestroyInstance(instance, NULL);
+	vkDestroyInstance(_instance, NULL);
 }
 
 void vlk::destroy_requirement_lists()
@@ -272,12 +293,12 @@ void vlk::select_physical_device()
 	std::vector<const char*>		device_ext;		/* required device extensions */
 
 	/* check assumptions */
-	if (instance == VK_NULL_HANDLE)
+	if (_instance == VK_NULL_HANDLE)
 	{
 		LOG_FATAL("Vulkan instance must be created before selecting a phyiscal device.");
 	}
 
-	if (surface == VK_NULL_HANDLE)
+	if (_surface == VK_NULL_HANDLE)
 	{
 		LOG_FATAL("Vulkan surface must be created before selecting a phyiscal device.");
 	}
@@ -295,7 +316,7 @@ void vlk::select_physical_device()
 
 	/* get number of GPUs */
 	uint32_t num_gpus = 0;
-	vkEnumeratePhysicalDevices(instance, &num_gpus, NULL);
+	vkEnumeratePhysicalDevices(_instance, &num_gpus, NULL);
 	if (num_gpus == 0)
 	{
 		LOG_FATAL("No GPU found with Vulkan support.");
@@ -303,7 +324,7 @@ void vlk::select_physical_device()
 
 	/* get the list of devices */
 	devices.resize(num_gpus);
-	vkEnumeratePhysicalDevices(instance, &num_gpus, devices.data());
+	vkEnumeratePhysicalDevices(_instance, &num_gpus, devices.data());
 
 	/* allocate mem for GPU info */
 	gpus.resize(num_gpus);
@@ -311,7 +332,7 @@ void vlk::select_physical_device()
 	/* get info for each physical device */
 	for (uint32_t i = 0; i < num_gpus; i++)
 	{
-		gpus[i] = new vlk_gpu(devices[i], surface);
+		gpus[i] = new vlk_gpu(devices[i], _surface);
 	}
 
 	/*
@@ -373,12 +394,12 @@ void vlk::select_physical_device()
 		*/
 
 		/* init new gpu info for selected GPU and destroy the temp array */
-		gpu = new jetz::vlk_gpu(gpu->get_handle(), surface);
+		_gpu = new jetz::vlk_gpu(gpu->get_handle(), _surface);
 		break;
 	}
 
 	/* verify a physical device was selected */
-	if (gpu == nullptr) 
+	if (_gpu == nullptr) 
 	{
 		LOG_FATAL("Failed to find a suitable GPU.");
 	}
@@ -392,7 +413,7 @@ void vlk::select_physical_device()
 	gpus.clear();
 
 	/* Cleanup temp surface */
-	vkDestroySurfaceKHR(instance, surface, NULL);
+	vkDestroySurfaceKHR(_instance, _surface, NULL);
 }
 
 }   /* namespace jetz */

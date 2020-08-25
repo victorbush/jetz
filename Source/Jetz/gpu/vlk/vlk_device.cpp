@@ -165,9 +165,15 @@ int vlk_device::get_gfx_family_idx() const { return gfx_family_idx; }
 
 VkQueue vlk_device::get_gfx_queue() const { return gfx_queue; }
 
+vlk_material_layout& vlk_device::get_material_layout() const { return *material_layout; }
+
+vlk_per_view_layout& vlk_device::get_per_view_layout() const { return *per_view_layout; }
+
 int vlk_device::get_present_family_idx() const { return present_family_idx; }
 
 VkQueue vlk_device::get_present_queue() const { return present_queue; }
+
+VkSampler vlk_device::get_texture_sampler() const { return texture_sampler; }
 
 void vlk_device::transition_image_layout(VkImage image, VkFormat format, VkImageLayout old_layout, VkImageLayout new_layout) const
 {
@@ -317,9 +323,8 @@ void vlk_device::create_command_pool()
 
 void vlk_device::create_layouts()
 {
-	LOG_DBG("Descriptor set layouts not implemented.");
-	//_vlk_material_layout__construct(&dev->material_layout, dev);
-	//_vlk_per_view_layout__construct(&dev->per_view_layout, dev);
+	per_view_layout = new jetz::vlk_per_view_layout(*this);
+	material_layout = new jetz::vlk_material_layout(*this);
 }
 
 void vlk_device::create_logical_device
@@ -386,18 +391,18 @@ void vlk_device::create_logical_device
 	create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
 	/* queues */
-	create_info.queueCreateInfoCount = queues.size();
+	create_info.queueCreateInfoCount = (uint32_t)queues.size();
 	create_info.pQueueCreateInfos = queues.data();
 
 	/* device features */
 	create_info.pEnabledFeatures = &device_features;
 
 	/* extensions */
-	create_info.enabledExtensionCount = req_dev_ext.size();
+	create_info.enabledExtensionCount = (uint32_t)req_dev_ext.size();
 	create_info.ppEnabledExtensionNames = req_dev_ext.data();
 
 	/* layers */
-	create_info.enabledLayerCount = req_inst_layers.size();
+	create_info.enabledLayerCount = (uint32_t)req_inst_layers.size();
 	create_info.ppEnabledLayerNames = req_inst_layers.data();
 
 	/* create the logical device */
@@ -618,9 +623,8 @@ void vlk_device::destroy_command_pool()
 
 void vlk_device::destroy_layouts()
 {
-	LOG_DBG("destory_layouts TODO");
-	//_vlk_material_layout__destruct(&dev->material_layout);
-	//_vlk_per_view_layout__destruct(&dev->per_view_layout);
+	delete per_view_layout;
+	delete material_layout;
 }
 
 void vlk_device::destroy_logical_device()

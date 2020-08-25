@@ -62,6 +62,16 @@ vlk_buffer::~vlk_buffer()
 PUBLIC METHODS
 =============================================================================*/
 
+VmaAllocation vlk_buffer::get_allocation() const
+{
+	return allocation;
+}
+
+VkBuffer vlk_buffer::get_handle() const
+{
+	return handle;
+}
+
 VkDescriptorBufferInfo vlk_buffer::get_buffer_info() const
 {
 	VkDescriptorBufferInfo info = {};

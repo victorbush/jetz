@@ -41,6 +41,13 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
+	VmaAllocation get_allocation() const;
+
+	/** 
+	Gets the buffer handle.
+	*/
+	VkBuffer get_handle() const;
+
 	/**
 	Builds a VkDescriptorBufferInfo struct for this buffer.
 	*/

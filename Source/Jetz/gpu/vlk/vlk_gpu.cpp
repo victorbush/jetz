@@ -285,11 +285,11 @@ VkPhysicalDevice vlk_gpu::get_handle() const
 
 VkResult vlk_gpu::query_surface_capabilties
 	(
-	VkSurfaceKHR				surface,
-	VkSurfaceCapabilitiesKHR*	capabilties
+	const VkSurfaceKHR			surface,
+	VkSurfaceCapabilitiesKHR&	capabilties
 	) const
 {
-	return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(handle, surface, capabilties);
+	return vkGetPhysicalDeviceSurfaceCapabilitiesKHR(handle, surface, &capabilties);
 }
 
 /*=============================================================================

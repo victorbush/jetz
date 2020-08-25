@@ -15,7 +15,6 @@ INCLUDES
 #include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/gpu/vlk/vlk_gpu.h"
-#include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/main/window.h"
 
 /*=============================================================================
@@ -24,6 +23,8 @@ NAMESPACE
 
 namespace jetz {
 	
+class vlk_window;
+
 /*=============================================================================
 CLASS
 =============================================================================*/
@@ -39,6 +40,9 @@ public:
 	Public static variables
 	-----------------------------------------------------*/
 
+	/* The maximum number of materials allowed. */
+	static int max_num_materials;
+
 	/**
 	The number of frame buffers to use for rendering.
 	Double buffered == 2
@@ -50,10 +54,14 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
-	/**
-	jetz::gpu::wait_idle
-	*/
-	virtual void wait_idle() const;
+	VkInstance get_instance() const;
+	vlk_device& get_device() const;
+
+	/*-----------------------------------------------------
+	jetz::gpu methods
+	-----------------------------------------------------*/
+
+	virtual void wait_idle() const override;
 
 	/*-----------------------------------------------------
 	Public variables
@@ -77,22 +85,21 @@ private:
 	/*
 	Dependencies
 	*/
-	GLFWwindow*						glfw_window;
-	window&							app_window;
+	window&							_app_window;
 
 	/*
 	Create/destroy
 	*/
-	vlk_device*						dev;					/* logical device */
-	VkDebugReportCallbackEXT		dbg_callback_hndl;
-	vlk_gpu*						gpu;					/* physical device */
-	VkInstance						instance;
-	VkSurfaceKHR					surface;
-	vlk_window*						vlk_window;
+	vlk_device*						_dev;					/* logical device */
+	VkDebugReportCallbackEXT		_dbg_callback_hndl;
+	vlk_gpu*						_gpu;					/* physical device */
+	VkInstance						_instance;
+	VkSurfaceKHR					_surface;
+	vlk_window*						_vlk_window;
 
-	std::vector<const char*>		required_device_ext;		/* required device extensions */
-	std::vector<const char*>		required_instance_ext;		/* required instance extensions */
-	std::vector<const char*>		required_instance_layers;	/* required instance layers */
+	std::vector<const char*>		_required_device_ext;		/* required device extensions */
+	std::vector<const char*>		_required_instance_ext;		/* required instance extensions */
+	std::vector<const char*>		_required_instance_layers;	/* required instance layers */
 
 	/*-----------------------------------------------------
 	Private methods

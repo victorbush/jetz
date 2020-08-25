@@ -11,7 +11,6 @@ INCLUDES
 #include <vulkan/vulkan.h>
 
 #include "jetz/gpu/gpu_frame.h"
-#include "jetz/gpu/vlk/vlk_frame.h"
 
 /*=============================================================================
 NAMESPACE
@@ -28,7 +27,7 @@ enum class vlk_frame_status {
 	SWAPCHAIN_OUT_OF_DATE
 };
 
-class vlk_frame : gpu_frame {
+class vlk_frame : public gpu_frame {
 
 public:
 

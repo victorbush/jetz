@@ -9,6 +9,7 @@ INCLUDES
 #include <glm/glm.hpp>
 
 #include "jetz/gpu/vlk/vlk.h"
+#include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/gpu/vlk/descriptors/vlk_per_view_layout.h"
 #include "jetz/gpu/vlk/descriptors/vlk_per_view_set.h"
 #include "jetz/main/common.h"
@@ -41,7 +42,7 @@ vlk_per_view_set::~vlk_per_view_set()
 PUBLIC METHODS
 =============================================================================*/
 
-void vlk_per_view_set::_vlk_per_view_set__bind
+void vlk_per_view_set::bind
 	(
 	VkCommandBuffer			cmd_buf, 
 	const vlk_frame&		frame, 
@@ -52,7 +53,7 @@ void vlk_per_view_set::_vlk_per_view_set__bind
 	vkCmdBindDescriptorSets(cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, setNum, 1, &sets[frame.image_idx], 0, NULL);
 }
 
-void vlk_per_view_set::_vlk_per_view_set__update
+void vlk_per_view_set::update
 	(
 	const vlk_frame&		frame,
 	const camera&			camera,
@@ -101,7 +102,7 @@ void vlk_per_view_set::create_sets()
 	VkDescriptorSetAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	alloc_info.descriptorPool = layout.get_pool_handle();
-	alloc_info.descriptorSetCount = layouts.size();
+	alloc_info.descriptorSetCount = (uint32_t)layouts.size();
 	alloc_info.pSetLayouts = layouts.data();
 
 	VkResult result = vkAllocateDescriptorSets(layout.get_device().get_handle(), &alloc_info, &sets[0]);

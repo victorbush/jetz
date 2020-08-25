@@ -57,6 +57,11 @@ public:
 	VkCommandBuffer get_cmd_buf(const vlk_frame& frame) const;
 
 	/**
+	Gets the picker buffer image for the specified frame.
+	*/
+	VkImage get_picker_image(const vlk_frame& frame) const;
+
+	/**
 	Gets the swapchain extent.
 	*/
 	VkExtent2D get_extent() const;

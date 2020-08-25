@@ -160,6 +160,11 @@ VkCommandBuffer vlk_swapchain::get_cmd_buf(const vlk_frame& frame) const
 	return cmd_bufs[frame.image_idx];
 }
 
+VkImage vlk_swapchain::get_picker_image(const vlk_frame& frame) const
+{
+	return picker_images[frame.image_idx];
+}
+
 VkExtent2D vlk_swapchain::get_extent() const
 {
 	return extent;
@@ -301,7 +306,7 @@ void vlk_swapchain::create_command_buffers()
 	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	alloc_info.commandPool = dev.get_cmd_pool();
 	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	alloc_info.commandBufferCount = cmd_bufs.size();
+	alloc_info.commandBufferCount = (uint32_t)cmd_bufs.size();
 
 	if (vkAllocateCommandBuffers(dev.get_handle(), &alloc_info, cmd_bufs.data()) != VK_SUCCESS)
 	{
@@ -317,7 +322,7 @@ void vlk_swapchain::create_command_buffers()
 	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	alloc_info.commandPool = dev.get_cmd_pool();
 	alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	alloc_info.commandBufferCount = picker_cmd_bufs.size();
+	alloc_info.commandBufferCount = (uint32_t)picker_cmd_bufs.size();
 
 	if (vkAllocateCommandBuffers(dev.get_handle(), &alloc_info, picker_cmd_bufs.data()) != VK_SUCCESS)
 	{
@@ -560,7 +565,7 @@ void vlk_swapchain::create_swapchain(VkExtent2D extent)
 	Get surface capabilties
 	*/
 	VkSurfaceCapabilitiesKHR surface_capabilities = {};
-	VkResult result = gpu.query_surface_capabilties(surface, &surface_capabilities);
+	VkResult result = gpu.query_surface_capabilties(surface, surface_capabilities);
 
 	if (result != VK_SUCCESS)
 	{

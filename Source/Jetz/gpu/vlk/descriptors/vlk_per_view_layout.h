@@ -11,7 +11,7 @@ INCLUDES
 #include <glm/glm.hpp>
 #include <vulkan/vulkan.h>
 
-#include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/descriptors/vlk_descriptor_layout.h"
 
 /*=============================================================================
 NAMESPACE
@@ -19,6 +19,8 @@ NAMESPACE
 
 namespace jetz {
 	
+class vlk_device;
+
 /*=============================================================================
 CLASS
 =============================================================================*/
@@ -29,7 +31,7 @@ struct vlk_per_view_ubo {
 	glm::vec3 camera_pos;
 };
 
-class vlk_per_view_layout {
+class vlk_per_view_layout : public vlk_descriptor_layout {
 
 public:
 
@@ -44,9 +46,17 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	VkDescriptorSetLayout	get_handle() const;
-	vlk_device&				get_device() const;
-	VkDescriptorPool		get_pool_handle() const;
+protected:
+
+	/*-----------------------------------------------------
+	Protected methods
+	-----------------------------------------------------*/
+
+	/** Creates a descriptor pool for this layout. Descriptor sets are allocated from the pool. */
+	virtual void create_descriptor_pool() override;
+
+	/** Creates the descriptor set layout. */
+	virtual void create_layout() override;
 
 private:
 
@@ -54,32 +64,9 @@ private:
 	Private methods
 	-----------------------------------------------------*/
 
-	/** Creates a descriptor pool for this layout. Descriptor sets are allocated from the pool. */
-	void create_descriptor_pool();
-
-	/** Creates the descriptor set layout. */
-	void create_layout();
-
-	/** Destroys the descriptor pool. */
-	void destroy_descriptor_pool();
-
-	/** Destroys the descriptor set layout. */
-	void destroy_layout();
-
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-
-	/*
-	Dependencies
-	*/
-	vlk_device&					dev;
-
-	/*
-	Create/destroy
-	*/
-	VkDescriptorSetLayout		handle;
-	VkDescriptorPool			pool_handle;
 };
 
 }   /* namespace jetz */

@@ -85,8 +85,8 @@ public:
 	*/
 	VkResult query_surface_capabilties
 		(
-		VkSurfaceKHR					surface,			/* The surface to get capabilties for */
-		VkSurfaceCapabilitiesKHR*		capabilties			/* Output - the surface capabilties */
+		const VkSurfaceKHR				surface,			/* The surface to get capabilties for */
+		VkSurfaceCapabilitiesKHR&		capabilties			/* Output - the surface capabilties */
 		) const;
 
 	/*-----------------------------------------------------

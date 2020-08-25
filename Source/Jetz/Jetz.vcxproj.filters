@@ -28,6 +28,12 @@
     <Filter Include="gpu\vlk\descriptors">
       <UniqueIdentifier>{1b08cc35-8a14-469f-b6e4-a7ccb3fc1c8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gpu\vlk\pipelines">
+      <UniqueIdentifier>{572d9efb-b4c4-4678-956d-39bbbcc20f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\imgui">
+      <UniqueIdentifier>{39c5fbaa-1c59-48da-8718-ca3490f1bde6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -105,6 +111,30 @@
     <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_set.h">
       <Filter>gpu\vlk\descriptors</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\vlk\descriptors\vlk_material_layout.h">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\descriptors\vlk_descriptor_layout.h">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_imgui_pipeline.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_obj_pipeline.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_picker_pipeline.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_texture.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="main\utl.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -178,6 +208,36 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_set.cpp">
       <Filter>gpu\vlk\descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\descriptors\vlk_descriptor_layout.cpp">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\descriptors\vlk_material_layout.cpp">
+      <Filter>gpu\vlk\descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_imgui_pipeline.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_obj_pipeline.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_picker_pipeline.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\imgui\imgui.cpp">
+      <Filter>thirdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_texture.cpp">
+      <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\imgui\imgui_draw.cpp">
+      <Filter>thirdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp">
+      <Filter>thirdparty\imgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

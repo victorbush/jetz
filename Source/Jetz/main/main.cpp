@@ -102,8 +102,8 @@ static void startup()
 	/*
 	Setup renderer
 	*/
-	s_gpu = (jetz::gpu*)new jetz::vlk(s_window->get_hndl());
-
+	s_gpu = (jetz::gpu*)new jetz::vlk(*s_window);
+	
 	/*
 	Setup app
 	*/

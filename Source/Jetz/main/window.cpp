@@ -8,8 +8,9 @@ INCLUDES
 
 #include <memory>
 
-#include "thirdparty/glfw/glfw.h"
+#include "jetz/gpu/gpu_window.h"
 #include "jetz/main/window.h"
+#include "thirdparty/glfw/glfw.h"
 
 /*=============================================================================
 NAMESPACE
@@ -119,6 +120,8 @@ window::window(int width, int height)
 {
 	/* create the GLFW window */
 	hndl = glfwCreateWindow(width, height, "Jetz", nullptr, nullptr);
+	this->width = width;
+	this->height = height;
 
 	/* setup user data pointer for the window */
 	memset(&glfw_user_data, 0, sizeof(glfw_user_data));
@@ -136,23 +139,38 @@ window::window(int width, int height)
 window::~window()
 {
 	/* cleanup window */
-	glfwDestroyWindow(hndl);
-	hndl = nullptr;
+	glfwDestroyWindow(this->hndl);
+	this->hndl = nullptr;
 }
 
 VkResult window::create_surface(VkInstance instance, VkSurfaceKHR* surface) const
 {
 	/* Caller is responsible for destorying the surface when they are done. */
-	return glfwCreateWindowSurface(instance, hndl, NULL, surface);
+	return glfwCreateWindowSurface(instance, this->hndl, NULL, surface);
+}
+
+uint32_t window::get_height() const
+{
+	return this->height;
+}
+
+void window::set_gpu_window(jetz::gpu_window* window)
+{
+	this->gpu_window = window;
 }
 
 GLFWwindow* window::get_hndl() const
 {
-	return hndl;
+	return this->hndl;
+}
+
+uint32_t window::get_width() const
+{
+	return this->width;
 }
 
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
 
-}   /* namespace Klink */
+}   /* namespace jetz */
