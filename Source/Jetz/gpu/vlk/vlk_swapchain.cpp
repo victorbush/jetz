@@ -632,6 +632,7 @@ void vlk_swapchain::create_swapchain(VkExtent2D extent)
 	Get swap chain images
 	*/
 	vkGetSwapchainImagesKHR(dev.get_handle(), handle, &image_count, NULL);
+	images.resize(image_count);
 	vkGetSwapchainImagesKHR(dev.get_handle(), handle, &image_count, images.data());
 }
 

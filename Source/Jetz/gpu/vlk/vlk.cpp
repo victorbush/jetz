@@ -411,9 +411,6 @@ void vlk::select_physical_device()
 	}
 
 	gpus.clear();
-
-	/* Cleanup temp surface */
-	vkDestroySurfaceKHR(_instance, _surface, NULL);
 }
 
 }   /* namespace jetz */
