@@ -19,11 +19,6 @@ NAMESPACE
 
 namespace jetz {
 
-/* Default to double buffering. */
-int vlk::num_frame_buf = 2;
-
-int vlk::max_num_materials = 100;
-
 /*=============================================================================
 STATIC FUNCTIONS
 =============================================================================*/
@@ -67,6 +62,11 @@ vlk::~vlk()
 	destroy_dbg_callbacks();
 	destroy_instance();
 	destroy_requirement_lists();
+}
+
+VkInstance vlk::get_instance() const
+{
+	return _instance;
 }
 
 vlk_device& vlk::get_device() const

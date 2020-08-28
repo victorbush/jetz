@@ -267,6 +267,7 @@ void vlk_imgui_pipeline::create_descriptor_pool()
 void vlk_imgui_pipeline::create_descriptor_sets()
 {
 	std::vector<VkDescriptorSetLayout> layouts(vlk::num_frame_buf, descriptor_layout);
+	descriptor_sets.resize(vlk::num_frame_buf);
 
 	VkDescriptorSetAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;

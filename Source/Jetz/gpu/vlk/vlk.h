@@ -40,16 +40,6 @@ public:
 	Public static variables
 	-----------------------------------------------------*/
 
-	/* The maximum number of materials allowed. */
-	static int max_num_materials;
-
-	/**
-	The number of frame buffers to use for rendering.
-	Double buffered == 2
-	Triple buffered == 3
-	*/
-	static int num_frame_buf;
-
 	/*-----------------------------------------------------
 	Public methods
 	-----------------------------------------------------*/

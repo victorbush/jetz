@@ -48,7 +48,8 @@ CONSTRUCTORS
 vlk_window::vlk_window(vlk_device& device, VkInstance vkInstance, VkSurfaceKHR surface, uint32_t width, uint32_t height)
 	: instance(vkInstance),
 	dev(device),
-	surface(surface)
+	surface(surface),
+	gpu_window(width, height)
 {
 	create_swapchain(width, height);
 	create_pipelines();

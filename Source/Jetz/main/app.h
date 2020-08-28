@@ -18,6 +18,8 @@ NAMESPACE
 
 namespace jetz {
 	
+class window;
+
 /*=============================================================================
 TYPES
 =============================================================================*/
@@ -26,7 +28,7 @@ class app {
 
 public:
 
-	app();
+	app(window& main_window);
 	~app();
 
 	/*-----------------------------------------------------
@@ -38,6 +40,22 @@ public:
 
 private:
 
+	/*-----------------------------------------------------
+	Private variables
+	-----------------------------------------------------*/
+
+	/*
+	Dependencies
+	*/
+	window&					_window;
+
+	/*
+	Other
+	*/
+	float					_frame_time;		/* Current frame time (in seconds) */
+	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
+
+	bool					_should_exit;		/* Should the application exit? */
 };
 
 }   /* namespace jetz */

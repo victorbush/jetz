@@ -1,3 +1,3 @@
-[submodule "source/thirdparty/fmt"]
-	path = source/thirdparty/fmt
-	url = https://github.com/fmtlib/fmt.git
+[submodule "source/thirdparty/imgui"]
+	path = source/thirdparty/imgui
+	url = https://github.com/ocornut/imgui.git

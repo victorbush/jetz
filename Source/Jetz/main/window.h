@@ -16,7 +16,7 @@ NAMESPACE
 =============================================================================*/
 
 namespace jetz {
-
+	
 struct GLFWUserData {
 
 	int temp;
@@ -47,12 +47,24 @@ public:
 	VkResult create_surface(VkInstance instance, VkSurfaceKHR* surface) const;
 
 	/**
+	Gets the GPU window object that handles rendering for this window.
+	*/
+	gpu_window* get_gpu_window() const;
+
+	/**
+	Gets the window height.
+	*/
+	uint32_t get_height() const;
+
+	/**
 	Gets the GLFW window handle for this window.
 	*/
 	GLFWwindow* get_hndl() const;
 
+	/**
+	Gets the window width.
+	*/
 	uint32_t get_width() const;
-	uint32_t get_height() const;
 
 	/**
 	Sets the GPU window to use for rendering. The GPU window handles swapchains, rendering, etc.

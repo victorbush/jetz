@@ -149,6 +149,11 @@ VkResult window::create_surface(VkInstance instance, VkSurfaceKHR* surface) cons
 	return glfwCreateWindowSurface(instance, this->hndl, NULL, surface);
 }
 
+gpu_window* window::get_gpu_window() const
+{
+	return this->gpu_window;
+}
+
 uint32_t window::get_height() const
 {
 	return this->height;

@@ -27,6 +27,11 @@ public:
 	gpu_frame();
 	virtual ~gpu_frame() = 0;
 
+	/*-----------------------------------------------------
+	Public variables
+	-----------------------------------------------------*/
+	uint8_t				frame_idx;
+
 private: 
 
 	/*-----------------------------------------------------
@@ -40,7 +45,6 @@ private:
 	/*
 	Other
 	*/
-	uint8_t				frame_idx;
 };
 
 }   /* namespace jetz */
