@@ -37,10 +37,18 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
-	gpu_frame& begin_frame(camera* cam, float delta_time);
-	void end_frame(gpu_frame* frame);
+	gpu_frame& begin_frame(camera* cam);
+	void end_frame(gpu_frame& frame);
 	void render_imgui(gpu_frame* frame, ImDrawData* draw_data);
 	void resize(uint32_t width, uint32_t height);
+
+protected:
+
+	/*-----------------------------------------------------
+	Protected methods
+	-----------------------------------------------------*/
+	virtual gpu_frame& do_begin_frame(const gpu_frame& frame, camera* cam) = 0;
+	virtual gpu_frame& do_end_frame(const gpu_frame& frame) = 0;
 
 private:
 
