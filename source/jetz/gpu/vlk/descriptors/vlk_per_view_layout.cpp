@@ -45,7 +45,7 @@ void vlk_per_view_layout::create_descriptor_pool()
 	VkDescriptorPoolSize pool_sizes[1];
 	memset(pool_sizes, 0, sizeof(pool_sizes));
 	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	pool_sizes[0].descriptorCount = vlk::num_frame_buf;
+	pool_sizes[0].descriptorCount = gpu::num_frame_buf;
 
 	VkDescriptorPoolCreateInfo pool_info = {};
 	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -53,7 +53,7 @@ void vlk_per_view_layout::create_descriptor_pool()
 	pool_info.pPoolSizes = pool_sizes;
 
 	// TOOD : what should maxSets be??
-	pool_info.maxSets = vlk::num_frame_buf;
+	pool_info.maxSets = gpu::num_frame_buf;
 
 	if (vkCreateDescriptorPool(dev.get_handle(), &pool_info, NULL, &pool_handle) != VK_SUCCESS)
 	{

@@ -9,6 +9,7 @@ INCLUDES
 #include <glm/glm.hpp>
 
 #include "jetz/gpu/gpu_window.h"
+#include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/vlk_util.h"
 #include "jetz/main/common.h"
@@ -51,6 +52,8 @@ vlk_window::vlk_window(vlk_device& device, VkInstance vkInstance, VkSurfaceKHR s
 	surface(surface),
 	gpu_window(width, height)
 {
+	_frames.resize(gpu::num_frame_buf);
+
 	create_swapchain(width, height);
 	create_pipelines();
 	create_descriptors();
@@ -58,6 +61,8 @@ vlk_window::vlk_window(vlk_device& device, VkInstance vkInstance, VkSurfaceKHR s
 
 vlk_window::~vlk_window()
 {
+	_frames.clear();
+
 	destroy_descriptors();
 	destroy_pipelines();
 	destroy_swapchain();
@@ -67,21 +72,6 @@ vlk_window::~vlk_window()
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
-
-void vlk_window::begin_frame(vlk_frame& frame, const camera& camera)
-{
-	/* Setup render pass, command buffer, etc. */
-	swapchain->begin_frame(frame);
-
-	/* Setup per-view descriptor set data */
-	per_view_set->update(frame, camera, swapchain->get_extent());
-}
-
-void vlk_window::end_frame(const vlk_frame& frame)
-{
-	/* End render pass, submit command buffer, preset swapchain */
-	swapchain->end_frame(frame);
-}
 
 int vlk_window::get_picker_id(const vlk_frame& frame, float x, float y)
 {
@@ -94,15 +84,38 @@ int vlk_window::get_picker_id(const vlk_frame& frame, float x, float y)
 		x, y);
 }
 
-void vlk_window::render_imgui(vlk_frame& frame, ImDrawData* draw_data)
+/*=============================================================================
+PROTECTED METHODS
+=============================================================================*/
+
+gpu_frame& vlk_window::do_begin_frame(camera& cam)
 {
-	/* Draw imgui */
-	imgui_pipeline->render(frame, draw_data);
+	vlk_frame& frame = _frames[_frame_idx];
+
+	/* Setup render pass, command buffer, etc. */
+	swapchain->begin_frame(frame);
+
+	/* Setup per-view descriptor set data */
+	per_view_set->update(frame, cam, swapchain->get_extent());
+
+	return frame;
 }
 
-void vlk_window::resize(uint32_t width, uint32_t height)
+void vlk_window::do_end_frame(const gpu_frame& frame)
 {
-	swapchain->recreate(width, height);
+	/* End render pass, submit command buffer, preset swapchain */
+	swapchain->end_frame((const vlk_frame&)frame);
+}
+
+void vlk_window::do_render_imgui(const gpu_frame& frame, ImDrawData* draw_data)
+{
+	/* Draw imgui */
+	imgui_pipeline->render((const vlk_frame&)frame, draw_data);
+}
+
+void vlk_window::do_resize()
+{
+	swapchain->recreate(_width, _height);
 
 	// TODO : Dynamic state instead of recreating pipelines
 	destroy_pipelines();

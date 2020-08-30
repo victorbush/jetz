@@ -83,7 +83,7 @@ PRIVATE METHODS
 void vlk_per_view_set::create_buffers()
 {
 	VkDeviceSize buffer_size = sizeof(vlk_per_view_ubo);
-	buffers.resize(vlk::num_frame_buf);
+	buffers.resize(gpu::num_frame_buf);
 
 	for (uint32_t i = 0; i < buffers.size(); ++i)
 	{
@@ -96,9 +96,9 @@ void vlk_per_view_set::create_sets()
 	/*
 	Create a descriptor set for each possible concurrent frame
 	*/
-	sets.resize(vlk::num_frame_buf);
+	sets.resize(gpu::num_frame_buf);
 
-	std::vector<VkDescriptorSetLayout> layouts(vlk::num_frame_buf, layout.get_handle());
+	std::vector<VkDescriptorSetLayout> layouts(gpu::num_frame_buf, layout.get_handle());
 	VkDescriptorSetAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	alloc_info.descriptorPool = layout.get_pool_handle();
@@ -111,7 +111,7 @@ void vlk_per_view_set::create_sets()
 		LOG_FATAL("Failed to allocate descriptor sets.");
 	}
 
-	for (uint32_t i = 0; i < vlk::num_frame_buf; i++)
+	for (uint32_t i = 0; i < gpu::num_frame_buf; i++)
 	{
 		VkDescriptorBufferInfo buffer_info = buffers[i]->get_buffer_info();
 

@@ -17,7 +17,7 @@ namespace jetz {
 int gpu::max_num_materials = 100;
 
 /* Default to double buffering. */
-int gpu::num_frame_buf = 2;
+uint8_t gpu::num_frame_buf = 2;
 
 /*=============================================================================
 PUBLIC METHODS

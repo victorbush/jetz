@@ -141,7 +141,7 @@ static void startup()
 	/*
 	Setup app
 	*/
-	s_app = new jetz::app();
+	s_app = new jetz::app(*s_window);
 }
 
 /**

@@ -8,6 +8,8 @@ vlk_window.h
 INCLUDES
 =============================================================================*/
 
+#include <vector>
+
 #include "jetz/gpu/vlk/vlk.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_swapchain.h"
@@ -29,7 +31,7 @@ TYPES
 /**
 Vulkan logical device.
 */
-class vlk_window : gpu_window {
+class vlk_window : public gpu_window {
 
 public:
 
@@ -40,11 +42,18 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
-	void begin_frame(vlk_frame& frame, const camera& camera);
-	void end_frame(const vlk_frame& frame);
 	int get_picker_id(const vlk_frame& frame, float x, float y);
-	void render_imgui(vlk_frame& frame, ImDrawData* draw_data);
-	void resize(uint32_t width, uint32_t height);
+
+protected:
+
+	/*-----------------------------------------------------
+	Protected methods
+	-----------------------------------------------------*/
+	
+	virtual gpu_frame& do_begin_frame(camera& cam) override;
+	virtual void do_end_frame(const gpu_frame& frame) override;
+	virtual void do_render_imgui(const gpu_frame& frame, ImDrawData* draw_data) override;
+	virtual void do_resize() override;
 
 private:
 
@@ -79,6 +88,11 @@ private:
 	vlk_swapchain*		swapchain;
 
 	vlk_imgui_pipeline*	imgui_pipeline;
+
+	/*
+	Create/destroy
+	*/
+	std::vector<vlk_frame>		_frames;
 };
 
 }   /* namespace jetz */

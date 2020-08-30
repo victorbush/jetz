@@ -44,7 +44,7 @@ public:
 	Double buffered == 2
 	Triple buffered == 3
 	*/
-	static int num_frame_buf;
+	static uint8_t num_frame_buf;
 
 	/*-----------------------------------------------------
 	Public Methods

@@ -210,10 +210,10 @@ void vlk_imgui_pipeline::create_buffers()
 	/*
 	Resize buffer arrays. Buffers are created and updated as needed at render time.
 	*/
-	index_buffers.resize(vlk::num_frame_buf, nullptr);
-	index_buffer_sizes.resize(vlk::num_frame_buf, 0);
-	vertex_buffers.resize(vlk::num_frame_buf, nullptr);
-	vertex_buffer_sizes.resize(vlk::num_frame_buf, 0);
+	index_buffers.resize(gpu::num_frame_buf, nullptr);
+	index_buffer_sizes.resize(gpu::num_frame_buf, 0);
+	vertex_buffers.resize(gpu::num_frame_buf, nullptr);
+	vertex_buffer_sizes.resize(gpu::num_frame_buf, 0);
 }
 
 void vlk_imgui_pipeline::create_descriptor_layout()
@@ -248,7 +248,7 @@ void vlk_imgui_pipeline::create_descriptor_pool()
 
 	std::vector<VkDescriptorPoolSize> pool_sizes(1);
 	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	pool_sizes[0].descriptorCount = vlk::num_frame_buf;
+	pool_sizes[0].descriptorCount = gpu::num_frame_buf;
 
 	VkDescriptorPoolCreateInfo pool_info = {};
 	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -256,7 +256,7 @@ void vlk_imgui_pipeline::create_descriptor_pool()
 	pool_info.pPoolSizes = pool_sizes.data();
 
 	// TOOD : what should maxSets be??
-	pool_info.maxSets = vlk::num_frame_buf;
+	pool_info.maxSets = gpu::num_frame_buf;
 
 	if (vkCreateDescriptorPool(dev.get_handle(), &pool_info, NULL, &descriptor_pool) != VK_SUCCESS) 
 	{
@@ -266,8 +266,8 @@ void vlk_imgui_pipeline::create_descriptor_pool()
 
 void vlk_imgui_pipeline::create_descriptor_sets()
 {
-	std::vector<VkDescriptorSetLayout> layouts(vlk::num_frame_buf, descriptor_layout);
-	descriptor_sets.resize(vlk::num_frame_buf);
+	std::vector<VkDescriptorSetLayout> layouts(gpu::num_frame_buf, descriptor_layout);
+	descriptor_sets.resize(gpu::num_frame_buf);
 
 	VkDescriptorSetAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -281,7 +281,7 @@ void vlk_imgui_pipeline::create_descriptor_sets()
 		LOG_FATAL("Failed to allocate descriptor sets.");
 	}
 
-	for (int i = 0; i < vlk::num_frame_buf; ++i)
+	for (int i = 0; i < gpu::num_frame_buf; ++i)
 	{
 		VkWriteDescriptorSet descriptor_writes[1];
 		size_t write_idx = 0;

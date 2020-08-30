@@ -45,9 +45,9 @@ void vlk_material_layout::create_descriptor_pool()
 	VkDescriptorPoolSize pool_sizes[2];
 	memset(pool_sizes, 0, sizeof(pool_sizes));
 	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	pool_sizes[0].descriptorCount = vlk::max_num_materials;
+	pool_sizes[0].descriptorCount = gpu::max_num_materials;
 	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	pool_sizes[1].descriptorCount = vlk::max_num_materials;
+	pool_sizes[1].descriptorCount = gpu::max_num_materials;
 
 	VkDescriptorPoolCreateInfo pool_info = {};
 	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -55,7 +55,7 @@ void vlk_material_layout::create_descriptor_pool()
 	pool_info.pPoolSizes = pool_sizes;
 
 	// TOOD : what should maxSets be??
-	pool_info.maxSets = vlk::max_num_materials;
+	pool_info.maxSets = gpu::max_num_materials;
 
 	if (vkCreateDescriptorPool(dev.get_handle(), &pool_info, NULL, &pool_handle) != VK_SUCCESS)
 	{

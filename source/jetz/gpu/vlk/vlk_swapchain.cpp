@@ -6,6 +6,7 @@ vlk_swapchain.cpp
 INCLUDES
 =============================================================================*/
 
+#include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk.h"
 #include "jetz/gpu/vlk/vlk_swapchain.h"
 #include "jetz/main/common.h"
@@ -300,7 +301,7 @@ void vlk_swapchain::create_all(VkExtent2D extent)
 
 void vlk_swapchain::create_command_buffers()
 {
-	cmd_bufs.resize(vlk::num_frame_buf);
+	cmd_bufs.resize(gpu::num_frame_buf);
 
 	VkCommandBufferAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -316,7 +317,7 @@ void vlk_swapchain::create_command_buffers()
 	/*
 	Create command buffers for picker buffer render pass
 	*/
-	picker_cmd_bufs.resize(vlk::num_frame_buf);
+	picker_cmd_bufs.resize(gpu::num_frame_buf);
 
 	alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -334,9 +335,9 @@ void vlk_swapchain::create_depth_buffer()
 {
 	VkResult result;
 	VkFormat depth_format = gpu.get_depth_format();
-	depth_images.resize(vlk::num_frame_buf);
-	depth_image_views.resize(vlk::num_frame_buf);
-	depth_image_allocations.resize(vlk::num_frame_buf);
+	depth_images.resize(gpu::num_frame_buf);
+	depth_image_views.resize(gpu::num_frame_buf);
+	depth_image_allocations.resize(gpu::num_frame_buf);
 
 	for (size_t i = 0; i < depth_images.size(); i++)
 	{
@@ -398,7 +399,7 @@ void vlk_swapchain::create_depth_buffer()
 void vlk_swapchain::create_framebuffers()
 {
 	uint32_t i;
-	frame_bufs.resize(vlk::num_frame_buf);
+	frame_bufs.resize(gpu::num_frame_buf);
 
 	for (i = 0; i < frame_bufs.size(); i++) 
 	{
@@ -427,7 +428,7 @@ void vlk_swapchain::create_framebuffers()
 void vlk_swapchain::create_image_views()
 {
 	uint32_t i;
-	image_views.resize(vlk::num_frame_buf);
+	image_views.resize(gpu::num_frame_buf);
 
 	for (i = 0; i < image_views.size(); i++) 
 	{
@@ -535,9 +536,9 @@ void vlk_swapchain::create_picker_buffers()
 void vlk_swapchain::create_semaphores()
 {
 	VkDevice device = dev.get_handle();
-	image_avail_semaphores.resize(vlk::num_frame_buf);
-	render_finished_semaphores.resize(vlk::num_frame_buf);
-	in_flight_fences.resize(vlk::num_frame_buf);
+	image_avail_semaphores.resize(gpu::num_frame_buf);
+	render_finished_semaphores.resize(gpu::num_frame_buf);
+	in_flight_fences.resize(gpu::num_frame_buf);
 
 	VkSemaphoreCreateInfo semaphore_info = {};
 	semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -559,7 +560,7 @@ void vlk_swapchain::create_semaphores()
 
 void vlk_swapchain::create_swapchain(VkExtent2D extent)
 {
-	uint32_t image_count = vlk::num_frame_buf;
+	uint32_t image_count = gpu::num_frame_buf;
 
 	/*
 	Get surface capabilties
