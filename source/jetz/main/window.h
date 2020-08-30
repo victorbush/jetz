@@ -16,11 +16,6 @@ NAMESPACE
 =============================================================================*/
 
 namespace jetz {
-	
-struct GLFWUserData {
-
-	int temp;
-};
 
 class window {
 
@@ -77,16 +72,23 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	GLFWUserData					glfw_user_data;
-	gpu_window*						gpu_window;
-	GLFWwindow*						hndl;
+	gpu_window*						_gpu_window;
+	GLFWwindow*						_hndl;
 
-	uint32_t						height;
-	uint32_t						width;
+	uint32_t						_height;
+	uint32_t						_width;
 
 	/*-----------------------------------------------------
-	Private Methods
+	Private methods
 	-----------------------------------------------------*/
+
+	void on_resize(int width, int height);
+
+	/*-----------------------------------------------------
+	Private static methods
+	-----------------------------------------------------*/
+
+	static void framebuffer_resize_callback(GLFWwindow* window, int width, int height);
 };
 
 }   /* namespace jetz */

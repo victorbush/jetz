@@ -135,6 +135,9 @@
     <ClInclude Include="main\utl.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="main\filesystem.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp">
       <Filter>thirdparty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="main\filesystem.cpp">
+      <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

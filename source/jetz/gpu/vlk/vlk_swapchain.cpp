@@ -32,7 +32,7 @@ vlk_swapchain::vlk_swapchain
 	: dev(dev),
 	gpu(dev.get_gpu()),
 	surface(surface),
-	extent(extent)
+	_extent(extent)
 {
 	/* create everything */
 	create_all(extent);
@@ -58,7 +58,7 @@ void vlk_swapchain::begin_frame(vlk_frame& frame)
 	VkResult result = vkAcquireNextImageKHR(dev.get_handle(), handle, UINT64_MAX, image_avail_semaphores[frame.frame_idx], VK_NULL_HANDLE, &frame.image_idx);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		resize(extent);
+		resize(_extent);
 		frame_status = vlk_frame_status::SWAPCHAIN_OUT_OF_DATE;
 		return;
 	}
@@ -147,7 +147,7 @@ void vlk_swapchain::end_frame(const vlk_frame& frame)
 	if (result == VK_ERROR_OUT_OF_DATE_KHR
 		|| result == VK_SUBOPTIMAL_KHR)
 	{
-		resize(extent);
+		resize(_extent);
 		return;
 	}
 	else if (result != VK_SUCCESS)
@@ -168,7 +168,7 @@ VkImage vlk_swapchain::get_picker_image(const vlk_frame& frame) const
 
 VkExtent2D vlk_swapchain::get_extent() const
 {
-	return extent;
+	return _extent;
 }
 
 void vlk_swapchain::recreate(int width, int height)
@@ -207,7 +207,7 @@ void vlk_swapchain::begin_picker_render_pass(vlk_frame& frame)
 	render_pass_info.framebuffer = picker_frame_bufs[frame.image_idx];
 	render_pass_info.renderArea.offset.x = 0;
 	render_pass_info.renderArea.offset.y = 0;
-	render_pass_info.renderArea.extent = extent;
+	render_pass_info.renderArea.extent = _extent;
 
 	/* Initialize picker buffer to 0xFFFFFFFF. This is the invalid entity id. */
 	VkClearValue clear_values[1];
@@ -246,7 +246,7 @@ void vlk_swapchain::begin_primary_render_pass(vlk_frame& frame)
 	render_pass_info.framebuffer = frame_bufs[frame.image_idx];
 	render_pass_info.renderArea.offset.x = 0;
 	render_pass_info.renderArea.offset.y = 0;
-	render_pass_info.renderArea.extent = extent;
+	render_pass_info.renderArea.extent = _extent;
 
 	VkClearValue clear_values[2];
 	memset(&clear_values, 0, sizeof(clear_values));
@@ -283,6 +283,8 @@ VkExtent2D vlk_swapchain::choose_swap_extent(VkExtent2D desired_extent, VkSurfac
 
 void vlk_swapchain::create_all(VkExtent2D extent)
 {
+	_extent = extent;
+
 	/*
 	Order matters for these. These are recreated on resize.
 	*/
@@ -347,8 +349,8 @@ void vlk_swapchain::create_depth_buffer()
 		VkImageCreateInfo image_info = {};
 		image_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		image_info.imageType = VK_IMAGE_TYPE_2D;
-		image_info.extent.width = extent.width;
-		image_info.extent.height = extent.height;
+		image_info.extent.width = _extent.width;
+		image_info.extent.height = _extent.height;
 		image_info.extent.depth = 1;
 		image_info.mipLevels = 1;
 		image_info.arrayLayers = 1;
@@ -414,8 +416,8 @@ void vlk_swapchain::create_framebuffers()
 		framebuf_info.renderPass = dev.get_render_pass();
 		framebuf_info.attachmentCount = cnt_of_array(attachments);
 		framebuf_info.pAttachments = attachments;
-		framebuf_info.width = extent.width;
-		framebuf_info.height = extent.height;
+		framebuf_info.width = _extent.width;
+		framebuf_info.height = _extent.height;
 		framebuf_info.layers = 1;
 
 		if (vkCreateFramebuffer(dev.get_handle(), &framebuf_info, NULL, &frame_bufs[i]) != VK_SUCCESS)
@@ -456,6 +458,11 @@ void vlk_swapchain::create_image_views()
 
 void vlk_swapchain::create_picker_buffers()
 {
+	picker_images.resize(gpu::num_frame_buf);
+	picker_image_allocations.resize(gpu::num_frame_buf);
+	picker_image_views.resize(gpu::num_frame_buf);
+	picker_frame_bufs.resize(gpu::num_frame_buf);
+
 	for (int i = 0; i < picker_images.size(); ++i)
 	{
 		/*
@@ -464,8 +471,8 @@ void vlk_swapchain::create_picker_buffers()
 		VkImageCreateInfo image_info = {};
 		image_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		image_info.imageType = VK_IMAGE_TYPE_2D;
-		image_info.extent.width = extent.width;
-		image_info.extent.height = extent.height;
+		image_info.extent.width = _extent.width;
+		image_info.extent.height = _extent.height;
 		image_info.extent.depth = 1;
 		image_info.mipLevels = 1;
 		image_info.arrayLayers = 1;
@@ -522,8 +529,8 @@ void vlk_swapchain::create_picker_buffers()
 		framebuf_info.renderPass = dev.get_picker_render_pass();
 		framebuf_info.attachmentCount = cnt_of_array(attachments);
 		framebuf_info.pAttachments = attachments;
-		framebuf_info.width = extent.width;
-		framebuf_info.height = extent.height;
+		framebuf_info.width = _extent.width;
+		framebuf_info.height = _extent.height;
 		framebuf_info.layers = 1;
 
 		if (vkCreateFramebuffer(dev.get_handle(), &framebuf_info, NULL, &picker_frame_bufs[i]) != VK_SUCCESS)
@@ -716,6 +723,8 @@ void vlk_swapchain::destroy_swapchain()
 
 void vlk_swapchain::resize(VkExtent2D extent)
 {
+	_extent = extent;
+
 	/* wait until device is idle before recreation */
 	vkDeviceWaitIdle(dev.get_handle());
 

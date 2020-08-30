@@ -62,10 +62,12 @@ private:
 	-----------------------------------------------------*/
 
 	void create_descriptors();
+	void create_frame_info();
 	void create_pipelines();
 	void create_swapchain(uint32_t width, uint32_t height);
 
 	void destroy_descriptors();
+	void destroy_frame_info();
 	void destroy_pipelines();
 	void destroy_surface();
 	void destroy_swapchain();

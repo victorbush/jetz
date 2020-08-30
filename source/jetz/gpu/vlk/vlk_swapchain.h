@@ -160,7 +160,7 @@ private:
 	/*
 	Swapchain properties
 	*/
-	VkExtent2D						extent;
+	VkExtent2D						_extent;
 	VkPresentModeKHR				present_mode;
 	VkSurfaceFormatKHR				surface_format;
 

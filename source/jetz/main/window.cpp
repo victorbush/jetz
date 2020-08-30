@@ -37,21 +37,6 @@ static void charCallback(GLFWwindow* window, unsigned int c)
 	//}
 }
 
-static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	// && data->Renderer != nullptr)
-	//{
-	//	data->Renderer->OnWindowResize(window, width, height);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
@@ -116,66 +101,84 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 PUBLIC METHODS
 =============================================================================*/
 
-window::window(int width, int height)
+window::window(int width, int height) :
+	_gpu_window(nullptr),
+	_hndl(nullptr)
 {
 	/* create the GLFW window */
-	hndl = glfwCreateWindow(width, height, "Jetz", nullptr, nullptr);
-	this->width = width;
-	this->height = height;
+	_hndl = glfwCreateWindow(width, height, "Jetz", nullptr, nullptr);
+	_width = width;
+	_height = height;
 
 	/* setup user data pointer for the window */
-	memset(&glfw_user_data, 0, sizeof(glfw_user_data));
-	glfwSetWindowUserPointer(hndl, &glfw_user_data);
+	glfwSetWindowUserPointer(_hndl, this);
 
 	/* set GLFW window callbacks */
-	glfwSetFramebufferSizeCallback(hndl, framebufferResizeCallback);
-	glfwSetKeyCallback(hndl, keyCallback);
-	glfwSetCursorPosCallback(hndl, cursorPosCallback);
-	glfwSetMouseButtonCallback(hndl, mouseButtonCallback);
-	glfwSetCharCallback(hndl, charCallback);
-	glfwSetScrollCallback(hndl, scrollCallback);
+	glfwSetFramebufferSizeCallback(_hndl, framebuffer_resize_callback);
+	glfwSetKeyCallback(_hndl, keyCallback);
+	glfwSetCursorPosCallback(_hndl, cursorPosCallback);
+	glfwSetMouseButtonCallback(_hndl, mouseButtonCallback);
+	glfwSetCharCallback(_hndl, charCallback);
+	glfwSetScrollCallback(_hndl, scrollCallback);
 }
 
 window::~window()
 {
 	/* cleanup window */
-	glfwDestroyWindow(this->hndl);
-	this->hndl = nullptr;
+	glfwDestroyWindow(_hndl);
+	_hndl = nullptr;
 }
 
 VkResult window::create_surface(VkInstance instance, VkSurfaceKHR* surface) const
 {
 	/* Caller is responsible for destorying the surface when they are done. */
-	return glfwCreateWindowSurface(instance, this->hndl, NULL, surface);
+	return glfwCreateWindowSurface(instance, _hndl, NULL, surface);
 }
 
 gpu_window* window::get_gpu_window() const
 {
-	return this->gpu_window;
+	return _gpu_window;
 }
 
 uint32_t window::get_height() const
 {
-	return this->height;
+	return _height;
 }
 
 void window::set_gpu_window(jetz::gpu_window* window)
 {
-	this->gpu_window = window;
+	_gpu_window = window;
 }
 
 GLFWwindow* window::get_hndl() const
 {
-	return this->hndl;
+	return _hndl;
 }
 
 uint32_t window::get_width() const
 {
-	return this->width;
+	return _width;
 }
 
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
+
+void window::on_resize(int width, int height)
+{
+	_width = (uint32_t)width;
+	_height = (uint32_t)height;
+	this->_gpu_window->resize(_width, _height);
+}
+
+/*=============================================================================
+PRIVATE STATIC METHODS
+=============================================================================*/
+
+void window::framebuffer_resize_callback(GLFWwindow* window, int width, int height)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	data->on_resize(width, height);
+}
 
 }   /* namespace jetz */

@@ -52,8 +52,7 @@ vlk_window::vlk_window(vlk_device& device, VkInstance vkInstance, VkSurfaceKHR s
 	surface(surface),
 	gpu_window(width, height)
 {
-	_frames.resize(gpu::num_frame_buf);
-
+	create_frame_info();
 	create_swapchain(width, height);
 	create_pipelines();
 	create_descriptors();
@@ -67,6 +66,7 @@ vlk_window::~vlk_window()
 	destroy_pipelines();
 	destroy_swapchain();
 	destroy_surface();
+	destroy_frame_info();
 }
 
 /*=============================================================================
@@ -131,6 +131,17 @@ void vlk_window::create_descriptors()
 	per_view_set = new jetz::vlk_per_view_set(dev.get_per_view_layout());
 }
 
+void vlk_window::create_frame_info()
+{
+	_frames.resize(gpu::num_frame_buf);
+
+	for (uint32_t i = 0; i < _frames.size(); ++i)
+	{
+		_frames[i] = vlk_frame();
+		_frames[i].frame_idx = i;
+	}
+}
+
 void vlk_window::create_pipelines()
 {
 	imgui_pipeline = new jetz::vlk_imgui_pipeline(dev, dev.get_render_pass(), swapchain->get_extent());
@@ -149,6 +160,11 @@ void vlk_window::destroy_descriptors()
 {
 	delete per_view_set;
 	per_view_set = nullptr;
+}
+
+void vlk_window::destroy_frame_info()
+{
+	_frames.clear();
 }
 
 void vlk_window::destroy_pipelines()

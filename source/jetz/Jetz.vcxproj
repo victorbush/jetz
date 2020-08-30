@@ -41,6 +41,7 @@
     <ClInclude Include="main\build_config.h" />
     <ClInclude Include="main\camera.h" />
     <ClInclude Include="main\common.h" />
+    <ClInclude Include="main\filesystem.h" />
     <ClInclude Include="main\log.h" />
     <ClInclude Include="main\utl.h" />
     <ClInclude Include="main\window.h" />
@@ -77,6 +78,7 @@
     <ClCompile Include="gpu\vlk\vlk_window.cpp" />
     <ClCompile Include="main\app.cpp" />
     <ClCompile Include="main\camera.cpp" />
+    <ClCompile Include="main\filesystem.cpp" />
     <ClCompile Include="main\log.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="main\window.cpp" />
@@ -158,6 +160,6 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <PropertyGroup>
-	<LocalDebuggerWorkingDirectory>$(SolutionDir)../game/</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)../game/</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

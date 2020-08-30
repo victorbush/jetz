@@ -8,6 +8,7 @@ INCLUDES
 
 #include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/main/common.h"
+#include "jetz/main/filesystem.h"
 #include "jetz/main/log.h"
 
 /*=============================================================================
@@ -125,8 +126,21 @@ void vlk_device::copy_buffer_to_img_now
 
 VkShaderModule vlk_device::create_shader(const std::string& file) const
 {
-	LOG_FATAL("NOT IMPLEMENTED");
-	return VkShaderModule();
+	std::vector<char> code = filesystem::read_all(file);
+
+	/* Create the shader module */
+	VkShaderModuleCreateInfo create_info = {};
+	create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	create_info.codeSize = code.size();
+	create_info.pCode = (uint32_t*)code.data();
+
+	VkShaderModule shader;
+	if (vkCreateShaderModule(handle, &create_info, NULL, &shader) != VK_SUCCESS)
+	{
+		LOG_FATAL("Failed to create shader module.");
+	}
+
+	return shader;
 }
 
 void vlk_device::destroy_shader(VkShaderModule shader) const
