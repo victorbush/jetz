@@ -30,6 +30,7 @@ gpu_window::gpu_window(uint32_t width, uint32_t height) :
 
 gpu_window::~gpu_window()
 {
+	_frames.clear();
 }
 
 /*=============================================================================
@@ -64,6 +65,8 @@ void gpu_window::resize(uint32_t width, uint32_t height)
 {
 	_height = height;
 	_width = width;
+
+	this->do_resize();
 }
 
 /*=============================================================================

@@ -49,6 +49,7 @@ protected:
 	-----------------------------------------------------*/
 	virtual gpu_frame& do_begin_frame(const gpu_frame& frame, camera* cam) = 0;
 	virtual gpu_frame& do_end_frame(const gpu_frame& frame) = 0;
+	virtual gpu_frame& do_resize() = 0;
 
 private:
 
