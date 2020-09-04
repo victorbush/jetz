@@ -36,7 +36,6 @@ VARIABLES
 =============================================================================*/
 
 static jetz::app*			s_app;
-static jetz::log*			s_log;
 static jetz::gpu*			s_gpu;
 static jetz::window*		s_window;
 
@@ -66,7 +65,6 @@ static void shutdown()
 	delete s_app;
 	delete s_gpu;
 	delete s_window;
-	delete s_log;
 	glfwTerminate();
 }
 
@@ -75,11 +73,9 @@ static void startup()
 	/*
 	Seutp logging
 	*/
-	s_log = new jetz::log();
-	jetz::log::logger = s_log;
 
 	/* Add simple logging target */
-	s_log->register_target([](const std::string& msg) {
+	jetz::log::logger.register_target([](const std::string& msg) {
 		std::cout << msg;
 	});
 

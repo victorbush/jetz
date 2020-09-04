@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="tests\main\lua_tests.cpp">
+      <Filter>tests\main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jetz\main\lua.cpp">
+      <Filter>source\main</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="..\jetz\main\log.cpp">
+      <Filter>source\main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\fmt\src\format.cc">
+      <Filter>source\thirdparty\fmt</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tests">
+      <UniqueIdentifier>{c00a9e2a-8003-4176-ab76-bb4bfff340c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\main">
+      <UniqueIdentifier>{bdc156fa-08e7-4145-a77e-7c3106866093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{de4d6ca9-3573-4be5-a2cd-731351a4f5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\main">
+      <UniqueIdentifier>{446b8920-a0d1-413c-ad10-2be12c45bcb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\thirdparty">
+      <UniqueIdentifier>{3dcc1c0e-b8e7-48d9-8a20-dc4eec65a398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\thirdparty\fmt">
+      <UniqueIdentifier>{2e6ce1a0-15a2-4da8-942f-0792cf433d49}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\jetz\main\lua.h">
+      <Filter>source\main</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h" />
+    <ClInclude Include="..\jetz\main\log.h">
+      <Filter>source\main</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

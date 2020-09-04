@@ -21,25 +21,25 @@ MACROS
 #define __FILENAME__ (strrchr("\\" __FILE__, '\\') + 1)
 
 #define LOG_DBG(msg) \
-	jetz::log::logger->log_msg(jetz::log_level::DEBUG, msg)
+	jetz::log::logger.log_msg(jetz::log_level::DEBUG, msg)
 
 #define LOG_INFO(msg) \
-	jetz::log::logger->log_msg(jetz::log_level::INFO, msg)
+	jetz::log::logger.log_msg(jetz::log_level::INFO, msg)
 
 #define LOG_WARN(msg) \
-	jetz::log::logger->log_msg(jetz::log_level::WARN, msg)
+	jetz::log::logger.log_msg(jetz::log_level::WARN, msg)
 
 #define LOG_ERROR(msg) \
-	jetz::log::logger->log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg)
 
 #define LOG_ERROR_FMT(msg, params) \
-	jetz::log::logger->log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_FATAL(msg) \
-	jetz::log::logger->log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg)
 
 #define LOG_FATA_FMT(msg, params) \
-	jetz::log::logger->log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg, params)
 
 /*=============================================================================
 NAMESPACE
@@ -88,7 +88,7 @@ public:
 	-----------------------------------------------------*/
 
 	/** The global logger. Used by the LOG_XXX macros. */
-	static log* logger;
+	static log& logger;
 
 	/*-----------------------------------------------------
 	Public methods

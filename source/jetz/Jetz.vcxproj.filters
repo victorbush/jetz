@@ -138,6 +138,9 @@
     <ClInclude Include="main\filesystem.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="main\lua.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -243,6 +246,9 @@
       <Filter>thirdparty\imgui</Filter>
     </ClCompile>
     <ClCompile Include="main\filesystem.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\lua.cpp">
       <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>

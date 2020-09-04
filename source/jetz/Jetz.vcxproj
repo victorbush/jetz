@@ -43,6 +43,7 @@
     <ClInclude Include="main\common.h" />
     <ClInclude Include="main\filesystem.h" />
     <ClInclude Include="main\log.h" />
+    <ClInclude Include="main\lua.h" />
     <ClInclude Include="main\utl.h" />
     <ClInclude Include="main\window.h" />
   </ItemGroup>
@@ -80,6 +81,7 @@
     <ClCompile Include="main\camera.cpp" />
     <ClCompile Include="main\filesystem.cpp" />
     <ClCompile Include="main\log.cpp" />
+    <ClCompile Include="main\lua.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="main\window.cpp" />
   </ItemGroup>

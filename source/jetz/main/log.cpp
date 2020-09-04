@@ -27,7 +27,8 @@ static const char* get_log_level_str(log_level level);
 PUBLIC STATIC VARIABLES
 =============================================================================*/
 
-log* log::logger = nullptr;
+static log the_logger = log();
+log& log::logger = the_logger;
 
 /*=============================================================================
 PUBLIC METHODS
