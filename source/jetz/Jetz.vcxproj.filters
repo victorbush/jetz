@@ -34,6 +34,15 @@
     <Filter Include="thirdparty\imgui">
       <UniqueIdentifier>{39c5fbaa-1c59-48da-8718-ca3490f1bde6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ecs">
+      <UniqueIdentifier>{defb63a4-b5ac-4182-951e-bf646df159f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ecs\components">
+      <UniqueIdentifier>{8593c0cc-caec-41e5-9100-0415a850a49e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ecs\systems">
+      <UniqueIdentifier>{7a714f57-1dcc-4720-9728-248165386ee9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -140,6 +149,12 @@
     </ClInclude>
     <ClInclude Include="main\lua.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\ecs.h">
+      <Filter>ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\ecs_component.h">
+      <Filter>ecs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="main\lua.cpp">
       <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\ecs.cpp">
+      <Filter>ecs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

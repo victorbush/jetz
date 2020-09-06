@@ -14,6 +14,8 @@
     <ClInclude Include="..\thirdparty\glfw\glfw.h" />
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
+    <ClInclude Include="ecs\ecs.h" />
+    <ClInclude Include="ecs\ecs_component.h" />
     <ClInclude Include="gpu\gpu.h" />
     <ClInclude Include="gpu\gpu_frame.h" />
     <ClInclude Include="gpu\gpu_material.h" />
@@ -54,6 +56,7 @@
     <ClCompile Include="..\thirdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\thirdparty\vma\vma.cpp" />
+    <ClCompile Include="ecs\ecs.cpp" />
     <ClCompile Include="gpu\gpu.cpp" />
     <ClCompile Include="gpu\gpu_frame.cpp" />
     <ClCompile Include="gpu\gpu_material.cpp" />
