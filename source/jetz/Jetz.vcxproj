@@ -14,8 +14,12 @@
     <ClInclude Include="..\thirdparty\glfw\glfw.h" />
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
+    <ClInclude Include="ecs\components\ecs_model_component.h" />
+    <ClInclude Include="ecs\components\ecs_transform_component.h" />
     <ClInclude Include="ecs\ecs.h" />
+    <ClInclude Include="ecs\ecs_.h" />
     <ClInclude Include="ecs\ecs_component.h" />
+    <ClInclude Include="ecs\ecs_component_manager.h" />
     <ClInclude Include="gpu\gpu.h" />
     <ClInclude Include="gpu\gpu_frame.h" />
     <ClInclude Include="gpu\gpu_material.h" />

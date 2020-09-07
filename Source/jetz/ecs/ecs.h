@@ -9,6 +9,12 @@ INCLUDES
 =============================================================================*/
 
 #include <unordered_map>
+#include <unordered_set>
+
+#include "jetz/ecs/ecs_.h"
+#include "jetz/ecs/ecs_component_manager.h"
+#include "jetz/ecs/components/ecs_model_component.h"
+#include "jetz/ecs/components/ecs_transform_component.h"
 
 /*=============================================================================
 NAMESPACE
@@ -16,12 +22,9 @@ NAMESPACE
 
 namespace jetz {
 
-typedef int entity_id;
-
-enum class component_type {
-	transform,
-	model
-};
+/*=============================================================================
+ECS CORE
+=============================================================================*/
 
 class ecs {
 
@@ -36,9 +39,10 @@ public:
 
 	entity_id create_entity();
 	void destory_entity(entity_id ent);
+	bool entity_exists(entity_id ent) const;
 
-	create_component(entity_id ent, component_type comp);
-	destroy_component();
+	ecs_component_manager<ecs_model_component> models;
+	ecs_component_manager<ecs_transform_component> transforms;
 
 private:
 
@@ -46,12 +50,15 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 
-	std::unordered_map<entity, h
+	std::unordered_set<entity_id> _entities;
+
+	entity_id _next_id;
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
 
+	entity_id get_next_available_id() const;
 };
 
 }   /* namespace jetz */

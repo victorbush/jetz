@@ -156,6 +156,18 @@
     <ClInclude Include="ecs\ecs_component.h">
       <Filter>ecs</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\components\ecs_model_component.h">
+      <Filter>ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\components\ecs_transform_component.h">
+      <Filter>ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\ecs_component_manager.h">
+      <Filter>ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\ecs_.h">
+      <Filter>ecs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">

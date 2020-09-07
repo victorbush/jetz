@@ -10,6 +10,7 @@ INCLUDES
 
 #include <vulkan/vulkan.h>
 
+#include "jetz/ecs/ecs.h"
 #include "jetz/main/camera.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 
@@ -54,6 +55,7 @@ private:
 	Other
 	*/
 	camera					_camera;
+	ecs						_ecs;
 	float					_frame_time;		/* Current frame time (in seconds) */
 	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
 
