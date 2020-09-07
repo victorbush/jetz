@@ -308,7 +308,7 @@ void vlk_imgui_pipeline::create_descriptor_sets()
 
 void vlk_imgui_pipeline::create_font_texture()
 {
-	ImGuiIO io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 
 	// TODO : make sure fonts exist, fall back to default if doesn't - imgui will assert otherwise.
 	//io.Fonts->AddFontDefault();

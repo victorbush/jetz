@@ -14,12 +14,16 @@ INCLUDES
 #include "jetz/main/camera.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 
+
+#include "jetz/editor/ed_file_picker_dialog.h"
+
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
 
 namespace jetz {
 
+class gpu_window;
 class window;
 
 /*=============================================================================
@@ -40,7 +44,26 @@ public:
 	void run_frame();
 	bool should_exit();
 
+
+
+	// TODO : MOVE
+	float			simulation_speed;
+
+	bool			is_world_loading;
+	std::string		world_filename;
+
+
+	ed_file_picker_dialog	ed_file_picker;
+
+
 private:
+
+	/*-----------------------------------------------------
+	Private methods
+	-----------------------------------------------------*/
+
+	void imgui_begin_frame(float delta_time, float width, float height);
+	void imgui_end_frame(gpu_window* window, gpu_frame& frame);
 
 	/*-----------------------------------------------------
 	Private variables

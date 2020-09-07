@@ -104,7 +104,7 @@ static void startup()
 	s_imgui_ctx = ImGui::CreateContext(nullptr);
 	ImGui::SetCurrentContext(s_imgui_ctx);
 
-	ImGuiIO io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
 	io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;

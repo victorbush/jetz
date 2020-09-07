@@ -43,6 +43,9 @@
     <Filter Include="ecs\systems">
       <UniqueIdentifier>{7a714f57-1dcc-4720-9728-248165386ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editor">
+      <UniqueIdentifier>{2ea6d778-b936-47eb-b681-841d6d59508c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -168,6 +171,18 @@
     <ClInclude Include="ecs\ecs_.h">
       <Filter>ecs</Filter>
     </ClInclude>
+    <ClInclude Include="editor\ed_dialog.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\ed_file_picker_dialog.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\ecs_input_system.h">
+      <Filter>ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\ecs_render_system.h">
+      <Filter>ecs\systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -280,6 +295,18 @@
     </ClCompile>
     <ClCompile Include="ecs\ecs.cpp">
       <Filter>ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\ed_dialog.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\ed_file_picker_dialog.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\systems\ecs_input_system.cpp">
+      <Filter>ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\systems\ecs_render_system.cpp">
+      <Filter>ecs\systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

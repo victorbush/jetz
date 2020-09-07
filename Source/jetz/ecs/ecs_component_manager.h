@@ -56,7 +56,7 @@ public:
 	/**
 	Checks if the specified entity has this component.
 	*/
-	bool exists(entity_id entity)
+	bool exists(entity_id entity) const
 	{
 		auto it = _components.find(entity);
 		return it != _components.end();
@@ -66,7 +66,7 @@ public:
 	Gets the component for the specified entity (returns NULL if entity doesn't
 	have this component).
 	*/
-	T* get(entity_id entity)
+	T* get(entity_id entity) const
 	{
 		if (!exists(entity))
 		{

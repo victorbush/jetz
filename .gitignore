@@ -10,3 +10,4 @@ source/.vs/
 .vs/
 scripts/log.txt
 source/packages/
+/game/imgui.ini

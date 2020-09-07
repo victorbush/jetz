@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs.h
+ed_dialog.h
 =============================================================================*/
 
 #pragma once
@@ -8,13 +8,8 @@ ecs.h
 INCLUDES
 =============================================================================*/
 
+#include <string>
 #include <unordered_map>
-#include <unordered_set>
-
-#include "jetz/ecs/ecs_.h"
-#include "jetz/ecs/ecs_component_manager.h"
-#include "jetz/ecs/components/ecs_model_component.h"
-#include "jetz/ecs/components/ecs_transform_component.h"
 
 /*=============================================================================
 NAMESPACE
@@ -22,34 +17,45 @@ NAMESPACE
 
 namespace jetz {
 
-/*=============================================================================
-ECS CORE
-=============================================================================*/
+enum class ed_dialog_state {
+	OPENING,
+	OPEN,
+	CLOSING,
+	CLOSED
+};
 
-class ecs {
+enum class ed_dialog_result {
+	NONE,		/* Dialog still open, or never opened */
+	OK,
+	YES,
+	NO,
+	CANCEL
+};
+
+class ed_dialog {
 
 public:
 
-	ecs();
-	~ecs();
+	virtual ~ed_dialog() = 0;
 
 	/*-----------------------------------------------------
-	Public methods
+	Public Methods
 	-----------------------------------------------------*/
 
-	entity_id create_entity();
-	void destory_entity(entity_id ent);
-	bool entity_exists(entity_id ent) const;
+	ed_dialog_state get_state() const;
+	ed_dialog_result get_result() const;
 
-	/*-----------------------------------------------------
-	Public variables
-	-----------------------------------------------------*/
+	void close();
+	void open();
 
-	/*
-	Components
-	*/
-	ecs_component_manager<ecs_model_component> models;
-	ecs_component_manager<ecs_transform_component> transforms;
+	virtual void think() = 0;
+
+protected:
+
+	ed_dialog();
+
+	ed_dialog_result _result;
+	ed_dialog_state	_state;
 
 private:
 
@@ -57,15 +63,10 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 
-	std::unordered_set<entity_id> _entities;
-
-	entity_id _next_id;
-
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
 
-	entity_id get_next_available_id() const;
 };
 
 }   /* namespace jetz */

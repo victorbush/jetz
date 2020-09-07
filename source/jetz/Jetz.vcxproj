@@ -20,6 +20,10 @@
     <ClInclude Include="ecs\ecs_.h" />
     <ClInclude Include="ecs\ecs_component.h" />
     <ClInclude Include="ecs\ecs_component_manager.h" />
+    <ClInclude Include="ecs\systems\ecs_input_system.h" />
+    <ClInclude Include="ecs\systems\ecs_render_system.h" />
+    <ClInclude Include="editor\ed_dialog.h" />
+    <ClInclude Include="editor\ed_file_picker_dialog.h" />
     <ClInclude Include="gpu\gpu.h" />
     <ClInclude Include="gpu\gpu_frame.h" />
     <ClInclude Include="gpu\gpu_material.h" />
@@ -61,6 +65,10 @@
     <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\thirdparty\vma\vma.cpp" />
     <ClCompile Include="ecs\ecs.cpp" />
+    <ClCompile Include="ecs\systems\ecs_input_system.cpp" />
+    <ClCompile Include="ecs\systems\ecs_render_system.cpp" />
+    <ClCompile Include="editor\ed_dialog.cpp" />
+    <ClCompile Include="editor\ed_file_picker_dialog.cpp" />
     <ClCompile Include="gpu\gpu.cpp" />
     <ClCompile Include="gpu\gpu_frame.cpp" />
     <ClCompile Include="gpu\gpu_material.cpp" />

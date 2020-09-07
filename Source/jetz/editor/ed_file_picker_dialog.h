@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs.h
+ed_file_picker_dialog.h
 =============================================================================*/
 
 #pragma once
@@ -8,13 +8,10 @@ ecs.h
 INCLUDES
 =============================================================================*/
 
-#include <unordered_map>
-#include <unordered_set>
+#include <string>
+#include <vector>
 
-#include "jetz/ecs/ecs_.h"
-#include "jetz/ecs/ecs_component_manager.h"
-#include "jetz/ecs/components/ecs_model_component.h"
-#include "jetz/ecs/components/ecs_transform_component.h"
+#include "ed_dialog.h"
 
 /*=============================================================================
 NAMESPACE
@@ -22,34 +19,20 @@ NAMESPACE
 
 namespace jetz {
 
-/*=============================================================================
-ECS CORE
-=============================================================================*/
-
-class ecs {
+class ed_file_picker_dialog : public ed_dialog {
 
 public:
 
-	ecs();
-	~ecs();
+	ed_file_picker_dialog();
+	~ed_file_picker_dialog();
 
 	/*-----------------------------------------------------
-	Public methods
+	Public Methods
 	-----------------------------------------------------*/
 
-	entity_id create_entity();
-	void destory_entity(entity_id ent);
-	bool entity_exists(entity_id ent) const;
-
-	/*-----------------------------------------------------
-	Public variables
-	-----------------------------------------------------*/
-
-	/*
-	Components
-	*/
-	ecs_component_manager<ecs_model_component> models;
-	ecs_component_manager<ecs_transform_component> transforms;
+	std::string				get_selected_file() const;
+	void					set_directory(const std::string& dir);
+	virtual void			think() override;
 
 private:
 
@@ -57,15 +40,16 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 
-	std::unordered_set<entity_id> _entities;
-
-	entity_id _next_id;
+	std::vector<std::string>	_files;
+	std::string					_directory;
+	int							_selected_file_index;
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
 
-	entity_id get_next_available_id() const;
+	void handle_open();
+	void handle_opening();
 };
 
 }   /* namespace jetz */

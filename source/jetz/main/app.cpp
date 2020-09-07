@@ -29,6 +29,7 @@ app::app(window& main_window) :
 	_camera(),
 	_should_exit(false)
 {
+	ed_file_picker.open();
 }
 
 app::~app()
@@ -50,8 +51,14 @@ void app::run_frame()
 	gpu_window* gpu_window = _window.get_gpu_window();
 	gpu_frame& frame = gpu_window->begin_frame(_camera);
 
+	imgui_begin_frame(_frame_time_delta, _window.get_width(), _window.get_height());
+
 	//player_system__run(&j->world.ecs, &j->camera, j->frame_delta_time);
 	//render_system__run(&j->world.ecs, &j->window.gpu_window, frame);
+
+	ed_file_picker.think();
+
+	imgui_end_frame(gpu_window, frame);
 
 	/* End frame */
 	gpu_window->end_frame(frame);
@@ -65,5 +72,29 @@ bool app::should_exit()
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
+
+void app::imgui_begin_frame(float delta_time, float width, float height)
+{
+	ImGuiIO& io = ImGui::GetIO(); 
+
+	// Setup low-level inputs, e.g. on Win32: calling GetKeyboardState(), or write to those fields from your Windows message handlers, etc.
+	// (In the examples/ app this is usually done within the ImGui_ImplXXX_NewFrame() function from one of the demo Platform bindings)
+	io.DeltaTime = delta_time;              // set the time elapsed since the previous frame (in seconds)
+	io.DisplaySize.x = width;				// set the current display width
+	io.DisplaySize.y = height;             // set the current display height here
+
+	// Call NewFrame(), after this point you can use ImGui::* functions anytime
+	// (So you want to try calling NewFrame() as early as you can in your mainloop to be able to use imgui everywhere)
+	ImGui::NewFrame();
+}
+
+void app::imgui_end_frame(gpu_window* window, gpu_frame& frame)
+{
+	/* End imgui frame */
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImDrawData* draw_data = ImGui::GetDrawData();
+	window->render_imgui(frame, draw_data);
+}
 
 }   /* namespace jetz */

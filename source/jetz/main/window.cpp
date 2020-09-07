@@ -22,81 +22,6 @@ namespace jetz {
 STATIC FUNCTIONS
 =============================================================================*/
 
-static void charCallback(GLFWwindow* window, unsigned int c)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	//	&& data->InputManager != nullptr)
-	//{
-	//	data->InputManager->OnChar(window, c);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	// && data->InputManager)
-	//{
-	//	data->InputManager->OnKey(window, key, scancode, action, mods);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
-static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	// && data->InputManager != nullptr)
-	//{
-	//	data->InputManager->OnMouseCursor(window, xpos, ypos);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
-static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	// && data->InputManager != nullptr)
-	//{
-	//	data->InputManager->OnMouseButton(window, button, action, mods);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
-static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	//auto data = reinterpret_cast<GLFWUserData*>(glfwGetWindowUserPointer(window));
-
-	//if (data != nullptr
-	//	&& data->InputManager != nullptr)
-	//{
-	//	data->InputManager->OnScroll(window, xoffset, yoffset);
-	//}
-	//else
-	//{
-	//	throw std::runtime_error("Missing GLFW window user data.");
-	//}
-}
-
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
@@ -115,11 +40,12 @@ window::window(int width, int height) :
 
 	/* set GLFW window callbacks */
 	glfwSetFramebufferSizeCallback(_hndl, framebuffer_resize_callback);
-	glfwSetKeyCallback(_hndl, keyCallback);
-	glfwSetCursorPosCallback(_hndl, cursorPosCallback);
-	glfwSetMouseButtonCallback(_hndl, mouseButtonCallback);
-	glfwSetCharCallback(_hndl, charCallback);
-	glfwSetScrollCallback(_hndl, scrollCallback);
+	glfwSetKeyCallback(_hndl, key_callback);
+	glfwSetCursorPosCallback(_hndl, cursor_pos_callback);
+	glfwSetMouseButtonCallback(_hndl, mouse_button_callback);
+	glfwSetCharCallback(_hndl, char_callback);
+	glfwSetScrollCallback(_hndl, scroll_callback);
+	glfwSetWindowCloseCallback(_hndl, window_close_callback);
 }
 
 window::~window()
@@ -175,10 +101,39 @@ void window::on_resize(int width, int height)
 PRIVATE STATIC METHODS
 =============================================================================*/
 
+void window::char_callback(GLFWwindow* window, unsigned int c)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+}
+
+void window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+}
+
 void window::framebuffer_resize_callback(GLFWwindow* window, int width, int height)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
 	data->on_resize(width, height);
+}
+
+void window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+}
+
+void window::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+}
+
+void window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+}
+
+void window::window_close_callback(GLFWwindow* window)
+{
 }
 
 }   /* namespace jetz */

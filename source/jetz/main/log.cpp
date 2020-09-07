@@ -40,7 +40,7 @@ void log::log_msg(log_level level, const std::string& in_msg)
 	auto msg = fmt::format("[{}] {}\n", get_log_level_str(level), in_msg);
 	
 	/* Get the array of target callbacks for the log level */
-	const auto& target_list = targets[level];
+	const auto& target_list = targets[(int)level];
 
 	/* Log the message to each target callback */
 	for (auto target : target_list)

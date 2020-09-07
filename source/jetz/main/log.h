@@ -65,7 +65,7 @@ typedef void (*log_target_func)(const std::string& msg);
 /**
 Log levels.
 */
-enum log_level
+enum class log_level
 {
 	DEBUG,
 	INFO,
@@ -144,7 +144,7 @@ private:
 	The logging target functions for each log level. Each log level can output
 	to multiple logging targets.
 	*/
-	std::vector<log_target_func> targets[log_level::_COUNT];
+	std::vector<log_target_func> targets[(int)log_level::_COUNT];
 };
 
 }   /* namespace jetz */
