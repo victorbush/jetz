@@ -1,13 +1,12 @@
 /*=============================================================================
-ecs.cpp
+ed.cpp
 =============================================================================*/
 
 /*=============================================================================
 INCLUDES
 =============================================================================*/
 
-#include "jetz/ecs/ecs.h"
-#include "jetz/main/log.h"
+#include "jetz/editor/ed.h"
 
 /*=============================================================================
 NAMESPACE
@@ -15,77 +14,40 @@ NAMESPACE
 
 namespace jetz {
 
-ecs_input_singleton ecs::input_singleton;
-
 /*=============================================================================
-PUBLIC METHODS
+CONSTRUCTORS
 =============================================================================*/
 
-ecs::ecs()
-	: _next_id(0)
+ed::ed()
 {
 }
 
-ecs::~ecs()
+ed::~ed()
 {
-	for (auto ent : _entities)
-	{
-		destory_entity(ent);
-	}
-
-	_entities.clear();
 }
 
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
 
-entity_id ecs::create_entity()
+void ed::think()
 {
-	entity_id id = get_next_available_id();
-	if (id == INVALID_ENTITY)
+	//ed_file_picker.set_directory("worlds");
+	//ed_file_picker.open();
+
+	/*
+	World file picker dialog
+	*/
+	if (_world_file_picker.think() == ed_dialog_result::OK)
 	{
-		LOG_ERROR("Failed to create entity.");
-		return INVALID_ENTITY;
+		//is_world_loading = true;
+		//world_filename = ed_file_picker.get_selected_file();
+		//LOG_DBG_FMT("Opened {0}", world_filename.c_str());
 	}
-
-	_entities.insert(id);
-	return id;
-}
-
-void ecs::destory_entity(entity_id ent)
-{
-	models.destory(ent);
-	transforms.destory(ent);
-}
-
-bool ecs::entity_exists(entity_id ent) const
-{
-	auto it = _entities.find(ent);
-	return it != _entities.end();
 }
 
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
-
-entity_id ecs::get_next_available_id() const
-{
-	entity_id next_id = _next_id;
-	entity_id last_possible_id = next_id - 1;
-
-	do
-	{
-		if (next_id != INVALID_ENTITY && !entity_exists(next_id))
-		{
-			return next_id;
-		}
-
-		next_id++;
-
-	} while (next_id != last_possible_id);
-
-	return INVALID_ENTITY;
-}
 
 }   /* namespace jetz */

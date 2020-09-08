@@ -8,6 +8,9 @@ window.h
 INCLUDES
 =============================================================================*/
 
+#include <functional>
+
+#include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/gpu/gpu_window.h"
 #include "thirdparty/glfw/glfw.h"
 
@@ -66,6 +69,16 @@ public:
 	*/
 	void set_gpu_window(gpu_window* window);
 
+	/**
+	Sets the input system to send user inputs to.
+	*/
+	void set_input_system(ecs_input_system* input_system);
+
+	/**
+	Sets the callback function for when the window requests to be closed.
+	*/
+	void set_window_close_callback(std::function<void(void)> callback);
+
 private:
 
 	/*-----------------------------------------------------
@@ -73,6 +86,8 @@ private:
 	-----------------------------------------------------*/
 	gpu_window*						_gpu_window;
 	GLFWwindow*						_hndl;
+	ecs_input_system*				_input_system;
+	std::function<void(void)>		_on_window_close;
 
 	uint32_t						_height;
 	uint32_t						_width;
@@ -80,8 +95,6 @@ private:
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
-
-	void on_resize(int width, int height);
 
 	/*-----------------------------------------------------
 	Private static methods

@@ -438,5 +438,4 @@ static int read_pixel
 	return pixel_val;
 }
 
-
 }   /* namespace jetz */

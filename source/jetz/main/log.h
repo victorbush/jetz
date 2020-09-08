@@ -23,11 +23,20 @@ MACROS
 #define LOG_DBG(msg) \
 	jetz::log::logger.log_msg(jetz::log_level::DEBUG, msg)
 
+#define LOG_DBG_FMT(msg, params) \
+	jetz::log::logger.log_msg_with_source(jetz::log_level::DEBUG, __FILENAME__, __LINE__, msg, params)
+
 #define LOG_INFO(msg) \
 	jetz::log::logger.log_msg(jetz::log_level::INFO, msg)
 
+#define LOG_INFO_FMT(msg, params) \
+	jetz::log::logger.log_msg_with_source(jetz::log_level::INFO, __FILENAME__, __LINE__, msg, params)
+
 #define LOG_WARN(msg) \
 	jetz::log::logger.log_msg(jetz::log_level::WARN, msg)
+
+#define LOG_WARN_FMT(msg, params) \
+	jetz::log::logger.log_msg_with_source(jetz::log_level::WARN, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_ERROR(msg) \
 	jetz::log::logger.log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg)

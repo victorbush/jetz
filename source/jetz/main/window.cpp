@@ -28,7 +28,9 @@ PUBLIC METHODS
 
 window::window(int width, int height) :
 	_gpu_window(nullptr),
-	_hndl(nullptr)
+	_hndl(nullptr),
+	_input_system(nullptr),
+	_on_window_close(nullptr)
 {
 	/* create the GLFW window */
 	_hndl = glfwCreateWindow(width, height, "Jetz", nullptr, nullptr);
@@ -76,6 +78,16 @@ void window::set_gpu_window(jetz::gpu_window* window)
 	_gpu_window = window;
 }
 
+void window::set_input_system(ecs_input_system* input_system)
+{
+	_input_system = input_system;
+}
+
+void window::set_window_close_callback(std::function<void(void)> callback)
+{
+	_on_window_close = callback;
+}
+
 GLFWwindow* window::get_hndl() const
 {
 	return _hndl;
@@ -90,13 +102,6 @@ uint32_t window::get_width() const
 PRIVATE METHODS
 =============================================================================*/
 
-void window::on_resize(int width, int height)
-{
-	_width = (uint32_t)width;
-	_height = (uint32_t)height;
-	this->_gpu_window->resize(_width, _height);
-}
-
 /*=============================================================================
 PRIVATE STATIC METHODS
 =============================================================================*/
@@ -104,36 +109,67 @@ PRIVATE STATIC METHODS
 void window::char_callback(GLFWwindow* window, unsigned int c)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_input_system)
+	{
+		data->_input_system->on_char(c);
+	}
 }
 
 void window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_input_system)
+	{
+		data->_input_system->on_mouse_move(xpos, ypos);
+	}
 }
 
 void window::framebuffer_resize_callback(GLFWwindow* window, int width, int height)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
-	data->on_resize(width, height);
+	data->_width = (uint32_t)width;
+	data->_height = (uint32_t)height;
+
+	if (data->_gpu_window)
+	{
+		data->_gpu_window->resize(data->_width, data->_height);
+	}
 }
 
 void window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_input_system)
+	{
+		data->_input_system->on_key(key, scancode, action, mods);
+	}
 }
 
 void window::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_input_system)
+	{
+		data->_input_system->on_mouse_button(button, action, mods);
+	}
 }
 
 void window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_input_system)
+	{
+		data->_input_system->on_mouse_scroll(xoffset, yoffset);
+	}
 }
 
 void window::window_close_callback(GLFWwindow* window)
 {
+	auto data = (jetz::window*)glfwGetWindowUserPointer(window);
+	if (data->_on_window_close)
+	{
+		data->_on_window_close();
+	}
 }
 
 }   /* namespace jetz */

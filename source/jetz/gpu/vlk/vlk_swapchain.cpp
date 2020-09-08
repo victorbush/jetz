@@ -42,6 +42,7 @@ vlk_swapchain::vlk_swapchain
 
 vlk_swapchain::~vlk_swapchain()
 {
+	destroy_all();
 }
 
 /*=============================================================================

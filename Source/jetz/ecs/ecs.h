@@ -15,6 +15,7 @@ INCLUDES
 #include "jetz/ecs/ecs_component_manager.h"
 #include "jetz/ecs/components/ecs_model_component.h"
 #include "jetz/ecs/components/ecs_transform_component.h"
+#include "jetz/ecs/components/ecs_input_singleton.h"
 
 /*=============================================================================
 NAMESPACE
@@ -44,6 +45,8 @@ public:
 	/*-----------------------------------------------------
 	Public variables
 	-----------------------------------------------------*/
+
+	static ecs_input_singleton	input_singleton;
 
 	/*
 	Components

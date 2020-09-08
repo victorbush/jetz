@@ -183,6 +183,12 @@
     <ClInclude Include="ecs\systems\ecs_render_system.h">
       <Filter>ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\components\ecs_input_singleton.h">
+      <Filter>ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\ed.h">
+      <Filter>editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -307,6 +313,9 @@
     </ClCompile>
     <ClCompile Include="ecs\systems\ecs_render_system.cpp">
       <Filter>ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\ed.cpp">
+      <Filter>editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

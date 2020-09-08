@@ -9,6 +9,7 @@ INCLUDES
 #include "jetz/gpu/gpu_window.h"
 #include "jetz/main/app.h"
 #include "jetz/main/camera.h"
+#include "jetz/main/log.h"
 #include "jetz/main/window.h"
 #include "thirdparty/glfw/glfw.h"
 
@@ -29,7 +30,8 @@ app::app(window& main_window) :
 	_camera(),
 	_should_exit(false)
 {
-	ed_file_picker.open();
+	_window.set_input_system(&_input_system);
+	_window.set_window_close_callback(std::bind(&app::on_main_window_close, this));
 }
 
 app::~app()
@@ -51,12 +53,13 @@ void app::run_frame()
 	gpu_window* gpu_window = _window.get_gpu_window();
 	gpu_frame& frame = gpu_window->begin_frame(_camera);
 
-	imgui_begin_frame(_frame_time_delta, _window.get_width(), _window.get_height());
+	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
+
+	/* Process editor UI and functionality */
+	_ed.think();
 
 	//player_system__run(&j->world.ecs, &j->camera, j->frame_delta_time);
 	//render_system__run(&j->world.ecs, &j->window.gpu_window, frame);
-
-	ed_file_picker.think();
 
 	imgui_end_frame(gpu_window, frame);
 
@@ -95,6 +98,11 @@ void app::imgui_end_frame(gpu_window* window, gpu_frame& frame)
 	ImGui::Render();
 	ImDrawData* draw_data = ImGui::GetDrawData();
 	window->render_imgui(frame, draw_data);
+}
+
+void app::on_main_window_close()
+{
+	_should_exit = true;
 }
 
 }   /* namespace jetz */

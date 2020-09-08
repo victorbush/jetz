@@ -62,6 +62,11 @@ static void parse_cmd_line(const std::vector<std::string>& args)
 
 static void shutdown()
 {
+	if (s_gpu)
+	{
+		s_gpu->wait_idle();
+	}
+
 	delete s_app;
 	delete s_gpu;
 	delete s_window;

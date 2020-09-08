@@ -10,12 +10,11 @@ INCLUDES
 
 #include <vulkan/vulkan.h>
 
+#include "jetz/editor/ed.h"
 #include "jetz/ecs/ecs.h"
+#include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/main/camera.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
-
-
-#include "jetz/editor/ed_file_picker_dialog.h"
 
 /*=============================================================================
 NAMESPACE
@@ -47,13 +46,12 @@ public:
 
 
 	// TODO : MOVE
-	float			simulation_speed;
+	//float			simulation_speed;
 
-	bool			is_world_loading;
-	std::string		world_filename;
+	//bool			is_world_loading;
+	//std::string		world_filename;
 
 
-	ed_file_picker_dialog	ed_file_picker;
 
 
 private:
@@ -64,6 +62,7 @@ private:
 
 	void imgui_begin_frame(float delta_time, float width, float height);
 	void imgui_end_frame(gpu_window* window, gpu_frame& frame);
+	void on_main_window_close();
 
 	/*-----------------------------------------------------
 	Private variables
@@ -75,10 +74,16 @@ private:
 	window&					_window;
 
 	/*
+	Systems
+	*/
+	ecs_input_system		_input_system;
+
+	/*
 	Other
 	*/
 	camera					_camera;
-	ecs						_ecs;
+	ecs						_ecs;				/* Entity component system */
+	ed						_ed;				/* Editor */
 	float					_frame_time;		/* Current frame time (in seconds) */
 	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
 

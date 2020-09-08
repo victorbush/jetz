@@ -48,7 +48,7 @@ public:
 	void close();
 	void open();
 
-	virtual void think() = 0;
+	virtual ed_dialog_result think() = 0;
 
 protected:
 

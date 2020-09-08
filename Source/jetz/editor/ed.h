@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs_input_system.h
+ed.h
 =============================================================================*/
 
 #pragma once
@@ -8,41 +8,45 @@ ecs_input_system.h
 INCLUDES
 =============================================================================*/
 
+#include "jetz/editor/ed_file_picker_dialog.h"
+
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
 
 namespace jetz {
 
-class ecs_input_system {
+/*=============================================================================
+ECS CORE
+=============================================================================*/
+
+class ed {
 
 public:
 
-	ecs_input_system();
-	~ecs_input_system();
+	ed();
+	~ed();
 
 	/*-----------------------------------------------------
-	Public Methods
+	Public methods
 	-----------------------------------------------------*/
 
-	void run();
+	void think();
 
-	void on_char(unsigned int c);
-	void on_key(int key, int scancode, int action, int mods);
-	void on_mouse_button(int button, int action, int mods);
-	void on_mouse_move(double xpos, double ypos);
-	void on_mouse_scroll(double xoffset, double yoffset);
+	/*-----------------------------------------------------
+	Public variables
+	-----------------------------------------------------*/
 
 private:
 
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
+	ed_file_picker_dialog	_world_file_picker;
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
-
 };
 
 }   /* namespace jetz */

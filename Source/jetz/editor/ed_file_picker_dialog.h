@@ -30,9 +30,9 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	std::string				get_selected_file() const;
-	void					set_directory(const std::string& dir);
-	virtual void			think() override;
+	std::string					get_selected_file() const;
+	void						set_directory(const std::string& dir);
+	virtual ed_dialog_result	think() override;
 
 private:
 

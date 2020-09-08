@@ -45,7 +45,7 @@ std::string ed_file_picker_dialog::get_selected_file() const
 		return "";
 	}
 
-	return fmt::format("%s/%s", _directory, _files[_selected_file_index]);
+	return fmt::format("{0}/{1}", _directory, _files[_selected_file_index]);
 }
 
 void ed_file_picker_dialog::set_directory(const std::string& dir)
@@ -53,12 +53,12 @@ void ed_file_picker_dialog::set_directory(const std::string& dir)
 	_directory = std::string(dir);
 }
 
-void ed_file_picker_dialog::think()
+ed_dialog_result ed_file_picker_dialog::think()
 {
 	if (_state == ed_dialog_state::CLOSED
 		|| _state == ed_dialog_state::CLOSING)
 	{
-		return;
+		return ed_dialog_result::NONE;
 	}
 
 	if (_state == ed_dialog_state::OPENING)
@@ -70,6 +70,8 @@ void ed_file_picker_dialog::think()
 	{
 		handle_open();
 	}
+
+	return _result;
 }
 
 /*=============================================================================
@@ -78,6 +80,8 @@ PRIVATE METHODS
 
 void ed_file_picker_dialog::handle_open()
 {
+	_result = ed_dialog_result::NONE;
+
 	/* Render dialog */
 	ImGui::OpenPopup("Open File");
 	if (ImGui::BeginPopupModal("Open File", NULL, 0))
@@ -131,8 +135,9 @@ void ed_file_picker_dialog::handle_opening()
 	/* Get list of files in the worlds directory */
 	DIR* dir;
 	struct dirent* ent;
+	std::string dir_path = _directory + "\\";
 
-	if ((dir = opendir("worlds\\")) != NULL)
+	if ((dir = opendir(dir_path.c_str())) != NULL)
 	{
 		int i = 0;
 		while ((ent = readdir(dir)) != NULL)
