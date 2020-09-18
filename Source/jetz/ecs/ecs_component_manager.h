@@ -18,10 +18,21 @@ NAMESPACE
 
 namespace jetz {
 
+class ecs_component_manager_intf {
+public:
+	virtual void destory(entity_id entity) = 0;
+	virtual bool exists(entity_id entity) const = 0;
+};
+
 template <typename T>
-class ecs_component_manager {
+class ecs_component_manager : ecs_component_manager_intf {
 
 public:
+
+	ecs_component_manager(std::string name)
+		: _component_name(name)
+	{
+	}
 
 	/*-----------------------------------------------------
 	Public Methods
@@ -37,13 +48,13 @@ public:
 			_components.insert(entity);
 		}
 	
-		return _components[entity];
+		return &_components[entity];
 	}
 
 	/**
 	Destroys a component for the spcified entity (if it has one).
 	*/
-	void destory(entity_id entity)
+	void destory(entity_id entity) override
 	{
 		if (!exists(entity))
 		{
@@ -56,7 +67,7 @@ public:
 	/**
 	Checks if the specified entity has this component.
 	*/
-	bool exists(entity_id entity) const
+	bool exists(entity_id entity) const override
 	{
 		auto it = _components.find(entity);
 		return it != _components.end();
@@ -73,7 +84,15 @@ public:
 			return nullptr;
 		}
 
-		return _components[entity];
+		return &_components[entity];
+	}
+
+	/**
+	Gets the name of this component.
+	*/
+	const std::string& get_name() /*override*/
+	{
+		return _component_name;
 	}
 
 private:
@@ -82,7 +101,8 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 
-	std::unordered_map<entity_id, T> _components;
+	std::unordered_map<entity_id, T>	_components;
+	std::string							_component_name;
 };
 
 }   /* namespace jetz */

@@ -68,7 +68,7 @@ bool lua::CancelLoop()
 }
 
 template <class T, size_t N>
-std::pair<bool, std::vector<T>> lua::GetArray()
+lua_result<std::vector<T>> lua::GetArray()
 {
 	std::vector<T> data(N);
 
@@ -117,28 +117,28 @@ std::pair<bool, std::vector<T>> lua::GetArray()
 	}
 
 	/* Success */
-	return std::make_pair(true, data);
+	return lua_result<std::vector<T>>(true, data);
 }
 
-std::pair<bool, bool> lua::GetBool()
+lua_result<bool> lua::GetBool()
 {
 	if (!lua_isboolean(_state, -1))
 	{
 		LOG_ERROR("Not a boolean.");
-		return std::make_pair(false, false);
+		return lua_result<bool>(false, false);
 	}
 
 	/* Get the value */
 	bool val = (bool)lua_toboolean(_state, -1);
-	return std::make_pair(true, val);
+	return lua_result<bool>(true, val);
 }
 
-std::pair<bool, bool> lua::GetBool(const std::string &variable)
+lua_result<bool> lua::GetBool(const std::string &variable)
 {
 	auto pushed = Push(variable);
 	if (!pushed)
 	{
-		return std::make_pair(false, false);
+		return lua_result<bool>(false, false);
 	}
 
 	auto result = GetBool();
@@ -147,25 +147,25 @@ std::pair<bool, bool> lua::GetBool(const std::string &variable)
 	return result;
 }
 
-std::pair<bool, float> lua::GetFloat()
+lua_result<float> lua::GetFloat()
 {
 	if (!lua_isnumber(_state, -1))
 	{
 		LOG_ERROR("Not a number.");
-		return std::make_pair(false, 0.0f);
+		return lua_result<float>(false, 0.0f);
 	}
 
 	/* Get the value */
 	float val = (float)lua_tonumber(_state, -1);
-	return std::make_pair(true, val);
+	return lua_result<float>(true, val);
 }
 
-std::pair<bool, float> lua::GetFloat(const std::string &variable)
+lua_result<float> lua::GetFloat(const std::string &variable)
 {
 	auto pushed = Push(variable);
 	if (!pushed)
 	{
-		return std::make_pair(false, 0.0f);
+		return lua_result<float>(false, 0.0f);
 	}
 
 	auto result = GetFloat();
@@ -174,25 +174,25 @@ std::pair<bool, float> lua::GetFloat(const std::string &variable)
 	return result;
 }
 
-std::pair<bool, int> lua::GetInt()
+lua_result<int> lua::GetInt()
 {
 	if (!lua_isnumber(_state, -1))
 	{
 		LOG_ERROR("Not a number.");
-		return std::make_pair(false, 0);
+		return lua_result<int>(false, 0);
 	}
 
 	/* Get the value */
 	int val = (int)lua_tonumber(_state, -1);
-	return std::make_pair(true, val);
+	return lua_result<int>(true, val);
 }
 
-std::pair<bool, int> lua::GetInt(const std::string &variable)
+lua_result<int> lua::GetInt(const std::string &variable)
 {
 	auto pushed = Push(variable);
 	if (!pushed)
 	{
-		return std::make_pair(false, 0);
+		return lua_result<int>(false, 0);
 	}
 
 	auto result = GetInt();
@@ -201,7 +201,7 @@ std::pair<bool, int> lua::GetInt(const std::string &variable)
 	return result;
 }
 
-std::pair<bool, std::string> lua::GetKey()
+lua_result<std::string> lua::GetKey()
 {
 	/* Need to have stack like this:
 	[ 0]
@@ -210,7 +210,7 @@ std::pair<bool, std::string> lua::GetKey()
 */
 	if (lua_gettop(_state) < 2)
 	{
-		return std::make_pair(false, "");
+		return lua_result<std::string>(false, "");
 	}
 
 	/* Push key to top */
@@ -222,28 +222,28 @@ std::pair<bool, std::string> lua::GetKey()
 	/* Pop the value */
 	lua_pop(_state, 1);
 
-	return std::make_pair(true, key);
+	return lua_result<std::string>(true, key);
 }
 
-std::pair<bool, std::string> lua::GetString()
+lua_result<std::string> lua::GetString()
 {
 	if (!lua_isstring(_state, -1))
 	{
 		LOG_ERROR("Not a number.");
-		return std::make_pair(false, "");
+		return lua_result<std::string>(false, "");
 	}
 
 	/* Get the value */
 	std::string val(lua_tostring(_state, -1));
-	return std::make_pair(true, val);
+	return lua_result<std::string>(true, val);
 }
 
-std::pair<bool, std::string> lua::GetString(const std::string &variable)
+lua_result<std::string> lua::GetString(const std::string &variable)
 {
 	auto pushed = Push(variable);
 	if (!pushed)
 	{
-		return std::make_pair(false, "");
+		return lua_result<std::string>(false, "");
 	}
 
 	auto result = GetString();

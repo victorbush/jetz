@@ -189,6 +189,12 @@
     <ClInclude Include="editor\ed.h">
       <Filter>editor</Filter>
     </ClInclude>
+    <ClInclude Include="main\world.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\ecs_factory.h">
+      <Filter>ecs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -316,6 +322,12 @@
     </ClCompile>
     <ClCompile Include="editor\ed.cpp">
       <Filter>editor</Filter>
+    </ClCompile>
+    <ClCompile Include="main\world.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\ecs_factory.cpp">
+      <Filter>ecs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

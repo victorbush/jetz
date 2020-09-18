@@ -17,18 +17,15 @@
 //
 //namespace jetz {
 //
-//struct ecs_component {
+//class ecs_component {
 //
 //public:
-//
-//	ecs_component();
-//	virtual ~ecs_component();
 //
 //	/*-----------------------------------------------------
 //	Public Methods
 //	-----------------------------------------------------*/
 //
-//
+//	virtual static const std::string& get_name() = 0;
 //
 //private:
 //

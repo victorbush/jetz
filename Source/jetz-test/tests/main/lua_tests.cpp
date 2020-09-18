@@ -23,8 +23,8 @@ Verifies the result of a <success, value> pair.
 #define VERIFY_PAIR(success, value, actualPair) \
 	do { \
 		auto pair = actualPair; \
-		EXPECT_EQ(success, pair.first);	\
-		EXPECT_EQ(value, pair.second); \
+		EXPECT_EQ(success, pair.valid);	\
+		EXPECT_EQ(value, pair.value); \
 	} while (0)
 
 /*=============================================================================

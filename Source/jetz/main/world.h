@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs.h
+world.h
 =============================================================================*/
 
 #pragma once
@@ -8,14 +8,7 @@ ecs.h
 INCLUDES
 =============================================================================*/
 
-#include <unordered_map>
-#include <unordered_set>
-
-#include "jetz/ecs/ecs_.h"
-#include "jetz/ecs/ecs_component_manager.h"
-#include "jetz/ecs/components/ecs_model_component.h"
-#include "jetz/ecs/components/ecs_transform_component.h"
-#include "jetz/ecs/components/ecs_input_singleton.h"
+#include "jetz/ecs/ecs.h"
 
 /*=============================================================================
 NAMESPACE
@@ -23,38 +16,26 @@ NAMESPACE
 
 namespace jetz {
 
-/*=============================================================================
-ECS CORE
-=============================================================================*/
+class lua;
 
-class ecs {
+class world {
 
 public:
 
-	ecs();
-	~ecs();
+	world();
+	~world();
 
 	/*-----------------------------------------------------
-	Public methods
+	Public static methods
 	-----------------------------------------------------*/
 
-	entity_id create_entity();
-	void destory_all();
-	void destory_entity(entity_id ent);
-	bool entity_exists(entity_id ent) const;
-	void load_component(entity_id ent, const std::string& component);
+	static void load(world& world, lua* lua);
 
 	/*-----------------------------------------------------
-	Public variables
+	Public Methods
 	-----------------------------------------------------*/
 
-	static ecs_input_singleton	input_singleton;
-
-	/*
-	Components
-	*/
-	ecs_component_manager<ecs_model_component> models;
-	ecs_component_manager<ecs_transform_component> transforms;
+	ecs& get_ecs();
 
 private:
 
@@ -62,16 +43,12 @@ private:
 	Private variables
 	-----------------------------------------------------*/
 
-	std::unordered_map<std::string, ecs_component_manager_intf*> _component_managers;
-	std::unordered_set<entity_id> _entities;
-
-	entity_id _next_id;
+	ecs _ecs;
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
 
-	entity_id get_next_available_id() const;
 };
 
 }   /* namespace jetz */

@@ -7,6 +7,7 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/ecs/ecs.h"
+#include "jetz/ecs/ecs_component_manager.h"
 #include "jetz/main/log.h"
 
 /*=============================================================================
@@ -22,8 +23,13 @@ PUBLIC METHODS
 =============================================================================*/
 
 ecs::ecs()
-	: _next_id(0)
+	:
+	_next_id(0),
+	models("model"),
+	transforms("transform")
 {
+	_component_managers[models.get_name()] = (ecs_component_manager_intf*)&models;
+	_component_managers[transforms.get_name()] = (ecs_component_manager_intf*)&transforms;
 }
 
 ecs::~ecs()
@@ -53,16 +59,42 @@ entity_id ecs::create_entity()
 	return id;
 }
 
+void ecs::destory_all()
+{
+	for (auto ent : _entities)
+	{
+		destory_entity(ent);
+	}
+
+	_entities.clear();
+}
+
 void ecs::destory_entity(entity_id ent)
 {
-	models.destory(ent);
-	transforms.destory(ent);
+	for (const auto c : _component_managers)
+	{
+		c.second->destory(ent);
+	}
+
+	_entities.erase(ent);
 }
 
 bool ecs::entity_exists(entity_id ent) const
 {
 	auto it = _entities.find(ent);
 	return it != _entities.end();
+}
+
+void ecs::load_component(entity_id ent, const std::string& component)
+{
+	auto it = _component_managers.find(component);
+	if (it == _component_managers.end())
+	{
+		LOG_ERROR_FMT("Unknown component '{0}'.", component);
+		return;
+	}
+
+	_component_managers[component]->
 }
 
 /*=============================================================================
