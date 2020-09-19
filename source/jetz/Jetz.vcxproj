@@ -23,6 +23,7 @@
     <ClInclude Include="ecs\ecs_component.h" />
     <ClInclude Include="ecs\ecs_component_manager.h" />
     <ClInclude Include="ecs\systems\ecs_input_system.h" />
+    <ClInclude Include="ecs\systems\ecs_loader_system.h" />
     <ClInclude Include="ecs\systems\ecs_render_system.h" />
     <ClInclude Include="editor\ed.h" />
     <ClInclude Include="editor\ed_dialog.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="ecs\components\ecs_transform_component.cpp" />
     <ClCompile Include="ecs\ecs.cpp" />
     <ClCompile Include="ecs\systems\ecs_input_system.cpp" />
+    <ClCompile Include="ecs\systems\ecs_loader_system.cpp" />
     <ClCompile Include="ecs\systems\ecs_render_system.cpp" />
     <ClCompile Include="editor\ed.cpp" />
     <ClCompile Include="editor\ed_dialog.cpp" />

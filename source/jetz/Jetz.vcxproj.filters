@@ -195,6 +195,9 @@
     <ClInclude Include="ecs\components\ecs_loader_singleton.h">
       <Filter>ecs\components</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\systems\ecs_loader_system.h">
+      <Filter>ecs\systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -331,6 +334,9 @@
     </ClCompile>
     <ClCompile Include="ecs\components\ecs_transform_component.cpp">
       <Filter>ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\systems\ecs_loader_system.cpp">
+      <Filter>ecs\systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

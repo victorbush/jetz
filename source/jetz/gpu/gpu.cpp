@@ -29,11 +29,41 @@ gpu::gpu()
 
 gpu::~gpu()
 {
+	unload_cache();
+}
+
+gpu_material* gpu::get_material(const std::string& filename)
+{
+	/* Check if material already loaded */
+	if (_materials.find(filename) != _materials.end())
+	{
+		return _materials[filename];
+	}
+
+	return nullptr;
+}
+
+gpu_model* gpu::get_model(const std::string& filename)
+{
+	return nullptr;
+}
+
+gpu_model* gpu::get_texture(const std::string& filename)
+{
+	return nullptr;
 }
 
 gpu_material* gpu::load_material(const std::string& filename)
 {
-	return nullptr;
+	/* Check if material already loaded */
+	auto mat = get_material(filename);
+	if (mat)
+	{
+		return mat;
+	}
+
+	/* Not loaded, load it now */
+	mat = 
 }
 
 gpu_model* gpu::load_model(const std::string& filename)
@@ -69,32 +99,32 @@ PRIVATE METHODS
 
 void gpu::unload_materials()
 {
-	for (auto mat : materials)
+	for (auto mat : _materials)
 	{
 		delete mat.second;
 	}
 
-	materials.clear();
+	_materials.clear();
 }
 
 void gpu::unload_models()
 {
-	for (auto model : models)
+	for (auto model : _models)
 	{
 		delete model.second;
 	}
 
-	models.clear();
+	_models.clear();
 }
 
 void gpu::unload_textures()
 {
-	for (auto tex : textures)
+	for (auto tex : _textures)
 	{
 		delete tex.second;
 	}
 
-	textures.clear();
+	_textures.clear();
 }
 
 }   /* namespace jetz */

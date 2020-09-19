@@ -51,6 +51,30 @@ public:
 	-----------------------------------------------------*/
 
 	/**
+	Returns the specified material. If the material has not been loaded, null will be returned.
+
+	@param filename The material to get.
+	@returns [BORROW] The loaded material if found, NULL otherwise.
+	*/
+	gpu_material* get_material(const std::string& filename);
+
+	/**
+	Returns the specified model. If the model has not been loaded, null will be returned.
+
+	@param filename The model to get.
+	@returns [BORROW] The loaded model if found, NULL otherwise.
+	*/
+	gpu_model* get_model(const std::string& filename);
+
+	/**
+	Returns the specified texture. If the texture has not been loaded, null will be returned.
+
+	@param filename The texture to get.
+	@returns [BORROW] The loaded texture if found, NULL otherwise.
+	*/
+	gpu_model* get_texture(const std::string& filename);
+
+	/**
 	Returns the specified material, loading it if needed.
 
 	@param filename The material file to load.
@@ -85,6 +109,8 @@ protected:
 	Protected methods
 	-----------------------------------------------------*/
 
+	gpu_material* do_load_material(const std::string& filename);
+
 	/**
 	Unloads any cached GPU resources (models, textures, etc).
 	*/
@@ -97,13 +123,13 @@ private:
 	-----------------------------------------------------*/
 
 	/** Materials cache. */
-	std::unordered_map<std::string, gpu_material*> materials;
+	std::unordered_map<std::string, gpu_material*> _materials;
 
 	/** Models cache. */
-	std::unordered_map<std::string, gpu_model*> models;
+	std::unordered_map<std::string, gpu_model*> _models;
 
 	/** Textures cache. */
-	std::unordered_map<std::string, gpu_texture*> textures;
+	std::unordered_map<std::string, gpu_texture*> _textures;
 
 	/*-----------------------------------------------------
 	Private Methods
