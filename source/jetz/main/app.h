@@ -13,8 +13,9 @@ INCLUDES
 #include "jetz/editor/ed.h"
 #include "jetz/ecs/ecs.h"
 #include "jetz/ecs/systems/ecs_input_system.h"
-#include "jetz/main/camera.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
+#include "jetz/main/camera.h"
+#include "jetz/main/world.h"
 
 /*=============================================================================
 NAMESPACE
@@ -24,10 +25,23 @@ namespace jetz {
 
 class gpu_window;
 class window;
+class world;
 
 /*=============================================================================
 TYPES
 =============================================================================*/
+
+enum class app_state {
+	STARTUP,
+	//MENU_LOADING,
+	//MENU_RUNNING,
+	EDITOR_LOADING,
+	EDITOR_RUNNING,
+	//GAME_LOADING,
+	//GAME_PLAYING,
+	//GAME_PAUSED,
+	SHUTDOWN
+};
 
 class app {
 
@@ -88,6 +102,8 @@ private:
 	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
 
 	bool					_should_exit;		/* Should the application exit? */
+	app_state				_state;
+	world					_world;
 };
 
 }   /* namespace jetz */

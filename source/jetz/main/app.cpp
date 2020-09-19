@@ -28,7 +28,8 @@ app::app(window& main_window) :
 	_frame_time(0),
 	_frame_time_delta(0),
 	_camera(),
-	_should_exit(false)
+	_should_exit(false),
+	_state(app_state::STARTUP)
 {
 	_window.set_input_system(&_input_system);
 	_window.set_window_close_callback(std::bind(&app::on_main_window_close, this));
@@ -55,8 +56,30 @@ void app::run_frame()
 
 	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
 
-	/* Process editor UI and functionality */
-	_ed.think();
+
+
+	/* 
+	Determine what to do based on app state
+	*/
+	if (_state == app_state::STARTUP)
+	{
+		_state = app_state::EDITOR_LOADING;
+	}
+	else if (_state == app_state::EDITOR_LOADING)
+	{
+		// For now, just load a world
+		world::load(_world, "worlds/world.lua");
+
+		_state = app_state::EDITOR_RUNNING;
+	}
+	else if (_state == app_state::EDITOR_RUNNING)
+	{
+
+		/* Process editor UI and functionality */
+		_ed.think();
+
+	}
+
 
 	//player_system__run(&j->world.ecs, &j->camera, j->frame_delta_time);
 	//render_system__run(&j->world.ecs, &j->window.gpu_window, frame);

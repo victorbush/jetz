@@ -21,8 +21,8 @@ namespace jetz {
 /**
 A singleton component that tracks user input state.
 */
-struct ecs_input_singleton {
-
+class ecs_input_singleton {
+public:
 	bool		mouse_down[GLFW_MOUSE_BUTTON_LAST];
 	glm::vec2	mouse_pos;
 	glm::vec2	mouse_pos_prev;

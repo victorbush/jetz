@@ -8,7 +8,6 @@ lua.h
 INCLUDES
 =============================================================================*/
 
-#include <memory>
 #include <string>
 #include <vector>
 

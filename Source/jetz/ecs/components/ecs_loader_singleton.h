@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs_factory.h
+ecs_loader_singleton.h
 =============================================================================*/
 
 #pragma once
@@ -8,37 +8,23 @@ ecs_factory.h
 INCLUDES
 =============================================================================*/
 
+#include <string>
+#include <unordered_set>
+
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
 
 namespace jetz {
 
-class ecs_factory {
-
+/**
+A singleton component that tracks assets that need loaded (like textures,
+models, etc).
+*/
+class ecs_loader_singleton {
 public:
-
-	ecs_factory();
-	~ecs_factory();
-
-	/*-----------------------------------------------------
-	Public Methods
-	-----------------------------------------------------*/
-
-	void load_world()
-
-private:
-
-	/*-----------------------------------------------------
-	Private variables
-	-----------------------------------------------------*/
-
-	ecs _ecs;
-
-	/*-----------------------------------------------------
-	Private methods
-	-----------------------------------------------------*/
-
+	std::unordered_set<std::string> models;
+	std::unordered_set<std::string> materials;
 };
 
 }   /* namespace jetz */

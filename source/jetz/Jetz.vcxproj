@@ -15,13 +15,13 @@
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
     <ClInclude Include="ecs\components\ecs_input_singleton.h" />
+    <ClInclude Include="ecs\components\ecs_loader_singleton.h" />
     <ClInclude Include="ecs\components\ecs_model_component.h" />
     <ClInclude Include="ecs\components\ecs_transform_component.h" />
     <ClInclude Include="ecs\ecs.h" />
     <ClInclude Include="ecs\ecs_.h" />
     <ClInclude Include="ecs\ecs_component.h" />
     <ClInclude Include="ecs\ecs_component_manager.h" />
-    <ClInclude Include="ecs\ecs_factory.h" />
     <ClInclude Include="ecs\systems\ecs_input_system.h" />
     <ClInclude Include="ecs\systems\ecs_render_system.h" />
     <ClInclude Include="editor\ed.h" />
@@ -68,8 +68,9 @@
     <ClCompile Include="..\thirdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\thirdparty\vma\vma.cpp" />
+    <ClCompile Include="ecs\components\ecs_model_component.cpp" />
+    <ClCompile Include="ecs\components\ecs_transform_component.cpp" />
     <ClCompile Include="ecs\ecs.cpp" />
-    <ClCompile Include="ecs\ecs_factory.cpp" />
     <ClCompile Include="ecs\systems\ecs_input_system.cpp" />
     <ClCompile Include="ecs\systems\ecs_render_system.cpp" />
     <ClCompile Include="editor\ed.cpp" />

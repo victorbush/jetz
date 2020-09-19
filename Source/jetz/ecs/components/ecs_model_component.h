@@ -10,8 +10,7 @@ INCLUDES
 
 #include <string>
 
-#include "jetz/gpu/gpu_material.h"
-#include "jetz/gpu/gpu_model.h"
+#include "jetz/ecs/ecs_component.h"
 
 /*=============================================================================
 NAMESPACE
@@ -19,10 +18,9 @@ NAMESPACE
 
 namespace jetz {
 
-struct ecs_model_component {
+class ecs_model_component : public ecs_component {
 
-	gpu_material*		material;
-	gpu_model*			model;
+public:
 
 	/*
 	Property names
@@ -35,6 +33,12 @@ struct ecs_model_component {
 	*/
 	std::string			model_filename;
 	std::string			material_filename;
+
+	/*-----------------------------------------------------
+	ecs_component
+	-----------------------------------------------------*/
+
+	virtual void load_lua(lua& script) override;
 };
 
 }   /* namespace jetz */

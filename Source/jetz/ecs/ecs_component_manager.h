@@ -18,8 +18,11 @@ NAMESPACE
 
 namespace jetz {
 
+class ecs_component;
+
 class ecs_component_manager_intf {
 public:
+	virtual ecs_component* create(entity_id ent) = 0;
 	virtual void destory(entity_id entity) = 0;
 	virtual bool exists(entity_id entity) const = 0;
 };
@@ -41,11 +44,11 @@ public:
 	/**
 	Creates a component for the specified entity (if it doesn't already have one).
 	*/
-	T* create(entity_id entity)
+	ecs_component* create(entity_id entity) override
 	{
 		if (!exists(entity))
 		{
-			_components.insert(entity);
+			_components.emplace(entity, T());
 		}
 	
 		return &_components[entity];

@@ -10,6 +10,9 @@ INCLUDES
 
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
+
+#include "jetz/ecs/ecs_component.h"
 
 /*=============================================================================
 NAMESPACE
@@ -20,7 +23,9 @@ namespace jetz {
 /**
 A coordinate transformation that can be applied to an entity.
 */
-struct ecs_transform_component {
+class ecs_transform_component : public ecs_component {
+
+public:
 
 	/*
 	Property names
@@ -31,6 +36,12 @@ struct ecs_transform_component {
 	Property data
 	*/
 	glm::vec3			pos;
+
+	/*-----------------------------------------------------
+	ecs_component
+	-----------------------------------------------------*/
+
+	virtual void load_lua(lua& script) override;
 };
 
 }   /* namespace jetz */

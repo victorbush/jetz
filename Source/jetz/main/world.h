@@ -16,8 +16,6 @@ NAMESPACE
 
 namespace jetz {
 
-class lua;
-
 class world {
 
 public:
@@ -29,7 +27,7 @@ public:
 	Public static methods
 	-----------------------------------------------------*/
 
-	static void load(world& world, lua* lua);
+	static void load(world& world, const std::string& filename);
 
 	/*-----------------------------------------------------
 	Public Methods

@@ -16,6 +16,8 @@ INCLUDES
 #include "jetz/ecs/components/ecs_model_component.h"
 #include "jetz/ecs/components/ecs_transform_component.h"
 #include "jetz/ecs/components/ecs_input_singleton.h"
+#include "jetz/ecs/components/ecs_loader_singleton.h"
+#include "jetz/main/lua.h"
 
 /*=============================================================================
 NAMESPACE
@@ -42,13 +44,14 @@ public:
 	void destory_all();
 	void destory_entity(entity_id ent);
 	bool entity_exists(entity_id ent) const;
-	void load_component(entity_id ent, const std::string& component);
+	void load_component(entity_id ent, const std::string& component, lua& lua);
 
 	/*-----------------------------------------------------
 	Public variables
 	-----------------------------------------------------*/
 
 	static ecs_input_singleton	input_singleton;
+	static ecs_loader_singleton	loader_singleton;
 
 	/*
 	Components

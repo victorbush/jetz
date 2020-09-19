@@ -192,8 +192,8 @@
     <ClInclude Include="main\world.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\ecs_factory.h">
-      <Filter>ecs</Filter>
+    <ClInclude Include="ecs\components\ecs_loader_singleton.h">
+      <Filter>ecs\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -326,8 +326,11 @@
     <ClCompile Include="main\world.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="ecs\ecs_factory.cpp">
-      <Filter>ecs</Filter>
+    <ClCompile Include="ecs\components\ecs_model_component.cpp">
+      <Filter>ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\components\ecs_transform_component.cpp">
+      <Filter>ecs\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

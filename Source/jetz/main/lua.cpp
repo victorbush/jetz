@@ -76,13 +76,13 @@ lua_result<std::vector<T>> lua::GetArray()
 	if (!lua_istable(_state, -1))
 	{
 		LOG_ERROR("Expected table on top of stack.");
-		return std::make_pair(false, data);
+		return lua_result<std::vector<T>>(false, data);
 	}
 
 	/* Begin iterating through table */
 	if (!StartLoop())
 	{
-		return std::make_pair(false, data);
+		return lua_result<std::vector<T>>(false, data);
 	}
 
 	for (size_t i = 0; i < N; ++i)
@@ -91,19 +91,19 @@ lua_result<std::vector<T>> lua::GetArray()
 		{
 			/* Expected another float value */
 			LOG_ERROR("Fewer values in table than expected.");
-			return std::make_pair(false, data);
+			return lua_result<std::vector<T>>(false, data);
 		}
 
 		/* Try to get value */
-		std::pair<bool, T> d = getValue<T>();
-		if (!d.first)
+		lua_result<T> d = getValue<T>();
+		if (!d.valid)
 		{
 			/* Expected a value */
-			return std::make_pair(false, data);
+			return lua_result<std::vector<T>>(false, data);
 		}
 
 		/* Store value in output array */
-		data[i] = d.second;
+		data[i] = d.value;
 	}
 
 	/* Expect this to be the end of the table */
@@ -113,7 +113,7 @@ lua_result<std::vector<T>> lua::GetArray()
 		Pop(2);
 
 		LOG_ERROR("More values in table than expected.");
-		return std::make_pair(false, data);
+		return lua_result<std::vector<T>>(false, data);
 	}
 
 	/* Success */

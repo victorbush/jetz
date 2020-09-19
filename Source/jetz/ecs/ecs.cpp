@@ -17,6 +17,7 @@ NAMESPACE
 namespace jetz {
 
 ecs_input_singleton ecs::input_singleton;
+ecs_loader_singleton ecs::loader_singleton;
 
 /*=============================================================================
 PUBLIC METHODS
@@ -85,7 +86,7 @@ bool ecs::entity_exists(entity_id ent) const
 	return it != _entities.end();
 }
 
-void ecs::load_component(entity_id ent, const std::string& component)
+void ecs::load_component(entity_id ent, const std::string& component, lua& lua)
 {
 	auto it = _component_managers.find(component);
 	if (it == _component_managers.end())
@@ -94,7 +95,8 @@ void ecs::load_component(entity_id ent, const std::string& component)
 		return;
 	}
 
-	_component_managers[component]->
+	auto comp = _component_managers[component]->create(ent);
+	comp->load_lua(lua);
 }
 
 /*=============================================================================
