@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h" />
-    <ClInclude Include="..\thirdparty\tinygltf\json.hpp" />
     <ClInclude Include="..\thirdparty\tinygltf\tiny_gltf.h" />
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
@@ -31,6 +30,7 @@
     <ClInclude Include="editor\ed_dialog.h" />
     <ClInclude Include="editor\ed_file_picker_dialog.h" />
     <ClInclude Include="gpu\gpu.h" />
+    <ClInclude Include="gpu\gpu_factory.h" />
     <ClInclude Include="gpu\gpu_frame.h" />
     <ClInclude Include="gpu\gpu_material.h" />
     <ClInclude Include="gpu\gpu_model.h" />
@@ -47,6 +47,7 @@
     <ClInclude Include="gpu\vlk\vlk.h" />
     <ClInclude Include="gpu\vlk\vlk_buffer.h" />
     <ClInclude Include="gpu\vlk\vlk_device.h" />
+    <ClInclude Include="gpu\vlk\vlk_factory.h" />
     <ClInclude Include="gpu\vlk\vlk_frame.h" />
     <ClInclude Include="gpu\vlk\vlk_gpu.h" />
     <ClInclude Include="gpu\vlk\vlk_swapchain.h" />
@@ -82,6 +83,7 @@
     <ClCompile Include="editor\ed_dialog.cpp" />
     <ClCompile Include="editor\ed_file_picker_dialog.cpp" />
     <ClCompile Include="gpu\gpu.cpp" />
+    <ClCompile Include="gpu\gpu_factory.cpp" />
     <ClCompile Include="gpu\gpu_frame.cpp" />
     <ClCompile Include="gpu\gpu_material.cpp" />
     <ClCompile Include="gpu\gpu_model.cpp" />
@@ -96,6 +98,7 @@
     <ClCompile Include="gpu\vlk\pipelines\vlk_picker_pipeline.cpp" />
     <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline.cpp" />
     <ClCompile Include="gpu\vlk\vlk_buffer.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_factory.cpp" />
     <ClCompile Include="gpu\vlk\vlk_frame.cpp" />
     <ClCompile Include="gpu\vlk\vlk.cpp" />
     <ClCompile Include="gpu\vlk\vlk_device.cpp" />

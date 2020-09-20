@@ -49,7 +49,7 @@ void log::log_msg(log_level level, const std::string& in_msg)
 	}
 
 	/* Assert on fatal log */
-	if (level == log_level::FATAL)
+	if (level == log_level::LOG_FATAL)
 	{
 		throw new std::runtime_error("Fatal error.");
 	}
@@ -71,15 +71,15 @@ static const char* get_log_level_str(log_level level)
 {
 	switch (level)
 	{
-	case log_level::DEBUG:
+	case log_level::LOG_DEBUG:
 		return "DEBUG";
-	case log_level::INFO:
+	case log_level::LOG_INFO:
 		return "INFO";
-	case log_level::WARN:
+	case log_level::LOG_WARN:
 		return "WARN";
-	case log_level::ERROR:
+	case log_level::LOG_ERROR:
 		return "ERROR";
-	case log_level::FATAL:
+	case log_level::LOG_FATAL:
 		return "FATAL";
 	}
 

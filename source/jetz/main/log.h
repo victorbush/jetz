@@ -21,34 +21,34 @@ MACROS
 #define __FILENAME__ (strrchr("\\" __FILE__, '\\') + 1)
 
 #define LOG_DBG(msg) \
-	jetz::log::logger.log_msg(jetz::log_level::DEBUG, msg)
+	jetz::log::logger.log_msg(jetz::log_level::LOG_DEBUG, msg)
 
 #define LOG_DBG_FMT(msg, params) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::DEBUG, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_DEBUG, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_INFO(msg) \
-	jetz::log::logger.log_msg(jetz::log_level::INFO, msg)
+	jetz::log::logger.log_msg(jetz::log_level::LOG_INFO, msg)
 
 #define LOG_INFO_FMT(msg, params) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::INFO, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_INFO, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_WARN(msg) \
-	jetz::log::logger.log_msg(jetz::log_level::WARN, msg)
+	jetz::log::logger.log_msg(jetz::log_level::LOG_WARN, msg)
 
 #define LOG_WARN_FMT(msg, params) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::WARN, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_WARN, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_ERROR(msg) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_ERROR, __FILENAME__, __LINE__, msg)
 
 #define LOG_ERROR_FMT(msg, params) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::ERROR, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_ERROR, __FILENAME__, __LINE__, msg, params)
 
 #define LOG_FATAL(msg) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_FATAL, __FILENAME__, __LINE__, msg)
 
 #define LOG_FATA_FMT(msg, params) \
-	jetz::log::logger.log_msg_with_source(jetz::log_level::FATAL, __FILENAME__, __LINE__, msg, params)
+	jetz::log::logger.log_msg_with_source(jetz::log_level::LOG_FATAL, __FILENAME__, __LINE__, msg, params)
 
 /*=============================================================================
 NAMESPACE
@@ -76,11 +76,11 @@ Log levels.
 */
 enum class log_level
 {
-	DEBUG,
-	INFO,
-	WARN,
-	ERROR,
-	FATAL,
+	LOG_DEBUG,
+	LOG_INFO,
+	LOG_WARN,
+	LOG_ERROR,
+	LOG_FATAL,
 
 	_COUNT
 };

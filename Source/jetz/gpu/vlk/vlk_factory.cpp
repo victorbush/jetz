@@ -6,7 +6,7 @@ gpu_model.cpp
 INCLUDES
 =============================================================================*/
 
-#include "jetz/gpu/gpu_model.h"
+#include "jetz/gpu/vlk/vlk_factory.h"
 #include "jetz/main/log.h"
 
 /*=============================================================================
@@ -19,18 +19,9 @@ namespace jetz {
 PUBLIC METHODS
 =============================================================================*/
 
-/**
-Constructor
-*/
-gpu_model::gpu_model()
+uptr<gpu_model> vlk_factory::create_model(uptr<tinygltf::Model> gltf)
 {
-}
-
-/**
-Destructor
-*/
-gpu_model::~gpu_model()
-{
+	return uptr<gpu_model>();
 }
 
 /*=============================================================================

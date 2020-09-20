@@ -75,3 +75,34 @@ Unpacks packed 32-bit RGBA color into 8-bit integer color components in range [0
 	out_vec4_i.y = (((in_rgba) & 0xFF00) >> 8); \
 	out_vec4_i.z = (((in_rgba) & 0xFF0000) >> 16); \
 	out_vec4_i.w = (((in_rgba) & 0xFF000000) >> 24)
+
+/*=============================================================================
+NAMESPACE
+=============================================================================*/
+
+namespace jetz {
+namespace utl {
+
+/**
+Checks if a string ends with another string.
+*/
+inline bool ends_with(const std::string &str, const std::string &endsWith)
+{
+	/* Source: https://stackoverflow.com/questions/874134/find-if-string-ends-with-another-string-in-c */
+	if (endsWith.size() > str.size()) return false;
+	return std::equal(endsWith.rbegin(), endsWith.rend(), str.rbegin());
+}
+
+/**
+Combines two hash values.
+*/
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v)
+{
+	/* Source: https://stackoverflow.com/questions/35985960/c-why-is-boosthash-combine-the-best-way-to-combine-hash-values */
+	std::hash<T> hasher;
+	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+}   /* namespace utl */
+}   /* namespace jetz */

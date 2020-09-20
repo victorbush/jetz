@@ -8,6 +8,8 @@ Common types and utilties.
 INCLUDES
 =========================================================*/
 
+#include <memory>
+
 /*=========================================================
 CONSTANTS
 =========================================================*/
@@ -15,6 +17,22 @@ CONSTANTS
 /*=========================================================
 TYPES
 =========================================================*/
+
+/*
+Smart pointers - using STL smart pointers
+*/
+
+/** Shared pointer */
+template <class T>
+using sptr = std::shared_ptr<T>;
+
+/** Weak pointer */
+template <class T>
+using wptr = std::weak_ptr<T>;
+
+/** Unique pointer */
+template <class T>
+using uptr = std::unique_ptr<T>;
 
 /*=========================================================
 FUNCTIONS

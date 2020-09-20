@@ -201,8 +201,11 @@
     <ClInclude Include="ecs\systems\ecs_loader_system.h">
       <Filter>ecs\systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\thirdparty\tinygltf\json.hpp">
-      <Filter>thirdparty\tinygltf</Filter>
+    <ClInclude Include="gpu\gpu_factory.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_factory.h">
+      <Filter>gpu\vlk</Filter>
     </ClInclude>
     <ClInclude Include="..\thirdparty\tinygltf\tiny_gltf.h">
       <Filter>thirdparty\tinygltf</Filter>
@@ -349,6 +352,12 @@
     </ClCompile>
     <ClCompile Include="..\thirdparty\tinygltf\tiny_gltf.cpp">
       <Filter>thirdparty\tinygltf</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\gpu_factory.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_factory.cpp">
+      <Filter>gpu\vlk</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
