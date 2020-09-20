@@ -55,15 +55,16 @@ gpu_model* gpu::get_texture(const std::string& filename)
 
 gpu_material* gpu::load_material(const std::string& filename)
 {
-	/* Check if material already loaded */
-	auto mat = get_material(filename);
-	if (mat)
-	{
-		return mat;
-	}
+	return nullptr;
+	///* Check if material already loaded */
+	//auto mat = get_material(filename);
+	//if (mat)
+	//{
+	//	return mat;
+	//}
 
-	/* Not loaded, load it now */
-	mat = 
+	///* Not loaded, load it now */
+	//mat = 
 }
 
 gpu_model* gpu::load_model(const std::string& filename)

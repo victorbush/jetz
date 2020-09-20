@@ -46,6 +46,9 @@
     <Filter Include="editor">
       <UniqueIdentifier>{2ea6d778-b936-47eb-b681-841d6d59508c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="thirdparty\tinygltf">
+      <UniqueIdentifier>{6e781f41-c854-491a-9fbf-d8bf90dffce2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -198,6 +201,12 @@
     <ClInclude Include="ecs\systems\ecs_loader_system.h">
       <Filter>ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="..\thirdparty\tinygltf\json.hpp">
+      <Filter>thirdparty\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\thirdparty\tinygltf\tiny_gltf.h">
+      <Filter>thirdparty\tinygltf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -337,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="ecs\systems\ecs_loader_system.cpp">
       <Filter>ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thirdparty\tinygltf\tiny_gltf.cpp">
+      <Filter>thirdparty\tinygltf</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

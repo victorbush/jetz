@@ -12,6 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h" />
+    <ClInclude Include="..\thirdparty\tinygltf\json.hpp" />
+    <ClInclude Include="..\thirdparty\tinygltf\tiny_gltf.h" />
     <ClInclude Include="..\thirdparty\vma\vk_mem_alloc.h" />
     <ClInclude Include="..\thirdparty\vma\vma.h" />
     <ClInclude Include="ecs\components\ecs_input_singleton.h" />
@@ -68,6 +70,7 @@
     <ClCompile Include="..\thirdparty\imgui\imgui.cpp" />
     <ClCompile Include="..\thirdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\thirdparty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\thirdparty\tinygltf\tiny_gltf.cpp" />
     <ClCompile Include="..\thirdparty\vma\vma.cpp" />
     <ClCompile Include="ecs\components\ecs_model_component.cpp" />
     <ClCompile Include="ecs\components\ecs_transform_component.cpp" />
