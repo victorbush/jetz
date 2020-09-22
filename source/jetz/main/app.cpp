@@ -23,13 +23,15 @@ namespace jetz {
 CONSTRUCTORS
 =============================================================================*/
 
-app::app(window& main_window) :
+app::app(window& main_window, gpu& gpu) :
+	_gpu(gpu),
 	_window(main_window),
 	_frame_time(0),
 	_frame_time_delta(0),
 	_camera(),
 	_should_exit(false),
-	_state(app_state::STARTUP)
+	_state(app_state::STARTUP),
+	_loader_system()
 {
 	_window.set_input_system(&_input_system);
 	_window.set_window_close_callback(std::bind(&app::on_main_window_close, this));
@@ -49,6 +51,9 @@ void app::run_frame()
 	float last_time = _frame_time;
 	_frame_time = (float)glfwGetTime();
 	_frame_time_delta = _frame_time - last_time;
+
+	/* Let loader system run */
+	_loader_system.run(_ecs, _gpu);
 
 	/* Begin frame */
 	gpu_window* gpu_window = _window.get_gpu_window();

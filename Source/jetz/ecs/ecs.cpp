@@ -35,12 +35,7 @@ ecs::ecs()
 
 ecs::~ecs()
 {
-	for (auto ent : _entities)
-	{
-		destory_entity(ent);
-	}
-
-	_entities.clear();
+	destory_all();
 }
 
 /*=============================================================================
@@ -62,9 +57,9 @@ entity_id ecs::create_entity()
 
 void ecs::destory_all()
 {
-	for (auto ent : _entities)
+	for (auto it = _entities.begin(); it != _entities.end(); /* No increment */ )
 	{
-		destory_entity(ent);
+		destory_entity(*it++);
 	}
 
 	_entities.clear();

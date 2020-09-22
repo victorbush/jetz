@@ -13,6 +13,7 @@ INCLUDES
 #include "jetz/editor/ed.h"
 #include "jetz/ecs/ecs.h"
 #include "jetz/ecs/systems/ecs_input_system.h"
+#include "jetz/ecs/systems/ecs_loader_system.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/main/camera.h"
 #include "jetz/main/world.h"
@@ -23,6 +24,7 @@ NAMESPACE
 
 namespace jetz {
 
+class gpu;
 class gpu_window;
 class window;
 class world;
@@ -47,7 +49,7 @@ class app {
 
 public:
 
-	app(window& main_window);
+	app(window& main_window, gpu& gpu);
 	~app();
 
 	/*-----------------------------------------------------
@@ -85,12 +87,14 @@ private:
 	/*
 	Dependencies
 	*/
+	gpu&					_gpu;
 	window&					_window;
 
 	/*
 	Systems
 	*/
 	ecs_input_system		_input_system;
+	ecs_loader_system		_loader_system;
 
 	/*
 	Other

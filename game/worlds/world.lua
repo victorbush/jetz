@@ -4,12 +4,11 @@ world =
     {
         {
             transform = {
-                pos = { -10.0, 0.0, -10.0 }
+                pos = { 0.0, 0.0, -10.0 }
             },
             model = 
             {
-                model = "models/cube/cube.obj",
-                material = "models/cube/cube.mat.lua"
+                model = "models/cube/cube.gltf",
             }
         }
     }

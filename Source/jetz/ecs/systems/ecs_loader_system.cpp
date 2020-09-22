@@ -30,11 +30,11 @@ ecs_loader_system::~ecs_loader_system()
 PUBLIC METHODS
 =============================================================================*/
 
-void ecs_loader_system::run(ecs& ecs)
+void ecs_loader_system::run(ecs& ecs, gpu& gpu)
 {
-	for (const auto& material_file : ecs::loader_singleton.materials)
+	for (const auto& model_file : ecs::loader_singleton.models)
 	{
-
+		gpu.load_model(model_file);
 	}
 }
 

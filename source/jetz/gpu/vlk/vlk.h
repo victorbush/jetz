@@ -23,17 +23,18 @@ NAMESPACE
 
 namespace jetz {
 	
+class gpu_factory;
 class vlk_window;
 
 /*=============================================================================
 CLASS
 =============================================================================*/
 
-class vlk : gpu {
+class vlk : public gpu {
 
 public:
 
-	vlk(window& app_window);
+	vlk(window& app_window, gpu_factory& factory);
 	~vlk();
 
 	/*-----------------------------------------------------

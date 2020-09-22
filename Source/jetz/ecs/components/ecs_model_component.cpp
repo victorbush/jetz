@@ -39,18 +39,18 @@ void ecs_model_component::load_lua(lua& script)
 		}
 
 		/* Material */
-		if (key.value == MATERIAL)
-		{
-			const auto& val = script.GetString();
-			if (!val.valid)
-			{
-				LOG_ERROR("Invalid material filename.");
-				continue;
-			}
+		//if (key.value == MATERIAL)
+		//{
+		//	const auto& val = script.GetString();
+		//	if (!val.valid)
+		//	{
+		//		LOG_ERROR("Invalid material filename.");
+		//		continue;
+		//	}
 
-			material_filename = val.value;
-			ecs::loader_singleton.materials.insert(val.value);
-		}
+		//	material_filename = val.value;
+		//	ecs::loader_singleton.materials.insert(val.value);
+		//}
 
 		/* Model */
 		if (key.value == MODEL)

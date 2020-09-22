@@ -7,6 +7,7 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/gpu/vlk/vlk_factory.h"
+#include "jetz/gpu/vlk/vlk_model.h"
 #include "jetz/main/log.h"
 
 /*=============================================================================
@@ -21,7 +22,10 @@ PUBLIC METHODS
 
 uptr<gpu_model> vlk_factory::create_model(uptr<tinygltf::Model> gltf)
 {
-	return uptr<gpu_model>();
+	auto model_ptr = new vlk_model(std::move(gltf));
+	auto model = uptr<vlk_model>(model_ptr);
+
+	return std::move(model);
 }
 
 /*=============================================================================

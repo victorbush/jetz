@@ -6,6 +6,7 @@ vlk.cpp
 INCLUDES
 =============================================================================*/
 
+#include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk.h"
 #include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/vlk_util.h"
@@ -46,7 +47,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback
 PUBLIC METHODS
 =============================================================================*/
 
-vlk::vlk(window& app_window) : _app_window(app_window)
+vlk::vlk(window& app_window, gpu_factory& factory) 
+	:
+	_app_window(app_window),
+	gpu(factory)
 {
 	enable_validation = true;
 

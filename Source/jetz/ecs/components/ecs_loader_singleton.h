@@ -24,7 +24,6 @@ models, etc).
 class ecs_loader_singleton {
 public:
 	std::unordered_set<std::string> models;
-	std::unordered_set<std::string> materials;
 };
 
 }   /* namespace jetz */

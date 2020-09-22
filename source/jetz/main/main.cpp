@@ -18,6 +18,7 @@ INCLUDES
 #include "jetz/main/app.h"
 #include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk.h"
+#include "jetz/gpu/vlk/vlk_factory.h"
 #include "jetz/main/log.h"
 #include "jetz/main/window.h"
 #include "thirdparty/glfw/glfw.h"
@@ -37,6 +38,7 @@ VARIABLES
 
 static jetz::app*			s_app;
 static jetz::gpu*			s_gpu;
+static jetz::gpu_factory*	s_gpu_factory;
 static jetz::window*		s_window;
 
 static ImGuiContext*		s_imgui_ctx;
@@ -69,6 +71,7 @@ static void shutdown()
 
 	delete s_app;
 	delete s_gpu;
+	delete s_gpu_factory;
 	delete s_window;
 	glfwTerminate();
 }
@@ -137,12 +140,13 @@ static void startup()
 	/*
 	Setup renderer
 	*/
-	s_gpu = (jetz::gpu*)new jetz::vlk(*s_window);
-	
+	s_gpu_factory = (jetz::gpu_factory*)new jetz::vlk_factory();
+	s_gpu = (jetz::gpu*)new jetz::vlk(*s_window, *s_gpu_factory);
+
 	/*
 	Setup app
 	*/
-	s_app = new jetz::app(*s_window);
+	s_app = new jetz::app(*s_window, *s_gpu);
 }
 
 /**
