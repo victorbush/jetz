@@ -44,7 +44,8 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	void render(const vlk_frame& frame, ImDrawData* draw_data);
+	void			render(const vlk_frame& frame, ImDrawData* draw_data);
+	virtual void	resize(VkExtent2D extent) override;
 
 protected:
 

@@ -40,10 +40,12 @@
     <ClInclude Include="gpu\vlk\descriptors\vlk_material_layout.h" />
     <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_layout.h" />
     <ClInclude Include="gpu\vlk\descriptors\vlk_per_view_set.h" />
+    <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline_cache.h" />
     <ClInclude Include="gpu\vlk\pipelines\vlk_imgui_pipeline.h" />
-    <ClInclude Include="gpu\vlk\pipelines\vlk_obj_pipeline.h" />
+    <ClInclude Include="gpu\vlk\pipelines\vlk_gltf_pipeline.h" />
     <ClInclude Include="gpu\vlk\pipelines\vlk_picker_pipeline.h" />
     <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline.h" />
+    <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline_create_info.h" />
     <ClInclude Include="gpu\vlk\vlk.h" />
     <ClInclude Include="gpu\vlk\vlk_buffer.h" />
     <ClInclude Include="gpu\vlk\vlk_device.h" />
@@ -94,8 +96,9 @@
     <ClCompile Include="gpu\vlk\descriptors\vlk_material_layout.cpp" />
     <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_layout.cpp" />
     <ClCompile Include="gpu\vlk\descriptors\vlk_per_view_set.cpp" />
+    <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline_cache.cpp" />
     <ClCompile Include="gpu\vlk\pipelines\vlk_imgui_pipeline.cpp" />
-    <ClCompile Include="gpu\vlk\pipelines\vlk_obj_pipeline.cpp" />
+    <ClCompile Include="gpu\vlk\pipelines\vlk_gltf_pipeline.cpp" />
     <ClCompile Include="gpu\vlk\pipelines\vlk_picker_pipeline.cpp" />
     <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline.cpp" />
     <ClCompile Include="gpu\vlk\vlk_buffer.cpp" />

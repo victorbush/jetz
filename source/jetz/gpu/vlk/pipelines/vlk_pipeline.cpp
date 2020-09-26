@@ -24,9 +24,11 @@ vlk_pipeline::vlk_pipeline
 	VkRenderPass					render_pass,
 	VkExtent2D						extent
 	)
-	: dev(device),
-	render_pass(render_pass),
-	extent(extent)
+	: _dev(device),
+	_render_pass(render_pass),
+	_extent(extent),
+	_handle(nullptr),
+	_layout(nullptr)
 {
 }
 
@@ -40,7 +42,7 @@ PUBLIC METHODS
 
 void vlk_pipeline::bind(VkCommandBuffer cmd)
 {
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
+	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _handle);
 }
 
 /*=============================================================================

@@ -138,9 +138,6 @@
     <ClInclude Include="gpu\vlk\pipelines\vlk_imgui_pipeline.h">
       <Filter>gpu\vlk\pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="gpu\vlk\pipelines\vlk_obj_pipeline.h">
-      <Filter>gpu\vlk\pipelines</Filter>
-    </ClInclude>
     <ClInclude Include="gpu\vlk\pipelines\vlk_picker_pipeline.h">
       <Filter>gpu\vlk\pipelines</Filter>
     </ClInclude>
@@ -212,6 +209,15 @@
     </ClInclude>
     <ClInclude Include="gpu\vlk\vlk_model.h">
       <Filter>gpu\vlk</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_gltf_pipeline.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline_cache.h">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline_create_info.h">
+      <Filter>gpu\vlk\pipelines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,9 +305,6 @@
     <ClCompile Include="gpu\vlk\pipelines\vlk_imgui_pipeline.cpp">
       <Filter>gpu\vlk\pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="gpu\vlk\pipelines\vlk_obj_pipeline.cpp">
-      <Filter>gpu\vlk\pipelines</Filter>
-    </ClCompile>
     <ClCompile Include="gpu\vlk\pipelines\vlk_picker_pipeline.cpp">
       <Filter>gpu\vlk\pipelines</Filter>
     </ClCompile>
@@ -364,6 +367,12 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\vlk_model.cpp">
       <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_gltf_pipeline.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline_cache.cpp">
+      <Filter>gpu\vlk\pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

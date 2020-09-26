@@ -75,7 +75,7 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 			delete vertex_buffers[frame.image_idx];
 		}
 
-		vertex_buffers[frame.image_idx] = new jetz::vlk_buffer(dev, vertex_size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+		vertex_buffers[frame.image_idx] = new jetz::vlk_buffer(_dev, vertex_size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
 		vertex_buffer_sizes[frame.image_idx] = vertex_size;
 	}
 
@@ -87,7 +87,7 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 			delete index_buffers[frame.image_idx];
 		}
 
-		index_buffers[frame.image_idx] = new jetz::vlk_buffer(dev, index_size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+		index_buffers[frame.image_idx] = new jetz::vlk_buffer(_dev, index_size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
 		index_buffer_sizes[frame.image_idx] = index_size;
 	}
 
@@ -99,13 +99,13 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 		VmaAllocation vertex_alloc = vertex_buffers[frame.image_idx]->get_allocation();
 		VmaAllocation index_alloc = index_buffers[frame.image_idx]->get_allocation();
 
-		VkResult result = vmaMapMemory(dev.get_allocator(), vertex_alloc, (void**)&vertex_dest);
+		VkResult result = vmaMapMemory(_dev.get_allocator(), vertex_alloc, (void**)&vertex_dest);
 		if (result != VK_SUCCESS)
 		{
 			LOG_FATAL("Error");
 		}
 
-		result = vmaMapMemory(dev.get_allocator(), index_alloc, (void**)&index_dest);
+		result = vmaMapMemory(_dev.get_allocator(), index_alloc, (void**)&index_dest);
 		if (result != VK_SUCCESS)
 		{
 			LOG_FATAL("Error");
@@ -120,15 +120,15 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 			index_dest += cmd_list->IdxBuffer.Size;
 		}
 
-		vmaUnmapMemory(dev.get_allocator(), vertex_alloc);
-		vmaUnmapMemory(dev.get_allocator(), index_alloc);
+		vmaUnmapMemory(_dev.get_allocator(), vertex_alloc);
+		vmaUnmapMemory(_dev.get_allocator(), index_alloc);
 	}
 
 	/*
 	Bind pipeline and descriptor sets
 	*/
-	vkCmdBindPipeline(frame.cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
-	vkCmdBindDescriptorSets(frame.cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptor_sets[frame.image_idx], 0, NULL);
+	vkCmdBindPipeline(frame.cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, _handle);
+	vkCmdBindDescriptorSets(frame.cmd_buf, VK_PIPELINE_BIND_POINT_GRAPHICS, _layout, 0, 1, &descriptor_sets[frame.image_idx], 0, NULL);
 
 	/*
 	Bind buffers
@@ -141,8 +141,8 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 	/*
 	Setup viewport
 	*/
-	draw_data->DisplaySize.x = (float)extent.width;
-	draw_data->DisplaySize.y = (float)extent.height;
+	draw_data->DisplaySize.x = (float)_extent.width;
+	draw_data->DisplaySize.y = (float)_extent.height;
 
 	VkViewport viewport;
 	viewport.x = 0;
@@ -162,8 +162,8 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 		float translate[2];
 		translate[0] = -1.0f - draw_data->DisplayPos.x * scale[0];
 		translate[1] = -1.0f - draw_data->DisplayPos.y * scale[1];
-		vkCmdPushConstants(frame.cmd_buf, layout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 0, sizeof(float) * 2, scale);
-		vkCmdPushConstants(frame.cmd_buf, layout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 2, sizeof(float) * 2, translate);
+		vkCmdPushConstants(frame.cmd_buf, _layout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 0, sizeof(float) * 2, scale);
+		vkCmdPushConstants(frame.cmd_buf, _layout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 2, sizeof(float) * 2, translate);
 	}
 
 	// Render the command lists:
@@ -201,6 +201,14 @@ void vlk_imgui_pipeline::render(const vlk_frame& frame, ImDrawData* draw_data)
 	}
 }
 
+void vlk_imgui_pipeline::resize(VkExtent2D extent)
+{
+	_extent = extent;
+
+	destroy_pipeline();
+	create_pipeline();
+}
+
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/
@@ -236,7 +244,7 @@ void vlk_imgui_pipeline::create_descriptor_layout()
 	layout_info.bindingCount = (uint32_t)bindings.size();
 	layout_info.pBindings = bindings.data();
 
-	if (vkCreateDescriptorSetLayout(dev.get_handle(), &layout_info, NULL, &descriptor_layout) != VK_SUCCESS)
+	if (vkCreateDescriptorSetLayout(_dev.get_handle(), &layout_info, NULL, &descriptor_layout) != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to create descriptor set layout.");
 	}
@@ -258,7 +266,7 @@ void vlk_imgui_pipeline::create_descriptor_pool()
 	// TOOD : what should maxSets be??
 	pool_info.maxSets = gpu::num_frame_buf;
 
-	if (vkCreateDescriptorPool(dev.get_handle(), &pool_info, NULL, &descriptor_pool) != VK_SUCCESS) 
+	if (vkCreateDescriptorPool(_dev.get_handle(), &pool_info, NULL, &descriptor_pool) != VK_SUCCESS) 
 	{
 		LOG_FATAL("Failed to create descriptor pool.");
 	}
@@ -275,7 +283,7 @@ void vlk_imgui_pipeline::create_descriptor_sets()
 	alloc_info.descriptorSetCount = (uint32_t)descriptor_sets.size();
 	alloc_info.pSetLayouts = layouts.data();
 
-	VkResult result = vkAllocateDescriptorSets(dev.get_handle(), &alloc_info, descriptor_sets.data());
+	VkResult result = vkAllocateDescriptorSets(_dev.get_handle(), &alloc_info, descriptor_sets.data());
 	if (result != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to allocate descriptor sets.");
@@ -302,7 +310,7 @@ void vlk_imgui_pipeline::create_descriptor_sets()
 		descriptor_writes[write_idx].pImageInfo = &image_info;
 		++write_idx;
 
-		vkUpdateDescriptorSets(dev.get_handle(), write_idx, descriptor_writes, 0, NULL);
+		vkUpdateDescriptorSets(_dev.get_handle(), write_idx, descriptor_writes, 0, NULL);
 	}
 }
 
@@ -339,7 +347,7 @@ void vlk_imgui_pipeline::create_font_texture()
 	create_info.size = (size_t)width * height * 4;
 	//create_info.type = TEXTURE_TYPE_2D;
 
-	font_texture = new jetz::vlk_texture(dev, create_info);
+	font_texture = new jetz::vlk_texture(_dev, create_info);
 	io.Fonts->TexID = (void*)font_texture->get_image();
 
 	/*
@@ -365,7 +373,7 @@ void vlk_imgui_pipeline::create_font_texture()
 	sampler_info.minLod = -1000;
 	sampler_info.maxLod = 1000;
 
-	if (vkCreateSampler(dev.get_handle(), &sampler_info, NULL, &font_texture_sampler) != VK_SUCCESS) 
+	if (vkCreateSampler(_dev.get_handle(), &sampler_info, NULL, &font_texture_sampler) != VK_SUCCESS) 
 	{
 		LOG_FATAL("Failed to create texture sampler.");
 	}
@@ -373,8 +381,8 @@ void vlk_imgui_pipeline::create_font_texture()
 
 void vlk_imgui_pipeline::create_pipeline()
 {
-	VkShaderModule vert_shader = dev.create_shader("bin/shaders/imgui.vert.spv");
-	VkShaderModule frag_shader = dev.create_shader("bin/shaders/imgui.frag.spv");
+	VkShaderModule vert_shader = _dev.create_shader("bin/shaders/imgui.vert.spv");
+	VkShaderModule frag_shader = _dev.create_shader("bin/shaders/imgui.frag.spv");
 
 	/*
 	Shader stage creation
@@ -448,15 +456,15 @@ void vlk_imgui_pipeline::create_pipeline()
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float)extent.width;
-	viewport.height = (float)extent.height;
+	viewport.width = (float)_extent.width;
+	viewport.height = (float)_extent.height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
 	VkRect2D scissor = {};
 	scissor.offset.x = 0;
 	scissor.offset.y = 0;
-	scissor.extent = extent;
+	scissor.extent = _extent;
 
 	VkPipelineViewportStateCreateInfo viewport_state = {};
 	viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -554,14 +562,14 @@ void vlk_imgui_pipeline::create_pipeline()
 	pipeline_info.pColorBlendState = &color_blending;
 	pipeline_info.pDynamicState = &dynamic_state; // Optional
 
-	pipeline_info.layout = layout;
-	pipeline_info.renderPass = render_pass;
+	pipeline_info.layout = _layout;
+	pipeline_info.renderPass = _render_pass;
 	pipeline_info.subpass = 0;
 
 	pipeline_info.basePipelineHandle = VK_NULL_HANDLE; // Optional
 	pipeline_info.basePipelineIndex = -1; // Optional
 
-	if (vkCreateGraphicsPipelines(dev.get_handle(), VK_NULL_HANDLE, 1, &pipeline_info, NULL, &handle) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(_dev.get_handle(), VK_NULL_HANDLE, 1, &pipeline_info, NULL, &_handle) != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to create pipeline.");
 	}
@@ -569,8 +577,8 @@ void vlk_imgui_pipeline::create_pipeline()
 	/*
 	* Cleanup
 	*/
-	dev.destroy_shader(vert_shader);
-	dev.destroy_shader(frag_shader);
+	_dev.destroy_shader(vert_shader);
+	_dev.destroy_shader(frag_shader);
 }
 
 void vlk_imgui_pipeline::create_pipeline_layout()
@@ -598,7 +606,7 @@ void vlk_imgui_pipeline::create_pipeline_layout()
 	pipeline_layout_info.pushConstantRangeCount = cnt_of_array(push_constants);
 	pipeline_layout_info.pPushConstantRanges = push_constants;
 
-	if (vkCreatePipelineLayout(dev.get_handle(), &pipeline_layout_info, NULL, &layout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(_dev.get_handle(), &pipeline_layout_info, NULL, &_layout) != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to create pipeline layout.");
 	}
@@ -624,12 +632,12 @@ void vlk_imgui_pipeline::destroy_buffers()
 
 void vlk_imgui_pipeline::destroy_descriptor_layout()
 {
-	vkDestroyDescriptorSetLayout(dev.get_handle(), descriptor_layout, NULL);
+	vkDestroyDescriptorSetLayout(_dev.get_handle(), descriptor_layout, NULL);
 }
 
 void vlk_imgui_pipeline::destroy_descriptor_pool()
 {
-	vkDestroyDescriptorPool(dev.get_handle(), descriptor_pool, NULL);
+	vkDestroyDescriptorPool(_dev.get_handle(), descriptor_pool, NULL);
 }
 
 void vlk_imgui_pipeline::destroy_descriptor_sets()
@@ -642,18 +650,18 @@ void vlk_imgui_pipeline::destroy_descriptor_sets()
 
 void vlk_imgui_pipeline::destroy_font_texture()
 {
-	vkDestroySampler(dev.get_handle(), font_texture_sampler, NULL);
+	vkDestroySampler(_dev.get_handle(), font_texture_sampler, NULL);
 	delete font_texture;
 }
 
 void vlk_imgui_pipeline::destroy_pipeline()
 {
-	vkDestroyPipeline(dev.get_handle(), handle, NULL);
+	vkDestroyPipeline(_dev.get_handle(), _handle, NULL);
 }
 
 void vlk_imgui_pipeline::destroy_pipeline_layout()
 {
-	vkDestroyPipelineLayout(dev.get_handle(), layout, NULL);
+	vkDestroyPipelineLayout(_dev.get_handle(), _layout, NULL);
 }
 
 }   /* namespace jetz */
