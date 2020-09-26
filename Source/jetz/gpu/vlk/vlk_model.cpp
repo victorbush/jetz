@@ -6,8 +6,13 @@ vlk_texture.cpp
 INCLUDES
 =============================================================================*/
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
+#include "jetz/gpu/vlk/vlk_frame.h"
+#include "jetz/gpu/vlk/vlk_material.h"
 #include "jetz/gpu/vlk/vlk_model.h"
 #include "jetz/gpu/vlk/vlk_texture.h"
 #include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
@@ -90,7 +95,7 @@ void vlk_model::create_materials()
 {
 	for (const auto& mat : _gltf->materials)
 	{
-		loadMaterial(mat);
+		load_material(mat);
 	}
 }
 
@@ -150,10 +155,10 @@ void vlk_model::create_pipelines()
 
 			/* Create a primitive wrapper to store data for this primitive */
 			auto p = Primitive(mesh.primitives[j], pipeline);
-			p.PrimID = numPrimitives++;
-			p.MeshIndex = i;
-			p.PrimIndex = j;
-			p.Material = getVulkanMaterial(prim.material);
+			p.id = numPrimitives++;
+			p.mesh_index = i;
+			p.prim_index = j;
+			p.material = get_vulkan_material(prim.material);
 			_primitives[i].push_back(p);
 		}
 	}
@@ -161,9 +166,9 @@ void vlk_model::create_pipelines()
 
 void vlk_model::create_textures()
 {
-	for (const auto& img : _gltf.images)
+	for (const auto& img : _gltf->images)
 	{
-		loadTexture(img);
+		load_texture(img);
 	}
 }
 
@@ -186,10 +191,10 @@ void vlk_model::create_vertex_input_bindings()
 	If a buffer view is used by two or more accessors, the buffer view must define
 	the byte stride.
 	*/
-	for (size_t i = 0; i < _gltf.accessors.size(); ++i)
+	for (size_t i = 0; i < _gltf->accessors.size(); ++i)
 	{
-		const auto& a = _gltf.accessors[i];
-		const auto& bv = _gltf.bufferViews[a.bufferView];
+		const auto& a = _gltf->accessors[i];
+		const auto& bv = _gltf->bufferViews[a.bufferView];
 
 		/* Check if binding description already created for this buffer view */
 		auto bi = bindingCache.find(a.bufferView);
@@ -217,21 +222,21 @@ void vlk_model::create_vertex_input_bindings()
 		}
 
 		/* Create new binding */
-		_vertexBindingBuffers.resize(bindingIndex + 1);
-		_vertexBindingOffsets.resize(bindingIndex + 1);
-		_vertexBindingDescriptions.resize(bindingIndex + 1);
+		_vertex_binding_buffers.resize(bindingIndex + 1);
+		_vertex_binding_offsets.resize(bindingIndex + 1);
+		_vertex_binding_descriptions.resize(bindingIndex + 1);
 
 		/* Map the buffer view's buffer index to a GPU buffer */
-		_vertexBindingBuffers[bindingIndex] = _buffers[bv.buffer]->GetHandle();
+		_vertex_binding_buffers[bindingIndex] = _buffers[bv.buffer]->get_handle();
 
 		/* Record byte offset into buffer */
-		_vertexBindingOffsets[bindingIndex] = static_cast<VkDeviceSize>(bv.byteOffset);
+		_vertex_binding_offsets[bindingIndex] = static_cast<VkDeviceSize>(bv.byteOffset);
 
 		/* Create the vertex binding description */
-		_vertexBindingDescriptions[bindingIndex] = {};
-		_vertexBindingDescriptions[bindingIndex].binding = static_cast<uint32_t>(bindingIndex);
-		_vertexBindingDescriptions[bindingIndex].stride = static_cast<uint32_t>(byteStride);
-		_vertexBindingDescriptions[bindingIndex].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		_vertex_binding_descriptions[bindingIndex] = {};
+		_vertex_binding_descriptions[bindingIndex].binding = static_cast<uint32_t>(bindingIndex);
+		_vertex_binding_descriptions[bindingIndex].stride = static_cast<uint32_t>(byteStride);
+		_vertex_binding_descriptions[bindingIndex].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 		/* Add to the temporary cache so we know this buffer view has been processed */
 		bindingCache[a.bufferView] = bindingIndex++;
@@ -377,14 +382,15 @@ VkIndexType vlk_model::get_vk_index_type(int gltfComponentType) const
 	if (gltfComponentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
 		return VK_INDEX_TYPE_UINT16;
 
-	throw new std::runtime_error("Unknown format");
+	LOG_FATAL("Unknown index type.");
 }
 
 wptr<vlk_material> vlk_model::get_vulkan_material(int index)
 {
 	if (index < 0 || index >= _materials.size())
 	{
-		throw std::runtime_error("Invalid material index.");
+		LOG_ERROR("Invalid material index.");
+		return wptr<vlk_material>();
 	}
 
 	return _materials[index];
@@ -398,7 +404,7 @@ wptr<vlk_texture> vlk_model::get_vulkan_texture(int index)
 		return wptr<vlk_texture>();
 	}
 
-	auto imgIdx = _gltf.textures[index].source;
+	auto imgIdx = _gltf->textures[index].source;
 
 	if (imgIdx < 0 || imgIdx >= _textures.size())
 	{
@@ -411,7 +417,7 @@ wptr<vlk_texture> vlk_model::get_vulkan_texture(int index)
 
 void vlk_model::load_material(const tinygltf::Material& mat)
 {
-	auto material = new VulkanMaterial(_device);
+	auto material = new vlk_material(_device);
 
 	/*
 	Normal/occlusion/emissive
@@ -428,14 +434,14 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (addAttr != mat.additionalValues.end())
 	{
 		auto texIdx = addAttr->second.TextureIndex();
-		material->NormalTexture = getVulkanTexture(texIdx);
+		material->normal_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Emissive factor */
 	addAttr = mat.additionalValues.find(MAT_EMISSIVE_FACTOR);
 	if (addAttr != mat.additionalValues.end())
 	{
-		material->EmissiveFactor = glm::make_vec3(addAttr->second.number_array.data());
+		material->emissive_factor = glm::make_vec3(addAttr->second.number_array.data());
 	}
 
 	/* Emissive texture */
@@ -443,7 +449,7 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (addAttr != mat.additionalValues.end())
 	{
 		auto texIdx = addAttr->second.TextureIndex();
-		material->EmissiveTexture = getVulkanTexture(texIdx);
+		material->emissive_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Occlusion texture */
@@ -457,7 +463,7 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	auto attr = mat.values.find(MAT_BASE_COLOR_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->BaseColorFactor = glm::vec4(glm::make_vec4(attr->second.ColorFactor().data()));
+		material->base_color_factor = glm::vec4(glm::make_vec4(attr->second.ColorFactor().data()));
 	}
 
 	/* Base color texture */
@@ -465,21 +471,21 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (attr != mat.values.end())
 	{
 		auto texIdx = attr->second.TextureIndex();
-		material->BaseColorTexture = getVulkanTexture(texIdx);
+		material->base_color_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Metallic factor */
 	attr = mat.values.find(MAT_METALLIC_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->MetallicFactor = static_cast<float>(attr->second.Factor());
+		material->metallic_factor = static_cast<float>(attr->second.Factor());
 	}
 
 	/* Roughness factor */
 	attr = mat.values.find(MAT_ROUGHNESS_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->RoughnessFactor = static_cast<float>(attr->second.Factor());
+		material->roughness_factor = static_cast<float>(attr->second.Factor());
 	}
 
 	/* Metallic/roughness texture */
@@ -487,50 +493,48 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (attr != mat.values.end())
 	{
 		auto texIdx = attr->second.TextureIndex();
-		material->MetallicRoughnessTexture = getVulkanTexture(texIdx);
+		material->metallic_roughness_texture = get_vulkan_texture(texIdx);
 	}
 
 	/*
 	Save material
 	*/
-	_materials.push_back(std::shared_ptr<VulkanMaterial>(material));
+	_materials.push_back(sptr<vlk_material>(material));
 }
 
 void vlk_model::load_texture(const tinygltf::Image& image)
 {
-	TextureCreateInfo createInfo = {};
-	createInfo.Data = (void*)image.image.data();
-	createInfo.Size = image.image.size();
-	createInfo.Width = static_cast<uint32_t>(image.width);
-	createInfo.Height = static_cast<uint32_t>(image.height);
-	createInfo.Type = TEXTURE_TYPE_2D;
+	vlk_texture_create_info create_info = {};
+	create_info.data = (void*)image.image.data();
+	create_info.size = image.image.size();
+	create_info.width = static_cast<uint32_t>(image.width);
+	create_info.height = static_cast<uint32_t>(image.height);
 
 	/* Create and store texture */
-	auto texture = new VulkanTexture(_device, createInfo);
-	_textures.push_back(std::shared_ptr<VulkanTexture>(texture));
+	auto texture = new vlk_texture(_device, create_info);
+	_textures.push_back(sptr<vlk_texture>(texture));
 }
 
 void vlk_model::render_mesh
 	(
 	size_t							index,
-	const RenderFrame&				frame,
+	const vlk_frame&				frame,
 	VkCommandBuffer					cmd,
-	glm::mat4						transform,
-	const VulkanModelInstance& instance
+	glm::mat4						transform
 	) const
 {
 	/* Validate index */
-	if (index >= _gltf.meshes.size())
+	if (index >= _gltf->meshes.size())
 	{
 		/* Invalid index */
 		return;
 	}
 
 	/* Get the mesh */
-	const auto& mesh = _gltf.meshes[index];
+	const auto& mesh = _gltf->meshes[index];
 
-	// Bind vertex buffers for mesh
-	vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(_vertexBindingBuffers.size()), _vertexBindingBuffers.data(), _vertexBindingOffsets.data());
+	/* Bind vertex buffers for mesh */
+	vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(_vertex_binding_buffers.size()), _vertex_binding_buffers.data(), _vertex_binding_offsets.data());
 
 	/*
 	Render each mesh component (GLTF "primitives")
@@ -542,7 +546,7 @@ void vlk_model::render_mesh
 		/*
 		Bind pipeline for primitive
 		*/
-		prim.Pipeline.Bind(cmd);
+		prim.pipeline.bind(cmd);
 
 		/*
 		Update instance descriptor set for primitive
@@ -569,6 +573,11 @@ void vlk_model::render_mesh
 		d->Bind(frame, cmd, prim.Pipeline.GetLayoutHandle());
 
 		/*
+		Bind material descriptor set
+		*/
+
+
+		/*
 		Bind index buffer for primitive
 		*/
 		auto a = _gltf.accessors[prim.Data.indices];
@@ -588,17 +597,18 @@ void vlk_model::render_mesh
 void vlk_model::render_node
 	(
 	size_t							index,
-	const RenderFrame& frame,
+	const vlk_frame&				frame,
 	VkCommandBuffer					cmd,
 	glm::mat4						parentTransform,
 	const VulkanModelInstance& instance
 	) const
 {
 	/* Validate index */
-	// TOOD : the GLTF loader should be trusted to provide validate indices
+	// TOOD : the GLTF loader should be trusted to provide valid indices
 	if (index >= _gltf.nodes.size())
 	{
 		/* Invalid index */
+		LOG_WARN_FMT("Invalid GLTF node index {0}.", index);
 		return;
 	}
 

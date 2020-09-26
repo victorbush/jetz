@@ -219,6 +219,9 @@
     <ClInclude Include="gpu\vlk\pipelines\vlk_pipeline_create_info.h">
       <Filter>gpu\vlk\pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="gpu\vlk\vlk_material.h">
+      <Filter>gpu\vlk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -373,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\pipelines\vlk_pipeline_cache.cpp">
       <Filter>gpu\vlk\pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="gpu\vlk\vlk_material.cpp">
+      <Filter>gpu\vlk</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

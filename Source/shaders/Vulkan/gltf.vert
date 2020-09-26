@@ -4,28 +4,30 @@
 /*---------------------------------------------------------
 Uniforms - per view
 ---------------------------------------------------------*/
-layout(set = 0, binding = 0) uniform PerViewUBO {
+layout(set = 0, binding = 0) uniform PerViewUbo {
     mat4 view;
     mat4 proj;
 	vec3 cameraPos;
 } viewUbo;
 
 /*---------------------------------------------------------
-Uniforms - per instance
+Push constants
 ---------------------------------------------------------*/
-layout(set = 1, binding = 0) uniform PerMeshInstanceUBO {
-	mat4 model;
+layout(std430, push_constant) uniform PushConstants
+{
+	mat4			model_matrix;
+} constants;
 
-	vec4 BaseColorFactor;
-	vec3 EmissiveFactor;
-	float MetallicFactor;
-	float RoughnessFactor;
-} meshUbo;
-
+/*---------------------------------------------------------
+Inputs
+---------------------------------------------------------*/
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec2 inTexCoord;
 
+/*---------------------------------------------------------
+Outputs
+---------------------------------------------------------*/
 layout(location = 0) out vec3 fragNormal;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 lightDirNorm;
@@ -35,8 +37,11 @@ out gl_PerVertex {
     vec4 gl_Position;
 };
 
+/*---------------------------------------------------------
+Functions
+---------------------------------------------------------*/
 void main() {
-	vec4 worldPos = meshUbo.model * vec4(inPosition, 1.0);
+	vec4 worldPos = constants.model_matrix * vec4(inPosition, 1.0);
 
 	vec4 lightPosWorld = vec4(-10.0, 0.0, 0.0, 1.0);
 	vec4 lightDir =  lightPosWorld - worldPos;

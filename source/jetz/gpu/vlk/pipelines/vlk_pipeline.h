@@ -39,7 +39,7 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	void					bind(VkCommandBuffer cmd);
+	void					bind(VkCommandBuffer cmd) const;
 	virtual void			resize(VkExtent2D extent) = 0;
 
 protected:

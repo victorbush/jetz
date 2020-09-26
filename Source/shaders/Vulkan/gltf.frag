@@ -2,16 +2,14 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 /*---------------------------------------------------------
-Uniforms - per instance
+Uniforms - Material properties
 ---------------------------------------------------------*/
-layout(set = 1, binding = 0) uniform PerMeshInstanceUBO {
-	mat4 model;
-
-	vec4 BaseColorFactor;
-	vec3 EmissiveFactor;
-	float MetallicFactor;
-	float RoughnessFactor;
-} instUbo;
+layout(set = 1, binding = 0) uniform MaterialUbo {
+	vec4 baseColorFactor;
+	vec3 emissiveFactor;
+	float metallicFactor;
+	float roughnessFactor;
+} materialUbo;
 
 layout(set = 1, binding = 1) uniform sampler2D baseColorTexture;
 layout(set = 1, binding = 2) uniform sampler2D metallicRoughnessTexture;
@@ -40,7 +38,7 @@ vec4 lambertian();
 
 void main() {
 	//outColor = vec4(1.0, 1.0, 1.0, 1.0);
-	//outColor = instUbo.BaseColorFactor * texture(baseColorTexture, fragTexCoord);
+	//outColor = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 	//outColor = lambertian();
 	outColor = blinnPhong();
 }
@@ -57,7 +55,7 @@ vec4 lambertian()
 	*/
 
 	/* Base diffuse color */
-	vec4 Kd = instUbo.BaseColorFactor * texture(baseColorTexture, fragTexCoord);
+	vec4 Kd = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 
 	/* Light intensity */
 	vec4 I = vec4(1.0, 1.0, 1.0, 1.0);
@@ -93,7 +91,7 @@ vec4 blinnPhong()
 	*/
 
 	/* Base diffuse color */
-	vec4 Kd = instUbo.BaseColorFactor * texture(baseColorTexture, fragTexCoord);
+	vec4 Kd = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 
 	/* Normal - combination of surface normal and sampled normal texture */
 	vec3 n = fragNormal * texture(normalTexture, fragTexCoord).xyz;

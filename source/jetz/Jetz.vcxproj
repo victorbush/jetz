@@ -52,6 +52,7 @@
     <ClInclude Include="gpu\vlk\vlk_factory.h" />
     <ClInclude Include="gpu\vlk\vlk_frame.h" />
     <ClInclude Include="gpu\vlk\vlk_gpu.h" />
+    <ClInclude Include="gpu\vlk\vlk_material.h" />
     <ClInclude Include="gpu\vlk\vlk_model.h" />
     <ClInclude Include="gpu\vlk\vlk_swapchain.h" />
     <ClInclude Include="gpu\vlk\vlk_texture.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="gpu\vlk\vlk.cpp" />
     <ClCompile Include="gpu\vlk\vlk_device.cpp" />
     <ClCompile Include="gpu\vlk\vlk_gpu.cpp" />
+    <ClCompile Include="gpu\vlk\vlk_material.cpp" />
     <ClCompile Include="gpu\vlk\vlk_model.cpp" />
     <ClCompile Include="gpu\vlk\vlk_swapchain.cpp" />
     <ClCompile Include="gpu\vlk\vlk_texture.cpp" />

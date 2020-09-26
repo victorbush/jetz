@@ -16,8 +16,10 @@ INCLUDES
 #include "jetz/gpu/gpu_model.h"
 #include "jetz/gpu/vlk/vlk_buffer.h"
 #include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_material.h"
 #include "jetz/gpu/vlk/pipelines/vlk_gltf_pipeline.h"
+#include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "thirdparty/tinygltf/tiny_gltf.h"
 
 /*=============================================================================
@@ -30,13 +32,17 @@ namespace jetz {
 TYPES
 =============================================================================*/
 
-class vlk_pipeline_chache
-
 class vlk_model : public gpu_model {
 
 public:
 
-	vlk_model(vlk_device& dev, uptr<tinygltf::Model> gltf, vlk_pipeline_cache& pipeline_cache);
+	vlk_model
+		(
+		vlk_device&				dev,
+		uptr<tinygltf::Model>	gltf,
+		vlk_pipeline_cache&		pipeline_cache
+		);
+
 	virtual ~vlk_model() override;
 
 	/*-----------------------------------------------------
@@ -152,6 +158,14 @@ private:
 	void					load_material(const tinygltf::Material& mat);
 	void					load_texture(const tinygltf::Image& image);
 
+	void render_mesh
+		(
+		size_t							index,
+		const vlk_frame&				frame,
+		VkCommandBuffer					cmd,
+		glm::mat4						transform
+		) const;
+
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
@@ -159,23 +173,25 @@ private:
 	/*
 	Dependencies
 	*/
-	vlk_device&						_device;
-	uptr<tinygltf::Model>			_gltf;
-	vlk_pipeline_cache&				_pipeline_cache;
+	vlk_device&							_device;
+	uptr<tinygltf::Model>				_gltf;
+	vlk_pipeline_cache&					_pipeline_cache;
 
 	/*
 	Create/destroy
 	*/
-	std::vector<uptr<vlk_buffer>>	_buffers;
+	std::vector<uptr<vlk_buffer>>		_buffers;
+	std::vector<wptr<vlk_material>>		_materials;
+	std::vector<wptr<vlk_texture>>		_textures;
 
 	/* A list of primitives for each mesh */
-	std::vector<std::vector<Primitive>>		_primitives;
+	std::vector<std::vector<Primitive>>	_primitives;
 
 	/* Vertex input binding data */
-	std::vector<VkBuffer>			_vertex_binding_buffers;
-	std::vector<VkDeviceSize>		_vertex_binding_offsets;
+	std::vector<VkBuffer>				_vertex_binding_buffers;
+	std::vector<VkDeviceSize>			_vertex_binding_offsets;
 	std::vector<VkVertexInputBindingDescription>
-									_vertex_binding_descriptions;
+										_vertex_binding_descriptions;
 
 	/*
 	Other

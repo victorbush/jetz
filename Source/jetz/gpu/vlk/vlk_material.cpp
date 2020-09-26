@@ -1,12 +1,13 @@
 /*=============================================================================
-vlk_pipeline.cpp
+vlk_material.cpp
 =============================================================================*/
 
 /*=============================================================================
 INCLUDES
 =============================================================================*/
 
-#include "jetz/gpu/vlk/pipelines/vlk_pipeline.h"
+#include "jetz/gpu/vlk/vlk_material.h"
+#include "jetz/main/log.h"
 
 /*=============================================================================
 NAMESPACE
@@ -18,32 +19,23 @@ namespace jetz {
 CONSTRUCTORS
 =============================================================================*/
 
-vlk_pipeline::vlk_pipeline
-	(
-	vlk_device&						device,
-	VkRenderPass					render_pass,
-	VkExtent2D						extent
-	)
-	: _dev(device),
-	_render_pass(render_pass),
-	_extent(extent),
-	_handle(nullptr),
-	_layout(nullptr)
+vlk_material::vlk_material(const vlk_device& device)
+	: 
+	_device(device),
+	base_color_factor(1.0f, 1.0f, 1.0f, 1.0f),
+	emissive_factor(0.0f, 0.0f, 0.0f),
+	metallic_factor(1.0f),
+	roughness_factor(1.0f)
 {
 }
 
-vlk_pipeline::~vlk_pipeline()
+vlk_material::~vlk_material()
 {
 }
 
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
-
-void vlk_pipeline::bind(VkCommandBuffer cmd) const
-{
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _handle);
-}
 
 /*=============================================================================
 PRIVATE METHODS

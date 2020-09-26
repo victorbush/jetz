@@ -7,22 +7,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="vulkan\shader.vert">
-      <Filter>vulkan</Filter>
-    </CustomBuild>
     <CustomBuild Include="vulkan\imgui.frag">
       <Filter>vulkan</Filter>
     </CustomBuild>
     <CustomBuild Include="vulkan\imgui.vert">
       <Filter>vulkan</Filter>
     </CustomBuild>
-    <CustomBuild Include="vulkan\shader.frag">
-      <Filter>vulkan</Filter>
-    </CustomBuild>
     <CustomBuild Include="vulkan\plane.frag">
       <Filter>vulkan</Filter>
     </CustomBuild>
     <CustomBuild Include="vulkan\plane.vert">
+      <Filter>vulkan</Filter>
+    </CustomBuild>
+    <CustomBuild Include="vulkan\gltf.frag">
+      <Filter>vulkan</Filter>
+    </CustomBuild>
+    <CustomBuild Include="vulkan\gltf.vert">
       <Filter>vulkan</Filter>
     </CustomBuild>
   </ItemGroup>
