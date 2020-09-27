@@ -73,27 +73,64 @@ void vlk_material_layout::create_layout()
 	ubo_layout_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 	ubo_layout_binding.pImmutableSamplers = NULL;
 
-	/* Diffuse texture */
-	VkDescriptorSetLayoutBinding diffuse_texture_binding = {};
-	diffuse_texture_binding.binding = 1;
-	diffuse_texture_binding.descriptorCount = 1;
-	diffuse_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	diffuse_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	diffuse_texture_binding.pImmutableSamplers = NULL;
+	/* Base color texture */
+	VkDescriptorSetLayoutBinding base_color_texture_binding = {};
+	base_color_texture_binding.binding = 1;
+	base_color_texture_binding.descriptorCount = 1;
+	base_color_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	base_color_texture_binding.pImmutableSamplers = nullptr;
+	base_color_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	VkDescriptorSetLayoutBinding bindings[2];
-	memset(bindings, 0, sizeof(bindings));
-	bindings[0] = ubo_layout_binding;
-	bindings[1] = diffuse_texture_binding;
+	/* Metallic/roughness texture */
+	VkDescriptorSetLayoutBinding metallic_roughness_texture_binding = {};
+	metallic_roughness_texture_binding.binding = 2;
+	metallic_roughness_texture_binding.descriptorCount = 1;
+	metallic_roughness_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	metallic_roughness_texture_binding.pImmutableSamplers = nullptr;
+	metallic_roughness_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	/* Normal texture */
+	VkDescriptorSetLayoutBinding normal_texture_binding = {};
+	normal_texture_binding.binding = 3;
+	normal_texture_binding.descriptorCount = 1;
+	normal_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	normal_texture_binding.pImmutableSamplers = nullptr;
+	normal_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	/* Occlusion texture */
+	VkDescriptorSetLayoutBinding occlusion_texture_binding = {};
+	occlusion_texture_binding.binding = 4;
+	occlusion_texture_binding.descriptorCount = 1;
+	occlusion_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	occlusion_texture_binding.pImmutableSamplers = nullptr;
+	occlusion_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	/* Emissive texture */
+	VkDescriptorSetLayoutBinding emissive_texture_binding = {};
+	emissive_texture_binding.binding = 5;
+	emissive_texture_binding.descriptorCount = 1;
+	emissive_texture_binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	emissive_texture_binding.pImmutableSamplers = nullptr;
+	emissive_texture_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	std::vector< VkDescriptorSetLayoutBinding> bindings =
+	{
+		ubo_layout_binding,
+		base_color_texture_binding,
+		metallic_roughness_texture_binding,
+		normal_texture_binding,
+		occlusion_texture_binding,
+		emissive_texture_binding
+	};
 
 	VkDescriptorSetLayoutCreateInfo layout_info = {};
 	layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	layout_info.bindingCount = cnt_of_array(bindings);
-	layout_info.pBindings = bindings;
+	layout_info.bindingCount = bindings.size();
+	layout_info.pBindings = bindings.data();
 
 	if (vkCreateDescriptorSetLayout(dev.get_handle(), &layout_info, NULL, &handle) != VK_SUCCESS)
 	{
-		LOG_FATAL("Failed to create descriptor set layout.");
+		LOG_FATAL("Failed to create material descriptor set layout.");
 	}
 }
 

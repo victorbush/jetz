@@ -12,8 +12,10 @@ INCLUDES
 #include <vulkan/vulkan.h>
 
 #include "jetz/gpu/gpu_material.h"
+#include "jetz/gpu/vlk/vlk_buffer.h"
 #include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/gpu/vlk/vlk_texture.h"
+#include "jetz/gpu/vlk/descriptors/vlk_material_layout.h"
 #include "jetz/main/common.h"
 
 /*=============================================================================
@@ -26,17 +28,11 @@ namespace jetz {
 TYPES
 =============================================================================*/
 
-class vlk_material : public gpu_material {
-
-public:
-
-	vlk_material(const vlk_device& device);
-	virtual ~vlk_material() override;
-
-	/*-----------------------------------------------------
-	Public variables
-	-----------------------------------------------------*/
-
+/**
+This is used to initialize a material.
+*/
+struct vlk_material_create_info
+{
 	/*
 	Normal/occlusion/emissive
 	*/
@@ -53,25 +49,47 @@ public:
 	float							metallic_factor;
 	wptr<vlk_texture>				metallic_roughness_texture;
 	float							roughness_factor;
+};
+
+/**
+This maps the UBO layout as used by the shader.
+*/
+struct vlk_material_ubo
+{
+	glm::vec4		base_color_factor;
+	glm::vec3		emissive_factor;
+	float			metallic_factor;
+	float			roughness_factor;
+};
+
+class vlk_material : public gpu_material {
+
+public:
+
+	vlk_material(vlk_device& device, const vlk_material_create_info& create_info);
+	virtual ~vlk_material() override;
+
+	/*-----------------------------------------------------
+	Public variables
+	-----------------------------------------------------*/
 
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
 
 	/** Binds the descriptor set for the material for rendering. */
-	void bind_descriptor_set();
-
-	/**
-	Updates the descriptor set using the current material properties.
-	This will update the data in the material UBO as well.
-	*/
-	void update_descriptor_set();
+	void bind() const;
 
 private:
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
+
+	void create_buffers();
+	void create_sets();
+	void destroy_buffers();
+	void destroy_sets();
 
 	/*-----------------------------------------------------
 	Private variables
@@ -80,7 +98,31 @@ private:
 	/*
 	Dependencies
 	*/
-	const vlk_device&			_device;
+	vlk_device&					_device;
+	sptr<vlk_material_layout>	_layout;
+
+	/*
+	Create/destroy
+	*/
+	std::vector<uptr<vlk_buffer>>	_buffers;
+	std::vector<VkDescriptorSet>	_sets;
+
+	/*
+	Normal/occlusion/emissive
+	*/
+	glm::vec3					_emissive_factor;
+	wptr<vlk_texture>			_emissive_texture;
+	wptr<vlk_texture>			_normal_texture;
+	wptr<vlk_texture>			_occlusion_texture;
+
+	/*
+	pbrMetallicRoughness
+	*/
+	glm::vec4					_base_color_factor;
+	wptr<vlk_texture>			_base_color_texture;
+	float						_metallic_factor;
+	wptr<vlk_texture>			_metallic_roughness_texture;
+	float						_roughness_factor;
 };
 
 }   /* namespace jetz */
