@@ -549,43 +549,36 @@ void vlk_model::render_mesh
 		prim.pipeline.bind(cmd);
 
 		/*
-		Update instance descriptor set for primitive
+		Set shader push constants
 		*/
-		auto descSet = instance.GetDescriptorSet(prim.PrimID);
-		auto d = descSet.lock();
+		push_constant pc = {};
+		pc.vertex.model_matrix = transform;
 
-		if (d == nullptr) throw new std::runtime_error("What?");
+		uint32_t pc_vert_size = sizeof(push_constant_vertex);
+		vkCmdPushConstants(frame.cmd_buf, prim.pipeline.get_layout_handle(), VK_SHADER_STAGE_VERTEX_BIT, 0, pc_vert_size, &pc.vertex);
 
-		PerMeshInstanceUBO data = {};
-		data.modelMatrix = transform;
-
-		auto mat = prim.Material.lock();
-		if (mat != nullptr)
+		/*
+		Bind material
+		*/
+		auto mat = prim.material.lock();
+		if (mat == nullptr)
 		{
-			data.BaseColorFactor = mat->BaseColorFactor;
+			LOG_ERROR("Could not get material for mesh.");
 		}
-
-		d->UpdateUniformBuffer(frame, data);
-
-		/*
-		Bind instance descriptor set for primitive
-		*/
-		d->Bind(frame, cmd, prim.Pipeline.GetLayoutHandle());
-
-		/*
-		Bind material descriptor set
-		*/
-
+		else
+		{
+			mat->bind(frame, prim.pipeline.get_layout_handle());
+		}
 
 		/*
 		Bind index buffer for primitive
 		*/
-		auto a = _gltf.accessors[prim.Data.indices];
-		auto bv = _gltf.bufferViews[a.bufferView];
+		auto a = _gltf->accessors[prim.data.indices];
+		auto bv = _gltf->bufferViews[a.bufferView];
 		auto offset = a.byteOffset + bv.byteOffset;
-		auto idxType = getVkIndexType(a.componentType);
+		auto idx_type = get_vk_index_type(a.componentType);
 
-		vkCmdBindIndexBuffer(cmd, _buffers[bv.buffer]->GetHandle(), offset, idxType);
+		vkCmdBindIndexBuffer(cmd, _buffers[bv.buffer]->get_handle(), offset, idx_type);
 
 		/*
 		Draw indexed
@@ -599,13 +592,12 @@ void vlk_model::render_node
 	size_t							index,
 	const vlk_frame&				frame,
 	VkCommandBuffer					cmd,
-	glm::mat4						parentTransform,
-	const VulkanModelInstance& instance
+	glm::mat4						parent_transform
 	) const
 {
 	/* Validate index */
 	// TOOD : the GLTF loader should be trusted to provide valid indices
-	if (index >= _gltf.nodes.size())
+	if (index >= _gltf->nodes.size())
 	{
 		/* Invalid index */
 		LOG_WARN_FMT("Invalid GLTF node index {0}.", index);
@@ -613,12 +605,12 @@ void vlk_model::render_node
 	}
 
 	/* Get the node */
-	const auto& node = _gltf.nodes[index];
+	const auto& node = _gltf->nodes[index];
 
 	/*
 	Compute the transform for this node
 	*/
-	glm::mat4 transform = glm::mat4(parentTransform);
+	glm::mat4 transform = glm::mat4(parent_transform);
 
 	if (node.matrix.size() == 16)
 	{
@@ -657,12 +649,12 @@ void vlk_model::render_node
 	/*
 	A node can contain a mesh or a camera, or it can be empty and just define a transform
 	*/
-	if (node.mesh >= 0 && node.mesh < _gltf.meshes.size())
+	if (node.mesh >= 0 && node.mesh < _gltf->meshes.size())
 	{
 		/* Node points to mesh */
-		renderMesh(node.mesh, frame, cmd, transform, instance);
+		render_mesh(node.mesh, frame, cmd, transform);
 	}
-	else if (node.camera >= 0 && node.camera < _gltf.cameras.size())
+	else if (node.camera >= 0 && node.camera < _gltf->cameras.size())
 	{
 		/* Node points to camera */
 	}
@@ -674,7 +666,7 @@ void vlk_model::render_node
 	/* Render child nodes */
 	for (auto childIndex : node.children)
 	{
-		renderNode(childIndex, frame, cmd, transform, instance);
+		render_node(childIndex, frame, cmd, transform);
 	}
 }
 

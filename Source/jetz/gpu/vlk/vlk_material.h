@@ -14,6 +14,7 @@ INCLUDES
 #include "jetz/gpu/gpu_material.h"
 #include "jetz/gpu/vlk/vlk_buffer.h"
 #include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_texture.h"
 #include "jetz/gpu/vlk/descriptors/vlk_material_layout.h"
 #include "jetz/main/common.h"
@@ -78,7 +79,11 @@ public:
 	-----------------------------------------------------*/
 
 	/** Binds the descriptor set for the material for rendering. */
-	void bind() const;
+	void bind
+		(
+		const vlk_frame&			frame,
+		VkPipelineLayout			pipeline_layout
+		) const;
 
 private:
 

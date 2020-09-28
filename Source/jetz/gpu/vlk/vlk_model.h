@@ -120,6 +120,7 @@ private:
 	/*-----------------------------------------------------
 	Class to encapsulate GLTF mesh primitives
 	-----------------------------------------------------*/
+
 	class Primitive
 	{
 	public:
@@ -134,6 +135,22 @@ private:
 
 		Primitive(const tinygltf::Primitive& data, const vlk_gltf_pipeline& pipeline)
 			: data(data), pipeline(pipeline), id(0), mesh_index(0), prim_index(0), index_type(VK_INDEX_TYPE_UINT16) {}
+	};
+
+	/*-----------------------------------------------------
+	Map of the push constant data used in the shader
+	-----------------------------------------------------*/
+
+	/** Vertex shader push constants */
+	struct push_constant_vertex
+	{
+		glm::mat4	model_matrix;	/* 16 * 4 = 64 bytes */
+	};
+
+	/** All push constants */
+	struct push_constant
+	{
+		push_constant_vertex	vertex;
 	};
 
 	/*-----------------------------------------------------
@@ -164,6 +181,14 @@ private:
 		const vlk_frame&				frame,
 		VkCommandBuffer					cmd,
 		glm::mat4						transform
+		) const;
+
+	void render_node
+		(
+		size_t							index,
+		const vlk_frame&				frame,
+		VkCommandBuffer					cmd,
+		glm::mat4						parent_transform
 		) const;
 
 	/*-----------------------------------------------------

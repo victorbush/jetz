@@ -45,6 +45,11 @@ void vlk_pipeline::bind(VkCommandBuffer cmd) const
 	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _handle);
 }
 
+VkPipelineLayout vlk_pipeline::get_layout_handle() const
+{
+	return _layout;
+}
+
 /*=============================================================================
 PRIVATE METHODS
 =============================================================================*/

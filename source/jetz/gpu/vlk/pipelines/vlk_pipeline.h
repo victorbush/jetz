@@ -39,6 +39,7 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
+	VkPipelineLayout		get_layout_handle() const;
 	void					bind(VkCommandBuffer cmd) const;
 	virtual void			resize(VkExtent2D extent) = 0;
 
