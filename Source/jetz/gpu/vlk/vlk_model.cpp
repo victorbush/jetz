@@ -417,7 +417,7 @@ wptr<vlk_texture> vlk_model::get_vulkan_texture(int index)
 
 void vlk_model::load_material(const tinygltf::Material& mat)
 {
-	auto material = new vlk_material(_device);
+	vlk_material_create_info mat_info = {};
 
 	/*
 	Normal/occlusion/emissive
@@ -434,14 +434,14 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (addAttr != mat.additionalValues.end())
 	{
 		auto texIdx = addAttr->second.TextureIndex();
-		material->normal_texture = get_vulkan_texture(texIdx);
+		mat_info.normal_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Emissive factor */
 	addAttr = mat.additionalValues.find(MAT_EMISSIVE_FACTOR);
 	if (addAttr != mat.additionalValues.end())
 	{
-		material->emissive_factor = glm::make_vec3(addAttr->second.number_array.data());
+		mat_info.emissive_factor = glm::make_vec3(addAttr->second.number_array.data());
 	}
 
 	/* Emissive texture */
@@ -449,11 +449,16 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (addAttr != mat.additionalValues.end())
 	{
 		auto texIdx = addAttr->second.TextureIndex();
-		material->emissive_texture = get_vulkan_texture(texIdx);
+		mat_info.emissive_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Occlusion texture */
-	// TODO
+	addAttr = mat.additionalValues.find(MAT_OCCLUSION_TEXTURE);
+	if (addAttr != mat.additionalValues.end())
+	{
+		auto texIdx = addAttr->second.TextureIndex();
+		mat_info.occlusion_texture = get_vulkan_texture(texIdx);
+	}
 
 	/*
 	PBR Metallic/Roughness
@@ -463,7 +468,7 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	auto attr = mat.values.find(MAT_BASE_COLOR_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->base_color_factor = glm::vec4(glm::make_vec4(attr->second.ColorFactor().data()));
+		mat_info.base_color_factor = glm::vec4(glm::make_vec4(attr->second.ColorFactor().data()));
 	}
 
 	/* Base color texture */
@@ -471,21 +476,21 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (attr != mat.values.end())
 	{
 		auto texIdx = attr->second.TextureIndex();
-		material->base_color_texture = get_vulkan_texture(texIdx);
+		mat_info.base_color_texture = get_vulkan_texture(texIdx);
 	}
 
 	/* Metallic factor */
 	attr = mat.values.find(MAT_METALLIC_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->metallic_factor = static_cast<float>(attr->second.Factor());
+		mat_info.metallic_factor = static_cast<float>(attr->second.Factor());
 	}
 
 	/* Roughness factor */
 	attr = mat.values.find(MAT_ROUGHNESS_FACTOR);
 	if (attr != mat.values.end())
 	{
-		material->roughness_factor = static_cast<float>(attr->second.Factor());
+		mat_info.roughness_factor = static_cast<float>(attr->second.Factor());
 	}
 
 	/* Metallic/roughness texture */
@@ -493,12 +498,13 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	if (attr != mat.values.end())
 	{
 		auto texIdx = attr->second.TextureIndex();
-		material->metallic_roughness_texture = get_vulkan_texture(texIdx);
+		mat_info.metallic_roughness_texture = get_vulkan_texture(texIdx);
 	}
 
 	/*
 	Save material
 	*/
+	auto material = new vlk_material(_device, mat_info);
 	_materials.push_back(sptr<vlk_material>(material));
 }
 
