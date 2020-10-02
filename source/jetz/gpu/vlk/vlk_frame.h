@@ -27,12 +27,19 @@ enum class vlk_frame_status {
 	SWAPCHAIN_OUT_OF_DATE
 };
 
-class vlk_frame : public gpu_frame {
+class vlk_frame {
 
 public:
 
-	vlk_frame();
+	vlk_frame(uint8_t frame_idx);
 	~vlk_frame();
+
+	/*-----------------------------------------------------
+	Public methods
+	-----------------------------------------------------*/
+
+	gpu_frame&						get_gpu_frame();
+	uint8_t							get_frame_idx() const;
 
 	/*-----------------------------------------------------
 	Public variables
@@ -40,12 +47,16 @@ public:
 		
 	VkCommandBuffer					cmd_buf;		/* command buffer */
 	VkCommandBuffer					picker_cmd_buf;
-	uint32_t						frame_idx;
 	uint32_t						image_idx;
 	double							delta_time;
 
 private: 
 
+	/*-----------------------------------------------------
+	Private variables
+	-----------------------------------------------------*/
+
+	gpu_frame						_gpu_frame;
 };
 
 }   /* namespace jetz */

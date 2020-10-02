@@ -14,7 +14,6 @@ INCLUDES
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_swapchain.h"
 #include "jetz/gpu/vlk/descriptors/vlk_per_view_set.h"
-#include "jetz/gpu/vlk/pipelines/vlk_imgui_pipeline.h"
 #include "jetz/main/camera.h"
 #include "thirdparty/imgui/imgui.h"
 
@@ -42,6 +41,7 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
+	vlk_frame& get_frame(const gpu_frame& gpu_frame);
 	int get_picker_id(const vlk_frame& frame, float x, float y);
 
 protected:
@@ -63,12 +63,10 @@ private:
 
 	void create_descriptors();
 	void create_frame_info();
-	void create_pipelines();
 	void create_swapchain(uint32_t width, uint32_t height);
 
 	void destroy_descriptors();
 	void destroy_frame_info();
-	void destroy_pipelines();
 	void destroy_surface();
 	void destroy_swapchain();
 
@@ -79,17 +77,15 @@ private:
 	/*
 	Dependencies
 	*/
-	vlk_device&			dev;
-	VkInstance			instance;
-	VkSurfaceKHR		surface;		/* Although this is a dependency, we must destroy it ourselves */
+	vlk_device&					dev;
+	VkInstance					instance;
+	VkSurfaceKHR				surface;		/* Although this is a dependency, we must destroy it ourselves */
 
 	/*
 	Create/destroy
 	*/
-	vlk_per_view_set*	per_view_set;
-	vlk_swapchain*		swapchain;
-
-	vlk_imgui_pipeline*	imgui_pipeline;
+	vlk_per_view_set*			per_view_set;
+	vlk_swapchain*				swapchain;
 
 	/*
 	Create/destroy

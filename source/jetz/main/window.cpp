@@ -27,7 +27,6 @@ PUBLIC METHODS
 =============================================================================*/
 
 window::window(int width, int height) :
-	_gpu_window(nullptr),
 	_hndl(nullptr),
 	_input_system(nullptr),
 	_on_window_close(nullptr)
@@ -63,7 +62,7 @@ VkResult window::create_surface(VkInstance instance, VkSurfaceKHR* surface) cons
 	return glfwCreateWindowSurface(instance, _hndl, NULL, surface);
 }
 
-gpu_window* window::get_gpu_window() const
+wptr<gpu_window> window::get_gpu_window() const
 {
 	return _gpu_window;
 }
@@ -73,7 +72,7 @@ uint32_t window::get_height() const
 	return _height;
 }
 
-void window::set_gpu_window(jetz::gpu_window* window)
+void window::set_gpu_window(wptr<gpu_window> window)
 {
 	_gpu_window = window;
 }
@@ -130,9 +129,9 @@ void window::framebuffer_resize_callback(GLFWwindow* window, int width, int heig
 	data->_width = (uint32_t)width;
 	data->_height = (uint32_t)height;
 
-	if (data->_gpu_window)
+	if (!data->_gpu_window.expired())
 	{
-		data->_gpu_window->resize(data->_width, data->_height);
+		data->_gpu_window.lock()->resize(data->_width, data->_height);
 	}
 }
 

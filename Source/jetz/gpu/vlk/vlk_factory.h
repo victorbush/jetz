@@ -13,6 +13,7 @@ INCLUDES
 #include "jetz/main/common.h"
 #include "jetz/gpu/gpu_factory.h"
 #include "jetz/gpu/gpu_model.h"
+#include "jetz/gpu/vlk/vlk_device.h"
 #include "thirdparty/tinygltf/tiny_gltf.h"
 
 /*=============================================================================
@@ -29,6 +30,12 @@ class vlk_factory : public gpu_factory {
 
 public:
 
+	vlk_factory
+		(
+		vlk_device&					device
+		);
+	virtual ~vlk_factory();
+
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
@@ -40,6 +47,8 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
+
+	vlk_device&					_device;
 
 	/*-----------------------------------------------------
 	Private Methods

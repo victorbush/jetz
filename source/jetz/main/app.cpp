@@ -52,16 +52,13 @@ void app::run_frame()
 	_frame_time = (float)glfwGetTime();
 	_frame_time_delta = _frame_time - last_time;
 
-	/* Let loader system run */
-	_loader_system.run(_ecs, _gpu);
-
 	/* Begin frame */
-	gpu_window* gpu_window = _window.get_gpu_window();
+	auto gpu_window = _window.get_gpu_window().lock();
 	gpu_frame& frame = gpu_window->begin_frame(_camera);
 
 	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
 
-
+	
 
 	/* 
 	Determine what to do based on app state
@@ -79,12 +76,16 @@ void app::run_frame()
 	}
 	else if (_state == app_state::EDITOR_RUNNING)
 	{
+		/* Let loader system run */
+		_loader_system.run(_world.get_ecs(), _gpu);
 
 		/* Process editor UI and functionality */
 		_ed.think();
 
-	}
 
+
+		_render_system.run(_world.get_ecs(), _gpu, frame);
+	}
 
 	//player_system__run(&j->world.ecs, &j->camera, j->frame_delta_time);
 	//render_system__run(&j->world.ecs, &j->window.gpu_window, frame);
@@ -119,7 +120,7 @@ void app::imgui_begin_frame(float delta_time, float width, float height)
 	ImGui::NewFrame();
 }
 
-void app::imgui_end_frame(gpu_window* window, gpu_frame& frame)
+void app::imgui_end_frame(sptr<gpu_window> window, gpu_frame& frame)
 {
 	/* End imgui frame */
 	ImGui::EndFrame();

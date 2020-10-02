@@ -9,17 +9,12 @@ INCLUDES
 =============================================================================*/
 
 #include <glm/glm.hpp>
+#include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
 
 #include "jetz/main/common.h"
 #include "jetz/gpu/gpu_model.h"
-#include "jetz/gpu/vlk/vlk_buffer.h"
-#include "jetz/gpu/vlk/vlk_device.h"
-#include "jetz/gpu/vlk/vlk_frame.h"
-#include "jetz/gpu/vlk/vlk_material.h"
-#include "jetz/gpu/vlk/pipelines/vlk_gltf_pipeline.h"
-#include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "thirdparty/tinygltf/tiny_gltf.h"
 
 /*=============================================================================
@@ -27,9 +22,19 @@ NAMESPACE
 =============================================================================*/
 
 namespace jetz {
-	
+
+class ecs_transform_component;
+class gpu_frame;
+class vlk_buffer;
+class vlk_device;
+class vlk_frame;
+class vlk_material;
+class vlk_texture;
+class vlk_gltf_pipeline;
+class vlk_pipeline_cache;
+
 /*=============================================================================
-TYPES
+CLASS
 =============================================================================*/
 
 class vlk_model : public gpu_model {
@@ -38,9 +43,9 @@ public:
 
 	vlk_model
 		(
-		vlk_device&				dev,
-		uptr<tinygltf::Model>	gltf,
-		vlk_pipeline_cache&		pipeline_cache
+		vlk_device&					dev,
+		uptr<tinygltf::Model>		gltf,
+		sptr<vlk_pipeline_cache>	pipeline_cache
 		);
 
 	virtual ~vlk_model() override;
@@ -107,8 +112,10 @@ public:
 	const char* MAT_METALLIC_ROUGHNESS_TEXTURE = "metallicRoughnessTexture";
 
 	/*-----------------------------------------------------
-	Public Methods
+	jetz::gpu_model Methods
 	-----------------------------------------------------*/
+
+	virtual void render(const gpu_frame& frame, const ecs_transform_component& transform) override;
 
 protected:
 
@@ -135,22 +142,6 @@ private:
 
 		Primitive(const tinygltf::Primitive& data, const vlk_gltf_pipeline& pipeline)
 			: data(data), pipeline(pipeline), id(0), mesh_index(0), prim_index(0), index_type(VK_INDEX_TYPE_UINT16) {}
-	};
-
-	/*-----------------------------------------------------
-	Map of the push constant data used in the shader
-	-----------------------------------------------------*/
-
-	/** Vertex shader push constants */
-	struct push_constant_vertex
-	{
-		glm::mat4	model_matrix;	/* 16 * 4 = 64 bytes */
-	};
-
-	/** All push constants */
-	struct push_constant
-	{
-		push_constant_vertex	vertex;
 	};
 
 	/*-----------------------------------------------------
@@ -200,14 +191,14 @@ private:
 	*/
 	vlk_device&							_device;
 	uptr<tinygltf::Model>				_gltf;
-	vlk_pipeline_cache&					_pipeline_cache;
+	sptr<vlk_pipeline_cache>			_pipeline_cache;
 
 	/*
 	Create/destroy
 	*/
 	std::vector<uptr<vlk_buffer>>		_buffers;
-	std::vector<wptr<vlk_material>>		_materials;
-	std::vector<wptr<vlk_texture>>		_textures;
+	std::vector<sptr<vlk_material>>		_materials;
+	std::vector<sptr<vlk_texture>>		_textures;
 
 	/* A list of primitives for each mesh */
 	std::vector<std::vector<Primitive>>	_primitives;

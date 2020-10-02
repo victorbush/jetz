@@ -38,7 +38,7 @@ vec4 lambertian();
 
 void main() {
 	//outColor = vec4(1.0, 1.0, 1.0, 1.0);
-	//outColor = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	//outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 	//outColor = lambertian();
 	outColor = blinnPhong();
 }
@@ -55,7 +55,7 @@ vec4 lambertian()
 	*/
 
 	/* Base diffuse color */
-	vec4 Kd = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	vec4 Kd = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 
 	/* Light intensity */
 	vec4 I = vec4(1.0, 1.0, 1.0, 1.0);
@@ -91,7 +91,7 @@ vec4 blinnPhong()
 	*/
 
 	/* Base diffuse color */
-	vec4 Kd = instUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	vec4 Kd = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 
 	/* Normal - combination of surface normal and sampled normal texture */
 	vec3 n = fragNormal * texture(normalTexture, fragTexCoord).xyz;

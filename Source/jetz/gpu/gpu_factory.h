@@ -28,6 +28,9 @@ class gpu_factory {
 
 public:
 
+	gpu_factory();
+	virtual ~gpu_factory();
+
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/

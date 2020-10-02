@@ -48,7 +48,7 @@ public:
 	-----------------------------------------------------*/
 
 	VkImage get_image() const;
-	VkDescriptorImageInfo* get_image_info() const;
+	VkDescriptorImageInfo* get_image_info();
 
 protected:
 

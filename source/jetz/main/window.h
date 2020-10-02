@@ -12,6 +12,7 @@ INCLUDES
 
 #include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/gpu/gpu_window.h"
+#include "jetz/main/common.h"
 #include "thirdparty/glfw/glfw.h"
 
 /*=============================================================================
@@ -47,7 +48,7 @@ public:
 	/**
 	Gets the GPU window object that handles rendering for this window.
 	*/
-	gpu_window* get_gpu_window() const;
+	wptr<gpu_window> get_gpu_window() const;
 
 	/**
 	Gets the window height.
@@ -67,7 +68,7 @@ public:
 	/**
 	Sets the GPU window to use for rendering. The GPU window handles swapchains, rendering, etc.
 	*/
-	void set_gpu_window(gpu_window* window);
+	void set_gpu_window(wptr<jetz::gpu_window> window);
 
 	/**
 	Sets the input system to send user inputs to.
@@ -84,7 +85,7 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	gpu_window*						_gpu_window;
+	wptr<gpu_window>				_gpu_window;
 	GLFWwindow*						_hndl;
 	ecs_input_system*				_input_system;
 	std::function<void(void)>		_on_window_close;

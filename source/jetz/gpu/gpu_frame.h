@@ -24,27 +24,20 @@ class gpu_frame {
 
 public:
 
-	gpu_frame();
-	virtual ~gpu_frame() = 0;
+	gpu_frame(uint8_t frame_idx);
+	~gpu_frame();
 
 	/*-----------------------------------------------------
 	Public variables
 	-----------------------------------------------------*/
-	uint8_t				frame_idx;
+	uint8_t				get_frame_idx() const;
 
 private: 
 
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	
-	/*
-	Dependencies
-	*/
-
-	/*
-	Other
-	*/
+	uint8_t				_frame_idx;
 };
 
 }   /* namespace jetz */

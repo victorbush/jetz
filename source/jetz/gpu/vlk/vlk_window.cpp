@@ -12,6 +12,8 @@ INCLUDES
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/vlk_util.h"
+#include "jetz/gpu/vlk/pipelines/vlk_imgui_pipeline.h"
+#include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "jetz/main/common.h"
 #include "jetz/main/log.h"
 #include "jetz/main/utl.h"
@@ -46,16 +48,24 @@ static int read_pixel
 CONSTRUCTORS
 =============================================================================*/
 
-vlk_window::vlk_window(vlk_device& device, VkInstance vkInstance, VkSurfaceKHR surface, uint32_t width, uint32_t height)
-	: instance(vkInstance),
+vlk_window::vlk_window
+	(
+	vlk_device&		device,
+	VkInstance		vkInstance, 
+	VkSurfaceKHR	surface,
+	uint32_t		width,
+	uint32_t		height
+	)
+	:
+	instance(vkInstance),
 	dev(device),
 	surface(surface),
 	gpu_window(width, height)
 {
 	create_frame_info();
 	create_swapchain(width, height);
-	create_pipelines();
 	create_descriptors();
+	dev.get_pipeline_cache()->resize(swapchain->get_extent());
 }
 
 vlk_window::~vlk_window()
@@ -63,7 +73,6 @@ vlk_window::~vlk_window()
 	_frames.clear();
 
 	destroy_descriptors();
-	destroy_pipelines();
 	destroy_swapchain();
 	destroy_surface();
 	destroy_frame_info();
@@ -72,6 +81,16 @@ vlk_window::~vlk_window()
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
+
+vlk_frame& vlk_window::get_frame(const gpu_frame& gpu_frame)
+{
+	if (gpu_frame.get_frame_idx() >= _frames.size())
+	{
+		LOG_FATAL("Invalid frame index.");
+	}
+
+	return _frames[gpu_frame.get_frame_idx()];
+}
 
 int vlk_window::get_picker_id(const vlk_frame& frame, float x, float y)
 {
@@ -97,29 +116,31 @@ gpu_frame& vlk_window::do_begin_frame(camera& cam)
 
 	/* Setup per-view descriptor set data */
 	per_view_set->update(frame, cam, swapchain->get_extent());
+	dev.get_pipeline_cache()->bind_per_view_set(frame.cmd_buf, frame, per_view_set);
 
-	return frame;
+	return frame.get_gpu_frame();
 }
 
 void vlk_window::do_end_frame(const gpu_frame& frame)
 {
+	auto& vlk_frame = get_frame(frame);
+
 	/* End render pass, submit command buffer, preset swapchain */
-	swapchain->end_frame((const vlk_frame&)frame);
+	swapchain->end_frame(vlk_frame);
 }
 
 void vlk_window::do_render_imgui(const gpu_frame& frame, ImDrawData* draw_data)
 {
+	auto& vlk_frame = get_frame(frame);
+
 	/* Draw imgui */
-	imgui_pipeline->render((const vlk_frame&)frame, draw_data);
+	dev.get_pipeline_cache()->get_imgui_pipeline().render(vlk_frame, draw_data);
 }
 
 void vlk_window::do_resize()
 {
 	swapchain->recreate(_width, _height);
-
-	// TODO : Dynamic state instead of recreating pipelines
-	destroy_pipelines();
-	create_pipelines();
+	dev.get_pipeline_cache()->resize(swapchain->get_extent());
 }
 
 /*=============================================================================
@@ -133,18 +154,13 @@ void vlk_window::create_descriptors()
 
 void vlk_window::create_frame_info()
 {
-	_frames.resize(gpu::num_frame_buf);
+	_frames.clear();
+	_frames.reserve(gpu::num_frame_buf);
 
-	for (uint32_t i = 0; i < _frames.size(); ++i)
+	for (uint8_t i = 0; i < gpu::num_frame_buf; ++i)
 	{
-		_frames[i] = vlk_frame();
-		_frames[i].frame_idx = i;
+		_frames.emplace_back(vlk_frame(i));
 	}
-}
-
-void vlk_window::create_pipelines()
-{
-	imgui_pipeline = new jetz::vlk_imgui_pipeline(dev, dev.get_render_pass(), swapchain->get_extent());
 }
 
 void vlk_window::create_swapchain(uint32_t width, uint32_t height)
@@ -165,12 +181,6 @@ void vlk_window::destroy_descriptors()
 void vlk_window::destroy_frame_info()
 {
 	_frames.clear();
-}
-
-void vlk_window::destroy_pipelines()
-{
-	delete imgui_pipeline;
-	imgui_pipeline = nullptr;
 }
 
 void vlk_window::destroy_surface()

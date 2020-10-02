@@ -24,7 +24,7 @@ NAMESPACE
 namespace jetz {
 	
 class gpu_factory;
-class vlk_window;
+class vlk_factory;
 
 /*=============================================================================
 CLASS
@@ -34,7 +34,7 @@ class vlk : public gpu {
 
 public:
 
-	vlk(window& app_window, gpu_factory& factory);
+	vlk(window& app_window);
 	~vlk();
 
 	/*-----------------------------------------------------
@@ -52,6 +52,7 @@ public:
 	jetz::gpu methods
 	-----------------------------------------------------*/
 
+	virtual sptr<gpu_factory> get_factory() const override;
 	virtual void wait_idle() const override;
 
 	/*-----------------------------------------------------
@@ -83,10 +84,10 @@ private:
 	*/
 	vlk_device*						_dev;					/* logical device */
 	VkDebugReportCallbackEXT		_dbg_callback_hndl;
+	sptr<vlk_factory>				_factory;
 	vlk_gpu*						_gpu;					/* physical device */
 	VkInstance						_instance;
 	VkSurfaceKHR					_surface;
-	vlk_window*						_vlk_window;
 
 	std::vector<const char*>		_required_device_ext;		/* required device extensions */
 	std::vector<const char*>		_required_instance_ext;		/* required instance extensions */
@@ -98,11 +99,13 @@ private:
 	
 	void create_device();
 	void create_dbg_callbacks();
+	void create_factory();
 	void create_instance();
 	void create_requirement_lists();
 
 	void destroy_device();
 	void destroy_dbg_callbacks();
+	void destroy_factory();
 	void destroy_instance();
 	void destroy_requirement_lists();
 

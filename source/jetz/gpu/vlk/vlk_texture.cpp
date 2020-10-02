@@ -43,7 +43,7 @@ VkImage vlk_texture::get_image() const
 	return image;
 }
 
-VkDescriptorImageInfo* vlk_texture::get_image_info() const
+VkDescriptorImageInfo* vlk_texture::get_image_info()
 {
 	return &image_info;
 }

@@ -11,10 +11,14 @@ INCLUDES
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
+#include "jetz/ecs/components/ecs_transform_component.h"
+#include "jetz/gpu/gpu_frame.h"
+#include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_material.h"
 #include "jetz/gpu/vlk/vlk_model.h"
 #include "jetz/gpu/vlk/vlk_texture.h"
+#include "jetz/gpu/vlk/pipelines/vlk_gltf_pipeline.h"
 #include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "jetz/main/log.h"
 
@@ -32,7 +36,7 @@ vlk_model::vlk_model
 	(
 	vlk_device&					dev,
 	uptr<tinygltf::Model>		gltf,
-	vlk_pipeline_cache&			pipeline_cache
+	sptr<vlk_pipeline_cache>	pipeline_cache
 	)
 	: 
 	_device(dev),
@@ -58,6 +62,22 @@ vlk_model::~vlk_model()
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
+
+void vlk_model::render(const gpu_frame& gpu_frame, const ecs_transform_component& transform)
+{
+	vlk_frame& frame = _device.get_frame(gpu_frame);
+
+	for (const auto& scene : _gltf->scenes)
+	{
+		for (auto nodeIndex : scene.nodes)
+		{
+			// TODO : model scale and rotation
+			auto root_transform = glm::mat4(1.0f);
+			root_transform = glm::translate(root_transform, transform.pos);
+			render_node(nodeIndex, frame, frame.cmd_buf, root_transform);
+		}
+	}
+}
 
 /*=============================================================================
 PRIVATE METHODS
@@ -151,7 +171,7 @@ void vlk_model::create_pipelines()
 			auto create_info = vlk_pipeline_create_info();
 			create_info.vertex_attribute_descriptions = attributeDescriptions;
 			create_info.vertex_binding_descriptions = _vertex_binding_descriptions;
-			const auto& pipeline = _pipeline_cache.create_gltf_pipeline(create_info);
+			const auto& pipeline = _pipeline_cache->create_gltf_pipeline(create_info);
 
 			/* Create a primitive wrapper to store data for this primitive */
 			auto p = Primitive(mesh.primitives[j], pipeline);
@@ -202,8 +222,8 @@ void vlk_model::create_vertex_input_bindings()
 		{
 			if (bv.byteStride == 0)
 			{
-				// TODO : non fatal error
-				throw std::runtime_error("Buffer views that are accessed by more than one accessor should define a byte stride.");
+				LOG_ERROR("Buffer views that are accessed by more than one accessor should define a byte stride.");
+				LOG_ERROR_FMT("Accessor: {0}; BufferView: {1}", a.name, bv.name);
 			}
 
 			/* Already processed this buffer view */
@@ -215,8 +235,8 @@ void vlk_model::create_vertex_input_bindings()
 
 		if (byteStride < 0)
 		{
-			// TODO : make non fatal and log error
-			throw std::runtime_error("Invalid byte stride.");
+			LOG_ERROR_FMT("Invalid byte stride {0}; setting to 0.", byteStride);
+			LOG_ERROR_FMT("Accessor: {0}; BufferView: {1}", a.name, bv.name);
 
 			byteStride = 0;
 		}
@@ -418,6 +438,7 @@ wptr<vlk_texture> vlk_model::get_vulkan_texture(int index)
 void vlk_model::load_material(const tinygltf::Material& mat)
 {
 	vlk_material_create_info mat_info = {};
+	int tex_idx;
 
 	/*
 	Normal/occlusion/emissive
@@ -430,34 +451,27 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	// TODO
 
 	/* Normal texture */
-	auto addAttr = mat.additionalValues.find(MAT_NORMAL_TEXTURE);
-	if (addAttr != mat.additionalValues.end())
+	tex_idx = mat.normalTexture.index;
+	if (tex_idx >= 0)
 	{
-		auto texIdx = addAttr->second.TextureIndex();
-		mat_info.normal_texture = get_vulkan_texture(texIdx);
+		mat_info.normal_texture = get_vulkan_texture(tex_idx);
 	}
 
 	/* Emissive factor */
-	addAttr = mat.additionalValues.find(MAT_EMISSIVE_FACTOR);
-	if (addAttr != mat.additionalValues.end())
-	{
-		mat_info.emissive_factor = glm::make_vec3(addAttr->second.number_array.data());
-	}
+	mat_info.emissive_factor = glm::make_vec3(mat.emissiveFactor.data());
 
 	/* Emissive texture */
-	addAttr = mat.additionalValues.find(MAT_EMISSIVE_TEXTURE);
-	if (addAttr != mat.additionalValues.end())
+	tex_idx = mat.emissiveTexture.index;
+	if (tex_idx >= 0)
 	{
-		auto texIdx = addAttr->second.TextureIndex();
-		mat_info.emissive_texture = get_vulkan_texture(texIdx);
+		mat_info.emissive_texture = get_vulkan_texture(tex_idx);
 	}
 
 	/* Occlusion texture */
-	addAttr = mat.additionalValues.find(MAT_OCCLUSION_TEXTURE);
-	if (addAttr != mat.additionalValues.end())
+	tex_idx = mat.occlusionTexture.index;
+	if (tex_idx >= 0)
 	{
-		auto texIdx = addAttr->second.TextureIndex();
-		mat_info.occlusion_texture = get_vulkan_texture(texIdx);
+		mat_info.occlusion_texture = get_vulkan_texture(tex_idx);
 	}
 
 	/*
@@ -465,40 +479,26 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 	*/
 
 	/* Base color factor */
-	auto attr = mat.values.find(MAT_BASE_COLOR_FACTOR);
-	if (attr != mat.values.end())
-	{
-		mat_info.base_color_factor = glm::vec4(glm::make_vec4(attr->second.ColorFactor().data()));
-	}
+	mat_info.base_color_factor = glm::make_vec4(mat.pbrMetallicRoughness.baseColorFactor.data());
 
 	/* Base color texture */
-	attr = mat.values.find(MAT_BASE_COLOR_TEXTURE);
-	if (attr != mat.values.end())
+	tex_idx = mat.pbrMetallicRoughness.baseColorTexture.index;
+	if (tex_idx >= 0)
 	{
-		auto texIdx = attr->second.TextureIndex();
-		mat_info.base_color_texture = get_vulkan_texture(texIdx);
+		mat_info.base_color_texture = get_vulkan_texture(tex_idx);
 	}
 
 	/* Metallic factor */
-	attr = mat.values.find(MAT_METALLIC_FACTOR);
-	if (attr != mat.values.end())
-	{
-		mat_info.metallic_factor = static_cast<float>(attr->second.Factor());
-	}
+	mat_info.metallic_factor = static_cast<float>(mat.pbrMetallicRoughness.metallicFactor);
 
 	/* Roughness factor */
-	attr = mat.values.find(MAT_ROUGHNESS_FACTOR);
-	if (attr != mat.values.end())
-	{
-		mat_info.roughness_factor = static_cast<float>(attr->second.Factor());
-	}
+	mat_info.roughness_factor = static_cast<float>(mat.pbrMetallicRoughness.roughnessFactor);
 
 	/* Metallic/roughness texture */
-	attr = mat.values.find(MAT_METALLIC_ROUGHNESS_TEXTURE);
-	if (attr != mat.values.end())
+	tex_idx = mat.pbrMetallicRoughness.metallicRoughnessTexture.index;
+	if (tex_idx >= 0)
 	{
-		auto texIdx = attr->second.TextureIndex();
-		mat_info.metallic_roughness_texture = get_vulkan_texture(texIdx);
+		mat_info.metallic_roughness_texture = get_vulkan_texture(tex_idx);
 	}
 
 	/*
@@ -557,10 +557,10 @@ void vlk_model::render_mesh
 		/*
 		Set shader push constants
 		*/
-		push_constant pc = {};
+		vlk_gltf_push_constant pc = {};
 		pc.vertex.model_matrix = transform;
 
-		uint32_t pc_vert_size = sizeof(push_constant_vertex);
+		uint32_t pc_vert_size = sizeof(vlk_gltf_push_constant_vertex);
 		vkCmdPushConstants(frame.cmd_buf, prim.pipeline.get_layout_handle(), VK_SHADER_STAGE_VERTEX_BIT, 0, pc_vert_size, &pc.vertex);
 
 		/*

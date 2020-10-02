@@ -7,6 +7,8 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/vlk_window.h"
+#include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "jetz/main/common.h"
 #include "jetz/main/filesystem.h"
 #include "jetz/main/log.h"
@@ -32,11 +34,18 @@ CONSTRUCTORS
 
 vlk_device::vlk_device
 	(
+	vlk&								vlk,			/* Vulkan context */
 	vlk_gpu&							gpu,			/* physical device used by the logical device */
 	const std::vector<const char*>&		req_dev_ext,	/* required device extensions */
-	const std::vector<const char*>&		req_inst_layers	/* required instance layers */
+	const std::vector<const char*>&		req_inst_layers,/* required instance layers */
+	VkSurfaceKHR						surface,		/* surface for the main window */
+	window&								app_window		/* main app window */
 	)
-	: gpu(gpu)
+	:
+	_vlk(vlk),
+	gpu(gpu),
+	_surface(surface),
+	_app_window(app_window)
 {
 	gfx_family_idx = -1;
 	present_family_idx = -1;
@@ -48,10 +57,14 @@ vlk_device::vlk_device
 	create_layouts();
 	create_render_pass();
 	create_picker_render_pass();
+	create_pipeline_cache();
+	create_window();
 }
 
 vlk_device::~vlk_device()
 {
+	destroy_window();
+	destroy_pipeline_cache();
 	destroy_picker_render_pass();
 	destroy_render_pass();
 	destroy_layouts();
@@ -165,11 +178,15 @@ void vlk_device::end_one_time_cmd_buf(VkCommandBuffer cmd_buf) const
 
 VmaAllocator vlk_device::get_allocator() const { return allocator; }
 
+vlk_frame& vlk_device::get_frame(const gpu_frame& frame) { return _window->get_frame(frame); }
+
 VkCommandPool vlk_device::get_cmd_pool() const { return command_pool; }
 
 vlk_gpu& vlk_device::get_gpu() const { return gpu; }
 
 VkDevice vlk_device::get_handle() const { return handle; }
+
+sptr<vlk_pipeline_cache> vlk_device::get_pipeline_cache() const { return _pipeline_cache; }
 
 VkRenderPass vlk_device::get_render_pass() const { return render_pass; }
 
@@ -188,6 +205,8 @@ int vlk_device::get_present_family_idx() const { return present_family_idx; }
 VkQueue vlk_device::get_present_queue() const { return present_queue; }
 
 VkSampler vlk_device::get_texture_sampler() const { return texture_sampler; }
+
+wptr<vlk_window> vlk_device::get_window() const { return _window; }
 
 void vlk_device::transition_image_layout(VkImage image, VkFormat format, VkImageLayout old_layout, VkImageLayout new_layout) const
 {
@@ -501,6 +520,16 @@ void vlk_device::create_picker_render_pass()
 	}
 }
 
+void vlk_device::create_pipeline_cache()
+{
+	VkExtent2D extent = {};
+	extent.width = 100;
+	extent.height = 100;
+
+	auto cache = new jetz::vlk_pipeline_cache(*this, render_pass, extent);
+	_pipeline_cache = sptr<vlk_pipeline_cache>(cache);
+}
+
 void vlk_device::create_render_pass()
 {
 	/*
@@ -625,6 +654,22 @@ void vlk_device::create_texture_sampler()
 	}
 }
 
+void vlk_device::create_window()
+{
+	/* Must check to make sure surface supports presentation */
+	VkBool32 supported = 0;
+	VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(gpu.get_handle(), present_family_idx, _surface, &supported);
+	if (result != VK_SUCCESS || !supported)
+	{
+		LOG_FATAL("Surface not supported for this GPU.");
+	}
+
+	/* Create gpu window */
+	auto w = new jetz::vlk_window(*this, _vlk.get_instance(), _surface, 800, 600);
+	_window = sptr<vlk_window>(w);
+	_app_window.set_gpu_window(_window);
+}
+
 void vlk_device::destroy_allocator()
 {
 	vmaDestroyAllocator(allocator);
@@ -651,6 +696,11 @@ void vlk_device::destroy_picker_render_pass()
 	vkDestroyRenderPass(handle, picker_render_pass, NULL);
 }
 
+void vlk_device::destroy_pipeline_cache()
+{
+	_pipeline_cache.reset();
+}
+
 void vlk_device::destroy_render_pass()
 {
 	vkDestroyRenderPass(handle, render_pass, NULL);
@@ -659,6 +709,11 @@ void vlk_device::destroy_render_pass()
 void vlk_device::destroy_texture_sampler()
 {
 	vkDestroySampler(handle, texture_sampler, NULL);
+}
+
+void vlk_device::destroy_window()
+{
+	_window.reset();
 }
 
 }   /* namespace jetz */

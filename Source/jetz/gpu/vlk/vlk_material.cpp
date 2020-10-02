@@ -8,6 +8,7 @@ INCLUDES
 
 #include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk_material.h"
+#include "jetz/gpu/vlk/descriptors/vlk_material_layout.h"
 #include "jetz/main/log.h"
 
 /*=============================================================================
@@ -99,15 +100,18 @@ void vlk_material::create_sets()
 	/*
 	Create a descriptor set for each possible concurrent frame
 	*/
-	auto layouts = std::vector<VkDescriptorSetLayout>(gpu::num_frame_buf, _layout->get_handle());
+	_sets.resize(gpu::num_frame_buf);
+
+	auto& layout = _device.get_material_layout();
+	auto layout_handles = std::vector<VkDescriptorSetLayout>(gpu::num_frame_buf, layout.get_handle());
 
 	VkDescriptorSetAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	alloc_info.descriptorPool = _layout->get_pool_handle();
-	alloc_info.descriptorSetCount = layouts.size();
-	alloc_info.pSetLayouts = layouts.data();
+	alloc_info.descriptorPool = layout.get_pool_handle();
+	alloc_info.descriptorSetCount = layout_handles.size();
+	alloc_info.pSetLayouts = layout_handles.data();
 
-	VkResult result = vkAllocateDescriptorSets(_device.get_handle(), &alloc_info, &_sets[0]);
+	VkResult result = vkAllocateDescriptorSets(_device.get_handle(), &alloc_info, _sets.data());
 	if (result != VK_SUCCESS)
 	{
 		LOG_FATAL("Failed to allocate descriptor sets.");
@@ -129,6 +133,7 @@ void vlk_material::create_sets()
 		descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		descriptor_writes[num_writes].descriptorCount = 1;
 		descriptor_writes[num_writes].pBufferInfo = &buffer_info;
+		++num_writes;
 
 		/* Base color texture */
 		auto base_color_texture = _base_color_texture.lock();

@@ -14,6 +14,10 @@ NAMESPACE
 
 namespace jetz {
 
+class ecs;
+class gpu;
+class gpu_frame;
+
 class ecs_render_system {
 
 public:
@@ -24,6 +28,8 @@ public:
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
+
+	void run(ecs& ecs, gpu& gpu, gpu_frame& frame);
 
 private:
 

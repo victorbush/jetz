@@ -125,7 +125,7 @@ void vlk_material_layout::create_layout()
 
 	VkDescriptorSetLayoutCreateInfo layout_info = {};
 	layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	layout_info.bindingCount = bindings.size();
+	layout_info.bindingCount = (uint32_t)bindings.size();
 	layout_info.pBindings = bindings.data();
 
 	if (vkCreateDescriptorSetLayout(dev.get_handle(), &layout_info, NULL, &handle) != VK_SUCCESS)

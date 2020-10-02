@@ -296,8 +296,8 @@ void vlk_imgui_pipeline::create_descriptor_sets()
 
 		/* Font texture */
 		VkDescriptorImageInfo image_info = {};
-		image_info.imageLayout = font_texture->get_image_info().imageLayout;
-		image_info.imageView = font_texture->get_image_info().imageView;
+		image_info.imageLayout = font_texture->get_image_info()->imageLayout;
+		image_info.imageView = font_texture->get_image_info()->imageView;
 		image_info.sampler = font_texture_sampler;
 
 		descriptor_writes[write_idx] = {};

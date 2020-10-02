@@ -17,12 +17,29 @@ NAMESPACE
 namespace jetz {
 
 /*=============================================================================
+CONSTRUCTORS
+=============================================================================*/
+
+vlk_factory::vlk_factory
+	(
+	vlk_device&					device
+	)
+	: 
+	_device(device)
+{
+}
+
+vlk_factory::~vlk_factory()
+{
+}
+
+/*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
 
 uptr<gpu_model> vlk_factory::create_model(uptr<tinygltf::Model> gltf)
 {
-	auto model_ptr = new vlk_model(std::move(gltf));
+	auto model_ptr = new vlk_model(_device, std::move(gltf), _device.get_pipeline_cache());
 	auto model = uptr<vlk_model>(model_ptr);
 
 	return std::move(model);

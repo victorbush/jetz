@@ -61,4 +61,20 @@ private:
 	void destroy_pipeline();
 };
 
+/*-----------------------------------------------------
+Map of the push constant data used in the shader
+-----------------------------------------------------*/
+
+/** Vertex shader push constants */
+struct vlk_gltf_push_constant_vertex
+{
+	glm::mat4	model_matrix;	/* 16 * 4 = 64 bytes */
+};
+
+/** All push constants */
+struct vlk_gltf_push_constant
+{
+	vlk_gltf_push_constant_vertex	vertex;
+};
+
 }   /* namespace jetz */

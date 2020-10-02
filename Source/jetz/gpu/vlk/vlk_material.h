@@ -16,7 +16,6 @@ INCLUDES
 #include "jetz/gpu/vlk/vlk_device.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/gpu/vlk/vlk_texture.h"
-#include "jetz/gpu/vlk/descriptors/vlk_material_layout.h"
 #include "jetz/main/common.h"
 
 /*=============================================================================
@@ -104,7 +103,6 @@ private:
 	Dependencies
 	*/
 	vlk_device&					_device;
-	sptr<vlk_material_layout>	_layout;
 
 	/*
 	Create/destroy

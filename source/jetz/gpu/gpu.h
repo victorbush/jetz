@@ -31,7 +31,7 @@ class gpu {
 
 public:
 
-	gpu(gpu_factory& gpu_factory);
+	gpu();
 	virtual ~gpu() = 0;
 
 	/*-----------------------------------------------------
@@ -51,6 +51,11 @@ public:
 	/*-----------------------------------------------------
 	Public Methods
 	-----------------------------------------------------*/
+
+	/**
+	Gets the GPU factory used to load models, etc.
+	*/
+	virtual sptr<gpu_factory> get_factory() const = 0;
 
 	/**
 	Returns the specified material. If the material has not been loaded, null will be returned.
@@ -121,8 +126,6 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-
-	gpu_factory& _factory;
 
 	/** Materials cache. */
 	std::unordered_map<std::string, sptr<gpu_material>> _materials;

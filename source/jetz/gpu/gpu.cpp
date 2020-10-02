@@ -7,6 +7,7 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/gpu/gpu.h"
+#include "jetz/main/log.h"
 
 /*=============================================================================
 NAMESPACE
@@ -23,15 +24,12 @@ uint8_t gpu::num_frame_buf = 2;
 CONSTRUCTORS
 =============================================================================*/
 
-gpu::gpu(gpu_factory& factory)
-	:
-	_factory(factory)
+gpu::gpu()
 {
 }
 
 gpu::~gpu()
 {
-	unload_cache();
 }
 
 /*=============================================================================
@@ -73,6 +71,7 @@ wptr<gpu_texture> gpu::get_texture(const std::string& filename)
 
 wptr<gpu_material> gpu::load_material(const std::string& filename)
 {
+	LOG_FATAL("jetz::gpu::load_material");
 	return wptr<gpu_material>();
 }
 
@@ -86,7 +85,7 @@ wptr<gpu_model> gpu::load_model(const std::string& filename)
 	}
 
 	/* Not loaded, load it now */
-	auto new_model_uptr = _factory.load_gltf(filename);
+	auto new_model_uptr = get_factory()->load_gltf(filename);
 
 	/* Convert to shared pointer and store in the model cache */
 	auto new_model_sptr = _models[filename] = sptr<gpu_model>(std::move(new_model_uptr));
@@ -96,6 +95,7 @@ wptr<gpu_model> gpu::load_model(const std::string& filename)
 
 wptr<gpu_texture> jetz::gpu::load_texture(const std::string& filename)
 {
+	LOG_FATAL("jetz::gpu::load_texture");
 	return wptr<gpu_texture>();
 }
 

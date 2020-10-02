@@ -8,8 +8,10 @@ INCLUDES
 
 #include "jetz/gpu/gpu.h"
 #include "jetz/gpu/vlk/vlk.h"
+#include "jetz/gpu/vlk/vlk_factory.h"
 #include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/vlk_util.h"
+#include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "jetz/main/window.h"
 #include "jetz/main/log.h"
 #include "thirdparty/glfw/glfw.h"
@@ -47,10 +49,10 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback
 PUBLIC METHODS
 =============================================================================*/
 
-vlk::vlk(window& app_window, gpu_factory& factory) 
+vlk::vlk(window& app_window) 
 	:
 	_app_window(app_window),
-	gpu(factory)
+	gpu()
 {
 	enable_validation = true;
 
@@ -58,10 +60,14 @@ vlk::vlk(window& app_window, gpu_factory& factory)
 	create_instance();
 	create_dbg_callbacks();
 	create_device();
+	create_factory();
 }
 
 vlk::~vlk()
 {
+	unload_cache();
+
+	destroy_factory();
 	destroy_device();
 	destroy_dbg_callbacks();
 	destroy_instance();
@@ -76,6 +82,11 @@ VkInstance vlk::get_instance() const
 vlk_device& vlk::get_device() const
 {
 	return *_dev;
+}
+
+sptr<gpu_factory> vlk::get_factory() const
+{
+	return _factory;
 }
 
 void vlk::wait_idle() const
@@ -105,19 +116,7 @@ void vlk::create_device()
 	select_physical_device();
 
 	/* Create logical device */
-	_dev = new jetz::vlk_device(*_gpu, _required_device_ext, _required_instance_layers);
-
-	/* Must check to make sure surface supports presentation */
-	VkBool32 supported = 0;
-	VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(_gpu->get_handle(), _dev->get_present_family_idx(), _surface, &supported);
-	if (result != VK_SUCCESS || !supported)
-	{
-		LOG_FATAL("Surface not supported for this GPU.");
-	}
-
-	/* Create gpu window */
-	_vlk_window = new jetz::vlk_window(*_dev, _instance, _surface, _app_window.get_width(), _app_window.get_height());
-	_app_window.set_gpu_window((gpu_window*)_vlk_window);
+	_dev = new jetz::vlk_device(*this, *_gpu, _required_device_ext, _required_instance_layers, _surface, _app_window);
 }
 
 void vlk::create_dbg_callbacks()
@@ -153,6 +152,12 @@ void vlk::create_dbg_callbacks()
 	{
 		LOG_FATAL("Failed to create Vulkan debug callback.");
 	}
+}
+
+void vlk::create_factory()
+{
+	auto factory = new vlk_factory(*_dev);
+	_factory = sptr<vlk_factory>(factory);
 }
 
 void vlk::create_instance()
@@ -252,7 +257,6 @@ void vlk::create_requirement_lists()
 
 void vlk::destroy_device()
 {
-	delete _vlk_window;
 	delete _dev;
 	delete _gpu;
 }
@@ -278,6 +282,11 @@ void vlk::destroy_dbg_callbacks()
 	{
 		LOG_FATAL("Failed to destroy Vulkan debug callback.");
 	}
+}
+
+void vlk::destroy_factory()
+{
+	_factory.reset();
 }
 
 void vlk::destroy_instance()

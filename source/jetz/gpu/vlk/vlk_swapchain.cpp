@@ -53,10 +53,10 @@ void vlk_swapchain::begin_frame(vlk_frame& frame)
 {
 	vlk_frame_status frame_status = vlk_frame_status::INVALID;
 
-	vkWaitForFences(dev.get_handle(), 1, &in_flight_fences[frame.frame_idx], VK_TRUE, UINT64_MAX);
-	vkResetFences(dev.get_handle(), 1, &in_flight_fences[frame.frame_idx]);
+	vkWaitForFences(dev.get_handle(), 1, &in_flight_fences[frame.get_frame_idx()], VK_TRUE, UINT64_MAX);
+	vkResetFences(dev.get_handle(), 1, &in_flight_fences[frame.get_frame_idx()]);
 
-	VkResult result = vkAcquireNextImageKHR(dev.get_handle(), handle, UINT64_MAX, image_avail_semaphores[frame.frame_idx], VK_NULL_HANDLE, &frame.image_idx);
+	VkResult result = vkAcquireNextImageKHR(dev.get_handle(), handle, UINT64_MAX, image_avail_semaphores[frame.get_frame_idx()], VK_NULL_HANDLE, &frame.image_idx);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		resize(_extent);
@@ -111,7 +111,7 @@ void vlk_swapchain::end_frame(const vlk_frame& frame)
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore swait_semaphores[] = { image_avail_semaphores[frame.frame_idx] };
+	VkSemaphore swait_semaphores[] = { image_avail_semaphores[frame.get_frame_idx()] };
 	VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submit_info.waitSemaphoreCount = 1;
 	submit_info.pWaitSemaphores = swait_semaphores;
@@ -120,11 +120,11 @@ void vlk_swapchain::end_frame(const vlk_frame& frame)
 	submit_info.commandBufferCount = cnt_of_array(cmd_buffers);
 	submit_info.pCommandBuffers = cmd_buffers;
 
-	VkSemaphore signal_semaphores[] = { render_finished_semaphores[frame.frame_idx] };
+	VkSemaphore signal_semaphores[] = { render_finished_semaphores[frame.get_frame_idx()] };
 	submit_info.signalSemaphoreCount = 1;
 	submit_info.pSignalSemaphores = signal_semaphores;
 
-	result = vkQueueSubmit(dev.get_gfx_queue(), 1, &submit_info, in_flight_fences[frame.frame_idx]);
+	result = vkQueueSubmit(dev.get_gfx_queue(), 1, &submit_info, in_flight_fences[frame.get_frame_idx()]);
 
 	if (result != VK_SUCCESS)
 	{

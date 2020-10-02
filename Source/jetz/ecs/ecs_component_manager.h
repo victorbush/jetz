@@ -80,7 +80,7 @@ public:
 	Gets the component for the specified entity (returns NULL if entity doesn't
 	have this component).
 	*/
-	T* get(entity_id entity) const
+	T* get(entity_id entity)
 	{
 		if (!exists(entity))
 		{

@@ -14,8 +14,10 @@ INCLUDES
 #include "jetz/ecs/ecs.h"
 #include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/ecs/systems/ecs_loader_system.h"
+#include "jetz/ecs/systems/ecs_render_system.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/main/camera.h"
+#include "jetz/main/common.h"
 #include "jetz/main/world.h"
 
 /*=============================================================================
@@ -77,7 +79,7 @@ private:
 	-----------------------------------------------------*/
 
 	void imgui_begin_frame(float delta_time, float width, float height);
-	void imgui_end_frame(gpu_window* window, gpu_frame& frame);
+	void imgui_end_frame(sptr<gpu_window> window, gpu_frame& frame);
 	void on_main_window_close();
 
 	/*-----------------------------------------------------
@@ -95,12 +97,12 @@ private:
 	*/
 	ecs_input_system		_input_system;
 	ecs_loader_system		_loader_system;
+	ecs_render_system		_render_system;
 
 	/*
 	Other
 	*/
 	camera					_camera;
-	ecs						_ecs;				/* Entity component system */
 	ed						_ed;				/* Editor */
 	float					_frame_time;		/* Current frame time (in seconds) */
 	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
