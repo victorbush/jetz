@@ -59,6 +59,8 @@ void app::run_frame()
 	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
 
 	
+	_input_system.run(&_world.get_ecs());
+
 
 	/* 
 	Determine what to do based on app state
@@ -81,6 +83,62 @@ void app::run_frame()
 
 		/* Process editor UI and functionality */
 		_ed.think();
+
+
+		//////////
+
+		/// TODO : Make this into a system
+		auto& input = _world.get_ecs().input_singleton;
+		if (input.key_down[GLFW_KEY_W])
+		{
+			_camera.move(_frame_time_delta * 2.0f);
+		}
+		else if (input.key_down[GLFW_KEY_S])
+		{
+			_camera.move(_frame_time_delta * -2.f);
+		}
+
+
+		//float moveSen = 0.05f;
+		//float rotSen = 0.30f;
+
+		//glm::vec2 prevMouse = manager.GetPrevMousePos();
+
+		//bool lmb = manager.GetLeftMouseButtonState();
+		//bool rmb = manager.GetRightMouseButtonState();
+
+		///* RIGHT + LEFT mouse buttons */
+		//if (rmb && lmb)
+		//{
+		//	float vertDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
+		//	float horizDelta = ((float)x - prevMouse.x) * moveSen;
+
+		//	_camera.Pan(vertDelta, horizDelta);
+		//}
+		///* RIGHT mouse button */
+		//else if (rmb)
+		//{
+		//	// Calc mouse change
+		//	float rotDeltaX = ((float)y - prevMouse.y) * rotSen * -1.0f;
+		//	float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
+
+		//	_camera.RotX(rotDeltaX);
+		//	_camera.RotY(rotDeltaY);
+		//}
+		///* LEFT mouse button */
+		//else if (lmb)
+		//{
+		//	// Calc mouse change
+		//	float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
+		//	float moveDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
+
+		//	_camera.RotY(rotDeltaY);
+		//	_camera.Move(moveDelta);
+		//}
+
+
+		//////////
+
 
 
 

@@ -23,7 +23,7 @@ CONSTRUCTORS
 PUBLIC METHODS
 =============================================================================*/
 
-void ecs_transform_component::load_lua(lua& script)
+void ecs_transform_component::load_lua(ecs& ecs, lua& script)
 {
 	/* Loop through component members */
 	bool loop = script.StartLoop();

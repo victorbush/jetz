@@ -50,8 +50,11 @@ public:
 	Public variables
 	-----------------------------------------------------*/
 
-	static ecs_input_singleton	input_singleton;
-	static ecs_loader_singleton	loader_singleton;
+	/*
+	Singleton components
+	*/
+	ecs_input_singleton		input_singleton;
+	ecs_loader_singleton	loader_singleton;
 
 	/*
 	Components

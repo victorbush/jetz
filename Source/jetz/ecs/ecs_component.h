@@ -21,6 +21,8 @@ NAMESPACE
 
 namespace jetz {
 
+class ecs;
+
 class ecs_component {
 
 public:
@@ -29,7 +31,7 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	virtual void load_lua(lua& script) = 0;
+	virtual void load_lua(ecs& ecs, lua& script) = 0;
 
 protected:
 

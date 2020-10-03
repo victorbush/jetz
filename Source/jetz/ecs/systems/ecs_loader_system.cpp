@@ -32,7 +32,9 @@ PUBLIC METHODS
 
 void ecs_loader_system::run(ecs& ecs, gpu& gpu)
 {
-	for (const auto& model_file : ecs::loader_singleton.models)
+	auto& loader = ecs.loader_singleton;
+
+	for (const auto& model_file : loader.models)
 	{
 		gpu.load_model(model_file);
 	}

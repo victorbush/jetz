@@ -14,6 +14,8 @@ NAMESPACE
 
 namespace jetz {
 
+class ecs;
+
 class ecs_input_system {
 
 public:
@@ -25,7 +27,7 @@ public:
 	Public Methods
 	-----------------------------------------------------*/
 
-	void run();
+	void run(ecs* ecs);
 
 	void on_char(unsigned int c);
 	void on_key(int key, int scancode, int action, int mods);
@@ -38,6 +40,8 @@ private:
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
+
+	ecs*		_current_ecs;
 
 	/*-----------------------------------------------------
 	Private methods

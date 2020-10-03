@@ -24,7 +24,7 @@ CONSTRUCTORS
 PUBLIC METHODS
 =============================================================================*/
 
-void ecs_model_component::load_lua(lua& script)
+void ecs_model_component::load_lua(ecs& ecs, lua& script)
 {
 	/* Loop through component members */
 	bool loop = script.StartLoop();
@@ -62,7 +62,7 @@ void ecs_model_component::load_lua(lua& script)
 			}
 
 			model_filename = val.value;
-			ecs::loader_singleton.models.insert(val.value);
+			ecs.loader_singleton.models.insert(val.value);
 		}
 	}
 }

@@ -160,7 +160,6 @@ int main(int argc, char* argv[])
 	/* Main loop */
 	while (!s_app->should_exit())
 	{
-		glfwPollEvents();
 		s_app->run_frame();
 	}
 

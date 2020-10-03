@@ -38,7 +38,7 @@ public:
 	ecs_component
 	-----------------------------------------------------*/
 
-	virtual void load_lua(lua& script) override;
+	virtual void load_lua(ecs& ecs, lua& script) override;
 };
 
 }   /* namespace jetz */

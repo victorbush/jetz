@@ -7,6 +7,7 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/ecs/ecs.h"
+#include "jetz/ecs/components/ecs_input_singleton.h"
 #include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/main/log.h"
 #include "thirdparty/glfw/glfw.h"
@@ -23,6 +24,8 @@ CONSTRUCTORS
 =============================================================================*/
 
 ecs_input_system::ecs_input_system()
+	: 
+	_current_ecs(nullptr)
 {
 }
 
@@ -34,8 +37,12 @@ ecs_input_system::~ecs_input_system()
 PUBLIC METHODS
 =============================================================================*/
 
-void ecs_input_system::run()
+void ecs_input_system::run(ecs* ecs)
 {
+	/* Set current ecs. GLFW callbacks will use it. */
+	_current_ecs = ecs;
+
+	glfwPollEvents();
 }
 
 void ecs_input_system::on_char(unsigned int c)
@@ -51,13 +58,26 @@ void ecs_input_system::on_char(unsigned int c)
 
 void ecs_input_system::on_key(int key, int scancode, int action, int mods)
 {
-	/* imgui */
+	if (!_current_ecs)
+	{
+		LOG_ERROR("No ECS found in input system.");
+		return;
+	}
+
 	ImGuiIO& imgui = ImGui::GetIO();
+	auto& input = _current_ecs->input_singleton;
 
 	if (action == GLFW_PRESS)
+	{
+		input.key_down[key] = true;
 		imgui.KeysDown[key] = true;
+	}
+
 	if (action == GLFW_RELEASE)
+	{
+		input.key_down[key] = false;
 		imgui.KeysDown[key] = false;
+	}
 
 	/* According to ImGui example, modifiers are not reliable across systems */
 	imgui.KeyCtrl = imgui.KeysDown[GLFW_KEY_LEFT_CONTROL] || imgui.KeysDown[GLFW_KEY_RIGHT_CONTROL];
@@ -68,7 +88,13 @@ void ecs_input_system::on_key(int key, int scancode, int action, int mods)
 
 void ecs_input_system::on_mouse_button(int button, int action, int mods)
 {
-	auto& input = ecs::input_singleton;
+	if (!_current_ecs)
+	{
+		LOG_ERROR("No ECS found in input system.");
+		return;
+	}
+
+	auto& input = _current_ecs->input_singleton;
 	input.mouse_down[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
 
 	/* imgui */
@@ -79,7 +105,13 @@ void ecs_input_system::on_mouse_button(int button, int action, int mods)
 
 void ecs_input_system::on_mouse_move(double xpos, double ypos)
 {
-	auto& input = ecs::input_singleton;
+	if (!_current_ecs)
+	{
+		LOG_ERROR("No ECS found in input system.");
+		return;
+	}
+
+	auto& input = _current_ecs->input_singleton;
 	input.mouse_pos_prev = input.mouse_pos;
 	input.mouse_pos.x = (float)xpos;
 	input.mouse_pos.y = (float)ypos;
