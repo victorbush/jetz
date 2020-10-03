@@ -52,6 +52,9 @@ void app::run_frame()
 	_frame_time = (float)glfwGetTime();
 	_frame_time_delta = _frame_time - last_time;
 
+	/* Run input system - needs to be done before start of frame */
+	_input_system.run(&_world.get_ecs());
+
 	/* Begin frame */
 	auto gpu_window = _window.get_gpu_window().lock();
 	gpu_frame& frame = gpu_window->begin_frame(_camera);
@@ -59,7 +62,6 @@ void app::run_frame()
 	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
 
 	
-	_input_system.run(&_world.get_ecs());
 
 
 	/* 
