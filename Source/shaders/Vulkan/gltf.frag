@@ -37,10 +37,10 @@ vec4 blinnPhong();
 vec4 lambertian();
 
 void main() {
-	//outColor = vec4(1.0, 1.0, 1.0, 1.0);
-	//outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	//outColor = vec4(1.0, 0.0, 1.0, 1.0);
+	outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 	//outColor = lambertian();
-	outColor = blinnPhong();
+	//outColor = blinnPhong();
 }
 
 /**

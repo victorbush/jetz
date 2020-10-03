@@ -83,6 +83,8 @@ vlk_imgui_pipeline& vlk_pipeline_cache::get_imgui_pipeline() const
 
 void vlk_pipeline_cache::resize(VkExtent2D extent)
 {
+	_extent = extent;
+
 	for (auto& pipeline : _gltf_pipelines)
 	{
 		pipeline.second->resize(extent);

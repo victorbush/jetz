@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jetz", "jetz\jetz.vcxproj", "{C6111E45-7118-4E40-B0DB-5009B5092C57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D874A36A-A56B-46B1-B17F-D21AD4BDCF1A} = {D874A36A-A56B-46B1-B17F-D21AD4BDCF1A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaders", "shaders\shaders.vcxproj", "{D874A36A-A56B-46B1-B17F-D21AD4BDCF1A}"
 EndProject
