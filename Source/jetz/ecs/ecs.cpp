@@ -39,6 +39,16 @@ ecs::~ecs()
 PUBLIC METHODS
 =============================================================================*/
 
+std::unordered_set<entity_id>::const_iterator ecs::cbegin() const
+{
+	return _entities.cbegin();
+}
+
+std::unordered_set<entity_id>::const_iterator ecs::cend() const
+{
+	return _entities.cend();
+}
+
 entity_id ecs::create_entity()
 {
 	entity_id id = get_next_available_id();

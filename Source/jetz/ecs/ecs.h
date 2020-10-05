@@ -40,6 +40,8 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
+	std::unordered_set<entity_id>::const_iterator cbegin() const;
+	std::unordered_set<entity_id>::const_iterator cend() const;
 	entity_id create_entity();
 	void destroy_all();
 	void destroy_entity(entity_id ent);

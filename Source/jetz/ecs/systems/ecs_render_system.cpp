@@ -36,13 +36,19 @@ PUBLIC METHODS
 
 void ecs_render_system::run(ecs& ecs, gpu& gpu, gpu_frame& frame)
 {
-	// TODO -- TEMP
-	if (ecs.entity_exists(0))
+	for (auto it = ecs.cbegin(); it != ecs.cend(); ++it)
 	{
-		auto m = ecs.models.get(0);
-		auto model = gpu.get_model(m->model_filename).lock();
-		auto transform = ecs.transforms.get((entity_id)0);
-		model->render(frame, *transform);
+		auto ent = *it;
+
+		if (!ecs.models.exists(ent) || !ecs.transforms.exists(ent))
+		{
+			continue;
+		}
+
+		auto model = ecs.models.get(ent);
+		auto gpu_model = gpu.get_model(model->model_filename).lock();
+		auto transform = ecs.transforms.get(ent);
+		gpu_model->render(frame, *transform);
 	}
 }
 
