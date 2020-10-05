@@ -31,7 +31,8 @@ app::app(window& main_window, gpu& gpu) :
 	_camera(),
 	_should_exit(false),
 	_state(app_state::STARTUP),
-	_loader_system()
+	_loader_system(),
+	_ed(*this)
 {
 	_window.set_input_system(&_input_system);
 	_window.set_window_close_callback(std::bind(&app::on_main_window_close, this));
@@ -44,6 +45,16 @@ app::~app()
 /*=============================================================================
 PUBLIC METHODS
 =============================================================================*/
+
+camera& app::get_camera()
+{
+	return _camera;
+}
+
+world& app::get_world()
+{
+	return _world;
+}
 
 void app::run_frame()
 {
@@ -58,6 +69,8 @@ void app::run_frame()
 	/* Begin frame */
 	auto gpu_window = _window.get_gpu_window().lock();
 	gpu_frame& frame = gpu_window->begin_frame(_camera);
+	frame.frame_time = _frame_time;
+	frame.frame_time_delta = _frame_time_delta;
 
 	imgui_begin_frame(_frame_time_delta, (float)_window.get_width(), (float)_window.get_height());
 
@@ -84,65 +97,7 @@ void app::run_frame()
 		_loader_system.run(_world.get_ecs(), _gpu);
 
 		/* Process editor UI and functionality */
-		_ed.think();
-
-
-		//////////
-
-		/// TODO : Make this into a system
-		auto& input = _world.get_ecs().input_singleton;
-		if (input.key_down[GLFW_KEY_W])
-		{
-			_camera.move(_frame_time_delta * 2.0f);
-		}
-		else if (input.key_down[GLFW_KEY_S])
-		{
-			_camera.move(_frame_time_delta * -2.f);
-		}
-
-
-		//float moveSen = 0.05f;
-		//float rotSen = 0.30f;
-
-		//glm::vec2 prevMouse = manager.GetPrevMousePos();
-
-		//bool lmb = manager.GetLeftMouseButtonState();
-		//bool rmb = manager.GetRightMouseButtonState();
-
-		///* RIGHT + LEFT mouse buttons */
-		//if (rmb && lmb)
-		//{
-		//	float vertDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
-		//	float horizDelta = ((float)x - prevMouse.x) * moveSen;
-
-		//	_camera.Pan(vertDelta, horizDelta);
-		//}
-		///* RIGHT mouse button */
-		//else if (rmb)
-		//{
-		//	// Calc mouse change
-		//	float rotDeltaX = ((float)y - prevMouse.y) * rotSen * -1.0f;
-		//	float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
-
-		//	_camera.RotX(rotDeltaX);
-		//	_camera.RotY(rotDeltaY);
-		//}
-		///* LEFT mouse button */
-		//else if (lmb)
-		//{
-		//	// Calc mouse change
-		//	float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
-		//	float moveDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
-
-		//	_camera.RotY(rotDeltaY);
-		//	_camera.Move(moveDelta);
-		//}
-
-
-		//////////
-
-
-
+		_ed.think(frame);
 
 		_render_system.run(_world.get_ecs(), _gpu, frame);
 	}

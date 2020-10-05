@@ -41,8 +41,8 @@ public:
 	-----------------------------------------------------*/
 
 	entity_id create_entity();
-	void destory_all();
-	void destory_entity(entity_id ent);
+	void destroy_all();
+	void destroy_entity(entity_id ent);
 	bool entity_exists(entity_id ent) const;
 	void load_component(entity_id ent, const std::string& component, lua& lua);
 

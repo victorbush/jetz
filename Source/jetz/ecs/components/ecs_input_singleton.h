@@ -26,6 +26,7 @@ public:
 	bool		mouse_down[GLFW_MOUSE_BUTTON_LAST];
 	glm::vec2	mouse_pos;
 	glm::vec2	mouse_pos_prev;
+	bool		mouse_pos_changed;
 	bool		key_down[GLFW_KEY_LAST];
 };
 

@@ -25,7 +25,7 @@ void world::load(world& world, const std::string& filename)
 	ecs& ecs = world._ecs;
 
 	/* Clear any previous state */
-	ecs.destory_all();
+	ecs.destroy_all();
 
 	/* Load the world script file */
 	lua script;

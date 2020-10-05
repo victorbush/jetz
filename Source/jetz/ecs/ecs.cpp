@@ -32,7 +32,7 @@ ecs::ecs()
 
 ecs::~ecs()
 {
-	destory_all();
+	destroy_all();
 }
 
 /*=============================================================================
@@ -52,17 +52,17 @@ entity_id ecs::create_entity()
 	return id;
 }
 
-void ecs::destory_all()
+void ecs::destroy_all()
 {
 	for (auto it = _entities.begin(); it != _entities.end(); /* No increment */ )
 	{
-		destory_entity(*it++);
+		destroy_entity(*it++);
 	}
 
 	_entities.clear();
 }
 
-void ecs::destory_entity(entity_id ent)
+void ecs::destroy_entity(entity_id ent)
 {
 	for (const auto c : _component_managers)
 	{

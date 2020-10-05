@@ -29,7 +29,6 @@ namespace jetz {
 class gpu;
 class gpu_window;
 class window;
-class world;
 
 /*=============================================================================
 TYPES
@@ -58,6 +57,8 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
+	camera& get_camera();
+	world& get_world();
 	void run_frame();
 	bool should_exit();
 

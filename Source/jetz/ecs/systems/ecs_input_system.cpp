@@ -42,6 +42,8 @@ void ecs_input_system::run(ecs* ecs)
 	/* Set current ecs. GLFW callbacks will use it. */
 	_current_ecs = ecs;
 
+	ecs->input_singleton.mouse_pos_changed = false;
+
 	glfwPollEvents();
 }
 
@@ -115,6 +117,7 @@ void ecs_input_system::on_mouse_move(double xpos, double ypos)
 	input.mouse_pos_prev = input.mouse_pos;
 	input.mouse_pos.x = (float)xpos;
 	input.mouse_pos.y = (float)ypos;
+	input.mouse_pos_changed = true;
 
 	/* imgui */
 	ImGuiIO& imgui = ImGui::GetIO();

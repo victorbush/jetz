@@ -28,9 +28,15 @@ public:
 	~gpu_frame();
 
 	/*-----------------------------------------------------
-	Public variables
+	Public methods
 	-----------------------------------------------------*/
 	uint8_t				get_frame_idx() const;
+
+	/*-----------------------------------------------------
+	Public variables
+	-----------------------------------------------------*/
+	float				frame_time;			/* Current frame time (in seconds) */
+	float				frame_time_delta;	/* Delta time since the last frame (in seconds) */
 
 private: 
 
