@@ -220,6 +220,8 @@ void vlk::create_requirement_lists()
 	if (enable_validation)
 	{
 		_required_instance_layers.push_back("VK_LAYER_LUNARG_standard_validation");
+		_required_instance_layers.push_back("VK_LAYER_LUNARG_monitor");
+		_required_instance_layers.push_back("VK_LAYER_KHRONOS_validation");
 	}
 
 	if (!vlk_util::are_instance_layers_available(_required_instance_layers))

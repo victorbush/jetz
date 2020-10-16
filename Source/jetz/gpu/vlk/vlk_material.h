@@ -60,6 +60,11 @@ struct vlk_material_ubo
 	glm::vec3		emissive_factor;
 	float			metallic_factor;
 	float			roughness_factor;
+	bool			hasBaseColorTexture;
+	bool			hasMetallicRoughnessTexture;
+	bool			hasNormalTexture;
+	bool			hasOcclusionTexture;
+	bool			hasEmissiveTexture;
 };
 
 class vlk_material : public gpu_material {
@@ -95,6 +100,8 @@ private:
 	void destroy_buffers();
 	void destroy_sets();
 
+	VkDescriptorImageInfo* get_img_info(wptr<vlk_texture> tex);
+
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
@@ -103,6 +110,7 @@ private:
 	Dependencies
 	*/
 	vlk_device&					_device;
+	wptr<vlk_texture>			_default_texture;
 
 	/*
 	Create/destroy

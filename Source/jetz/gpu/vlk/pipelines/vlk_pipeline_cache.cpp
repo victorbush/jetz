@@ -116,7 +116,7 @@ void vlk_pipeline_cache::create_gltf_layout()
 	pc_vert.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
 	// TODO : size and offset must be a multiple of 4
-	VkPushConstantRange push_constants[] =
+	auto push_constants = std::vector<VkPushConstantRange>
 	{
 		pc_vert
 	};
@@ -140,8 +140,8 @@ void vlk_pipeline_cache::create_gltf_layout()
 	layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	layout_info.setLayoutCount = static_cast<uint32_t>(set_layouts.size());
 	layout_info.pSetLayouts = set_layouts.data();
-	layout_info.pushConstantRangeCount = 0;
-	layout_info.pPushConstantRanges = nullptr;
+	layout_info.pushConstantRangeCount = push_constants.size();
+	layout_info.pPushConstantRanges = push_constants.data();
 
 	if (vkCreatePipelineLayout(_device.get_handle(), &layout_info, nullptr, &_gltf_layout_handle) != VK_SUCCESS)
 	{

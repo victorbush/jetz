@@ -12,6 +12,7 @@ INCLUDES
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
+#include <unordered_map>
 
 #include "jetz/main/common.h"
 #include "jetz/gpu/gpu_model.h"
@@ -131,40 +132,37 @@ private:
 	class Primitive
 	{
 	public:
-		size_t						id;			/* primitive ID for the GLTF model */
-		size_t						mesh_index;	/* mesh index */
-		size_t						prim_index;	/* primitive index within the mesh */
-
 		const tinygltf::Primitive&	data;		/* the actual primitive data from the GLTF model */
 		const vlk_gltf_pipeline&	pipeline;	/* pipeline used to render this mesh primitive */
 		wptr<vlk_material>			material;
 		VkIndexType					index_type;
+		std::vector<VkBuffer>		input_binding_buffers;
+		std::vector<VkDeviceSize>	input_binding_offsets;
 
 		Primitive(const tinygltf::Primitive& data, const vlk_gltf_pipeline& pipeline)
-			: data(data), pipeline(pipeline), id(0), mesh_index(0), prim_index(0), index_type(VK_INDEX_TYPE_UINT16) {}
+			: data(data), pipeline(pipeline), index_type(VK_INDEX_TYPE_UINT16) {}
 	};
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
 
-	void create_buffers();
+	void create_buffer(int bufferIndex);
 	void create_materials();
-	void create_pipelines();
+	void create_primitives();
 	void create_textures();
-	void create_vertex_input_bindings();
 	void destroy_buffers();
 	void destroy_materials();
-	void destroy_pipelines();
+	void destroy_primitives();
 	void destroy_textures();
-	void destroy_vertex_input_bindings();
 
-	VkFormat				get_vk_format(int gltfType, int gltfComponentType) const;
-	VkIndexType				get_vk_index_type(int gltfComponentType) const;
-	wptr<vlk_material>		get_vulkan_material(int index);
-	wptr<vlk_texture>		get_vulkan_texture(int index);
-	void					load_material(const tinygltf::Material& mat);
-	void					load_texture(const tinygltf::Image& image);
+	VkFormat					get_vk_format(int gltfType, int gltfComponentType) const;
+	VkIndexType					get_vk_index_type(int gltfComponentType) const;
+	wptr<vlk_material>			get_vulkan_material(int index);
+	wptr<vlk_texture>			get_vulkan_texture(int index);
+	void						load_material(const tinygltf::Material& mat);
+	void						load_primitive(const tinygltf::Primitive& prim, uint32_t mesh_idx);
+	void						load_texture(const tinygltf::Image& image);
 
 	void render_mesh
 		(
@@ -196,22 +194,12 @@ private:
 	/*
 	Create/destroy
 	*/
-	std::vector<uptr<vlk_buffer>>		_buffers;
+	std::unordered_map<int, uptr<vlk_buffer>>	_buffers;	/* Dictionary of buffers keyed by buffer index (from the gltf file) */
 	std::vector<sptr<vlk_material>>		_materials;
 	std::vector<sptr<vlk_texture>>		_textures;
 
 	/* A list of primitives for each mesh */
 	std::vector<std::vector<Primitive>>	_primitives;
-
-	/* Vertex input binding data */
-	std::vector<VkBuffer>				_vertex_binding_buffers;
-	std::vector<VkDeviceSize>			_vertex_binding_offsets;
-	std::vector<VkVertexInputBindingDescription>
-										_vertex_binding_descriptions;
-
-	/*
-	Other
-	*/
 };
 
 }   /* namespace jetz */

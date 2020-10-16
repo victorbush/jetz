@@ -10,6 +10,7 @@ INCLUDES
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
+#include <unordered_set>
 
 #include "jetz/ecs/components/ecs_transform_component.h"
 #include "jetz/gpu/gpu_frame.h"
@@ -43,19 +44,16 @@ vlk_model::vlk_model
 	_gltf(std::move(gltf)),
 	_pipeline_cache(pipeline_cache)
 {
-	create_buffers();
-	create_vertex_input_bindings();
 	create_textures();
 	create_materials();
-	create_pipelines();
+	create_primitives();
 }
 
 vlk_model::~vlk_model()
 {
-	destroy_pipelines();
+	destroy_primitives();
 	destroy_materials();
 	destroy_textures();
-	destroy_vertex_input_bindings();
 	destroy_buffers();
 }
 
@@ -83,32 +81,43 @@ void vlk_model::render(const gpu_frame& gpu_frame, const ecs_transform_component
 PRIVATE METHODS
 =============================================================================*/
 
-void vlk_model::create_buffers()
+void vlk_model::create_buffer(int bufferIndex)
 {
-	auto numBuffers = _gltf->buffers.size();
-	_buffers.resize(numBuffers);
-
-	// TODO : Sometimes a buffer contains more than indices and vertex data (ie,
-	// when textures are embedded into buffers for binary gltf
-
-	/* Create and populate each buffer */
-	for (size_t i = 0; i < numBuffers; ++i)
+	/* Validate buffer index */
+	if (bufferIndex < 0)
 	{
-		const auto& b = _gltf->buffers[i];
-		size_t buf_size = b.data.size();
-
-		/* Create buffer */
-		auto vlk_buf = new vlk_buffer(
-			_device,
-			buf_size,
-			VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VMA_MEMORY_USAGE_GPU_ONLY);
-			
-		_buffers[i] = uptr<vlk_buffer>(vlk_buf);
-
-		/* Transfer data to GPU */
-		_buffers[i]->update((void*)b.data.data(), 0, buf_size);
+		/* No buffer */
+		return;
 	}
+
+	if (bufferIndex >= _gltf->buffers.size())
+	{
+		LOG_ERROR_FMT("Invalid buffer index {0}, no buffer created.", bufferIndex);
+		return;
+	}
+
+	/* Check if buffer already created */
+	const auto it = _buffers.find(bufferIndex);
+	if (it != _buffers.end())
+	{
+		/* Buffer already created */
+		return;
+	}
+
+	/* Create the buffer */
+	const auto& b = _gltf->buffers[bufferIndex];
+	size_t buf_size = b.data.size();
+
+	auto vlk_buf = new vlk_buffer(
+		_device,
+		buf_size,
+		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		VMA_MEMORY_USAGE_GPU_ONLY);
+
+	_buffers[bufferIndex] = uptr<vlk_buffer>(vlk_buf);
+
+	/* Transfer data to GPU */
+	_buffers[bufferIndex]->update((void*)b.data.data(), 0, buf_size);
 }
 
 void vlk_model::create_materials()
@@ -119,12 +128,8 @@ void vlk_model::create_materials()
 	}
 }
 
-void vlk_model::create_pipelines()
+void vlk_model::create_primitives()
 {
-	/*
-	Create vertex input attribute descriptions.
-	Find pipeline for each mesh primitive.
-	*/
 	size_t numPrimitives = 0;
 	_primitives.resize(_gltf->meshes.size());
 
@@ -135,53 +140,115 @@ void vlk_model::create_pipelines()
 		for (size_t j = 0; j < mesh.primitives.size(); ++j)
 		{
 			const auto& prim = mesh.primitives[j];
-			std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-
-			// Function to load a vertex attribute description
-			auto loadAttribute = [this, prim, &attributeDescriptions](attribute_type type)
-			{
-				// Try to find the attribute in this primitve
-				auto attr = prim.attributes.find(attribute_names[type]);
-				if (attr != prim.attributes.end())
-				{
-					assert(attribute_locations[type] >= 0);
-
-					const auto& accessor = _gltf->accessors[attr->second];
-
-					VkVertexInputAttributeDescription desc = {};
-					desc.binding = accessor.bufferView;
-					desc.location = attribute_locations[type];
-					desc.format = get_vk_format(accessor.type, accessor.componentType);
-					desc.offset = static_cast<uint32_t>(accessor.byteOffset);
-
-					attributeDescriptions.push_back(desc);
-				}
-			};
-
-			loadAttribute(POSITION);
-			loadAttribute(NORMAL);
-			//loadAttribute(TANGENT);
-			loadAttribute(TEXCOORD_0);
-			//loadAttribute(TEXCOORD_1);
-			//loadAttribute(COLOR_0);
-			//loadAttribute(JOINTS_0);
-			//loadAttribute(WEIGHTS_0;
-
-			/* Get a pipeline for this mesh primitive */
-			auto create_info = vlk_pipeline_create_info();
-			create_info.vertex_attribute_descriptions = attributeDescriptions;
-			create_info.vertex_binding_descriptions = _vertex_binding_descriptions;
-			const auto& pipeline = _pipeline_cache->create_gltf_pipeline(create_info);
-
-			/* Create a primitive wrapper to store data for this primitive */
-			auto p = Primitive(mesh.primitives[j], pipeline);
-			p.id = numPrimitives++;
-			p.mesh_index = i;
-			p.prim_index = j;
-			p.material = get_vulkan_material(prim.material);
-			_primitives[i].push_back(p);
+			load_primitive(prim, i);
 		}
 	}
+}
+
+void vlk_model::load_primitive(const tinygltf::Primitive& prim, uint32_t mesh_idx)
+{
+	std::vector<VkVertexInputAttributeDescription>	input_attributes;
+	std::vector<VkVertexInputBindingDescription>	input_bindings;
+	std::vector<VkBuffer>							input_binding_buffers;
+	std::vector<VkDeviceSize>						input_binding_offsets;
+
+	std::unordered_map<int, int> accessor_index_to_input_binding;
+
+	/* Function to load a vertex attribute description */
+	auto load_attribute = 
+		[this, prim, &accessor_index_to_input_binding, &input_attributes, &input_bindings, &input_binding_buffers, &input_binding_offsets]
+		(attribute_type type)
+	{
+		/* Try to find the attribute in this primitve */
+		auto attr = prim.attributes.find(attribute_names[type]);
+		if (attr == prim.attributes.end())
+		{
+			/* Not found */
+			return;
+		}
+
+		/* Get accessor and buffer view */
+		const auto& a = _gltf->accessors[attr->second];
+		const auto& bv = _gltf->bufferViews[a.bufferView];
+
+		/* Load buffer if needed */
+		create_buffer(bv.buffer);
+
+		/* Create input binding if needed - we create an input binding for each accessor */
+		auto accessorIndex = attr->second;
+		if (accessor_index_to_input_binding.find(accessorIndex) == accessor_index_to_input_binding.end())
+		{
+			/* Determine byte stride */
+			int byteStride = a.ByteStride(bv);
+			if (byteStride < 0)
+			{
+				LOG_ERROR_FMT("Invalid byte stride {0}; setting to 0.", byteStride);
+				LOG_ERROR_FMT("Accessor: {0}; BufferView: {1}", a.name, bv.name);
+
+				byteStride = 0;
+			}
+
+			/* Determine binding index */
+			auto bindingIndex = input_bindings.size();
+
+			/* Determine binding buffer */
+			input_binding_buffers.push_back(_buffers[bv.buffer]->get_handle());
+
+			/* Determine binding offset (within the buffer) */
+			input_binding_offsets.push_back(bv.byteOffset + a.byteOffset);
+
+			/* Create input binding */
+			VkVertexInputBindingDescription input_binding = {};
+			input_binding.binding = bindingIndex;
+			input_binding.stride = static_cast<uint32_t>(byteStride);
+			input_binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+			input_bindings.push_back(input_binding);
+
+			accessor_index_to_input_binding[accessorIndex] = bindingIndex;
+		}
+
+		/* Get input binding index */
+		auto bindingIndex = accessor_index_to_input_binding[accessorIndex];
+
+		/* Create the attribute description */
+		assert(attribute_locations[type] >= 0);
+
+		VkVertexInputAttributeDescription input_attribute = {};
+		input_attribute.binding = bindingIndex;
+		input_attribute.location = attribute_locations[type];
+		input_attribute.format = get_vk_format(a.type, a.componentType);
+		input_attribute.offset = 0;
+
+		input_attributes.push_back(input_attribute);
+	};
+
+	/* Load attributes */
+	load_attribute(POSITION);
+	load_attribute(NORMAL);
+	//load_attribute(TANGENT);
+	load_attribute(TEXCOORD_0);
+	//load_attribute(TEXCOORD_1);
+	//load_attribute(COLOR_0);
+	//load_attribute(JOINTS_0);
+	//load_attribute(WEIGHTS_0;
+
+	/* Create index buffer */
+	const auto& indicesAccessor = _gltf->accessors[prim.indices];
+	const auto& indicesBufferView = _gltf->bufferViews[indicesAccessor.bufferView];
+	create_buffer(indicesBufferView.buffer);
+
+	/* Get a pipeline for this mesh primitive */
+	auto create_info = vlk_pipeline_create_info();
+	create_info.vertex_attribute_descriptions = input_attributes;
+	create_info.vertex_binding_descriptions = input_bindings;
+	const auto& pipeline = _pipeline_cache->create_gltf_pipeline(create_info);
+
+	/* Create a primitive wrapper to store data for this primitive */
+	auto p = Primitive(prim, pipeline);
+	p.material = get_vulkan_material(prim.material);
+	p.input_binding_buffers = input_binding_buffers;
+	p.input_binding_offsets = input_binding_offsets;
+	_primitives[mesh_idx].push_back(p);
 }
 
 void vlk_model::create_textures()
@@ -189,77 +256,6 @@ void vlk_model::create_textures()
 	for (const auto& img : _gltf->images)
 	{
 		load_texture(img);
-	}
-}
-
-/**
-Creates vertex input bindings
-*/
-void vlk_model::create_vertex_input_bindings()
-{
-	std::unordered_map<int, size_t> bindingCache;
-	size_t bindingIndex = 0;
-
-	/*
-	We only need bindings for buffer views that are used for indices and vertex input
-	attributes (position, normal, etc). Buffer view usage is defined by accessor,
-	so go through accessors and create bindings for each accessor, if appropriate.
-
-	If a buffer view is only used by one accessor, then that accesor will determine
-	the byte stride to use.
-
-	If a buffer view is used by two or more accessors, the buffer view must define
-	the byte stride.
-	*/
-	for (size_t i = 0; i < _gltf->accessors.size(); ++i)
-	{
-		const auto& a = _gltf->accessors[i];
-		const auto& bv = _gltf->bufferViews[a.bufferView];
-
-		/* Check if binding description already created for this buffer view */
-		auto bi = bindingCache.find(a.bufferView);
-		if (bi != bindingCache.end())
-		{
-			if (bv.byteStride == 0)
-			{
-				LOG_ERROR("Buffer views that are accessed by more than one accessor should define a byte stride.");
-				LOG_ERROR_FMT("Accessor: {0}; BufferView: {1}", a.name, bv.name);
-			}
-
-			/* Already processed this buffer view */
-			continue;
-		}
-
-		/* Determine byte stride */
-		int byteStride = a.ByteStride(bv);
-
-		if (byteStride < 0)
-		{
-			LOG_ERROR_FMT("Invalid byte stride {0}; setting to 0.", byteStride);
-			LOG_ERROR_FMT("Accessor: {0}; BufferView: {1}", a.name, bv.name);
-
-			byteStride = 0;
-		}
-
-		/* Create new binding */
-		_vertex_binding_buffers.resize(bindingIndex + 1);
-		_vertex_binding_offsets.resize(bindingIndex + 1);
-		_vertex_binding_descriptions.resize(bindingIndex + 1);
-
-		/* Map the buffer view's buffer index to a GPU buffer */
-		_vertex_binding_buffers[bindingIndex] = _buffers[bv.buffer]->get_handle();
-
-		/* Record byte offset into buffer */
-		_vertex_binding_offsets[bindingIndex] = static_cast<VkDeviceSize>(bv.byteOffset);
-
-		/* Create the vertex binding description */
-		_vertex_binding_descriptions[bindingIndex] = {};
-		_vertex_binding_descriptions[bindingIndex].binding = static_cast<uint32_t>(bindingIndex);
-		_vertex_binding_descriptions[bindingIndex].stride = static_cast<uint32_t>(byteStride);
-		_vertex_binding_descriptions[bindingIndex].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-		/* Add to the temporary cache so we know this buffer view has been processed */
-		bindingCache[a.bufferView] = bindingIndex++;
 	}
 }
 
@@ -281,9 +277,12 @@ void vlk_model::destroy_materials()
 	_materials.clear();
 }
 
-void vlk_model::destroy_pipelines()
+void vlk_model::destroy_primitives()
 {
-	/* Let the pipeline cache handle cleanup */
+	/* Let the destructors handle cleanup */
+	_primitives.clear();
+
+	/* The pipeline cache will handle pipeline cleanup */
 }
 
 void vlk_model::destroy_textures()
@@ -294,11 +293,6 @@ void vlk_model::destroy_textures()
 	}
 
 	_textures.clear();
-}
-
-void vlk_model::destroy_vertex_input_bindings()
-{
-	/* Nothing to do */
 }
 
 /**
@@ -431,7 +425,7 @@ wptr<vlk_texture> vlk_model::get_vulkan_texture(int index)
 		LOG_ERROR("Invalid image index.");
 		return wptr<vlk_texture>();
 	}
-
+	
 	return _textures[imgIdx];
 }
 
@@ -510,6 +504,7 @@ void vlk_model::load_material(const tinygltf::Material& mat)
 
 void vlk_model::load_texture(const tinygltf::Image& image)
 {
+	/* Setup */
 	vlk_texture_create_info create_info = {};
 	create_info.data = (void*)image.image.data();
 	create_info.size = image.image.size();
@@ -539,15 +534,15 @@ void vlk_model::render_mesh
 	/* Get the mesh */
 	const auto& mesh = _gltf->meshes[index];
 
-	/* Bind vertex buffers for mesh */
-	vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(_vertex_binding_buffers.size()), _vertex_binding_buffers.data(), _vertex_binding_offsets.data());
-
 	/*
 	Render each mesh component (GLTF "primitives")
 	*/
 	for (size_t i = 0; i < mesh.primitives.size(); ++i)
 	{
 		const auto& prim = _primitives[index][i];
+
+		/* Bind vertex buffers for primitive */
+		vkCmdBindVertexBuffers(cmd, 0, static_cast<uint32_t>(prim.input_binding_buffers.size()), prim.input_binding_buffers.data(), prim.input_binding_offsets.data());
 
 		/*
 		Bind pipeline for primitive
@@ -583,8 +578,9 @@ void vlk_model::render_mesh
 		auto bv = _gltf->bufferViews[a.bufferView];
 		auto offset = a.byteOffset + bv.byteOffset;
 		auto idx_type = get_vk_index_type(a.componentType);
+		auto buffer = _buffers.at(bv.buffer)->get_handle();
 
-		vkCmdBindIndexBuffer(cmd, _buffers[bv.buffer]->get_handle(), offset, idx_type);
+		vkCmdBindIndexBuffer(cmd, buffer, offset, idx_type);
 
 		/*
 		Draw indexed

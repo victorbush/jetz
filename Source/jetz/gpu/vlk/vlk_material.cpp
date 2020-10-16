@@ -31,7 +31,8 @@ vlk_material::vlk_material
 	_base_color_factor(1.0f, 1.0f, 1.0f, 1.0f),
 	_emissive_factor(0.0f, 0.0f, 0.0f),
 	_metallic_factor(1.0f),
-	_roughness_factor(1.0f)
+	_roughness_factor(1.0f),
+	_default_texture(device.get_default_texture())
 {
 	_emissive_factor = create_info.emissive_factor;
 	_emissive_texture = create_info.emissive_texture;
@@ -83,6 +84,11 @@ void vlk_material::create_buffers()
 	ubo.emissive_factor = _emissive_factor;
 	ubo.metallic_factor = _metallic_factor;
 	ubo.roughness_factor = _roughness_factor;
+	ubo.hasBaseColorTexture = !_base_color_texture.expired();
+	ubo.hasEmissiveTexture = !_emissive_texture.expired();
+	ubo.hasMetallicRoughnessTexture = !_metallic_roughness_texture.expired();
+	ubo.hasNormalTexture = !_normal_texture.expired();
+	ubo.hasOcclusionTexture = !_occlusion_texture.expired();
 
 	/* Create a UBO for all frames */
 	for (uint8_t i = 0; i < gpu::num_frame_buf; ++i)
@@ -122,91 +128,63 @@ void vlk_material::create_sets()
 		VkDescriptorBufferInfo buffer_info = _buffers[i]->get_buffer_info();
 
 		std::vector<VkWriteDescriptorSet> descriptor_writes;
-		int num_writes = 0;
 		descriptor_writes.resize(6);
 
 		/* Material UBO */
-		descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptor_writes[num_writes].dstSet = _sets[i];
-		descriptor_writes[num_writes].dstBinding = 0;
-		descriptor_writes[num_writes].dstArrayElement = 0;
-		descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptor_writes[num_writes].descriptorCount = 1;
-		descriptor_writes[num_writes].pBufferInfo = &buffer_info;
-		++num_writes;
+		descriptor_writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[0].dstSet = _sets[i];
+		descriptor_writes[0].dstBinding = 0;
+		descriptor_writes[0].dstArrayElement = 0;
+		descriptor_writes[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptor_writes[0].descriptorCount = 1;
+		descriptor_writes[0].pBufferInfo = &buffer_info;
 
 		/* Base color texture */
-		auto base_color_texture = _base_color_texture.lock();
-		if (base_color_texture != nullptr)
-		{
-			descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptor_writes[num_writes].dstSet = _sets[i];
-			descriptor_writes[num_writes].dstBinding = 1;
-			descriptor_writes[num_writes].dstArrayElement = 0;
-			descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptor_writes[num_writes].descriptorCount = 1;
-			descriptor_writes[num_writes].pImageInfo = base_color_texture->get_image_info();
-			++num_writes;
-		}
+		descriptor_writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[1].dstSet = _sets[i];
+		descriptor_writes[1].dstBinding = 1;
+		descriptor_writes[1].dstArrayElement = 0;
+		descriptor_writes[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptor_writes[1].descriptorCount = 1;
+		descriptor_writes[1].pImageInfo = get_img_info(_base_color_texture);
 
 		/* Metallic/roughness texture */
-		auto metallic_roughness_texture = _metallic_roughness_texture.lock();
-		if (metallic_roughness_texture != nullptr)
-		{
-			descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptor_writes[num_writes].dstSet = _sets[i];
-			descriptor_writes[num_writes].dstBinding = 2;
-			descriptor_writes[num_writes].dstArrayElement = 0;
-			descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptor_writes[num_writes].descriptorCount = 1;
-			descriptor_writes[num_writes].pImageInfo = metallic_roughness_texture->get_image_info();
-			++num_writes;
-		}
+		descriptor_writes[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[2].dstSet = _sets[i];
+		descriptor_writes[2].dstBinding = 2;
+		descriptor_writes[2].dstArrayElement = 0;
+		descriptor_writes[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptor_writes[2].descriptorCount = 1;
+		descriptor_writes[2].pImageInfo = get_img_info(_metallic_roughness_texture);
 
 		/* Normal texture */
-		auto normal_texture = _normal_texture.lock();
-		if (normal_texture != nullptr)
-		{
-			descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptor_writes[num_writes].dstSet = _sets[i];
-			descriptor_writes[num_writes].dstBinding = 3;
-			descriptor_writes[num_writes].dstArrayElement = 0;
-			descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptor_writes[num_writes].descriptorCount = 1;
-			descriptor_writes[num_writes].pImageInfo = normal_texture->get_image_info();
-			++num_writes;
-		}
+		descriptor_writes[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[3].dstSet = _sets[i];
+		descriptor_writes[3].dstBinding = 3;
+		descriptor_writes[3].dstArrayElement = 0;
+		descriptor_writes[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptor_writes[3].descriptorCount = 1;
+		descriptor_writes[3].pImageInfo = get_img_info(_normal_texture);
 
 		/* Occlusion texture */
-		auto occlusion_texture = _occlusion_texture.lock();
-		if (occlusion_texture != nullptr)
-		{
-			descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptor_writes[num_writes].dstSet = _sets[i];
-			descriptor_writes[num_writes].dstBinding = 4;
-			descriptor_writes[num_writes].dstArrayElement = 0;
-			descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptor_writes[num_writes].descriptorCount = 1;
-			descriptor_writes[num_writes].pImageInfo = occlusion_texture->get_image_info();
-			++num_writes;
-		}
+		descriptor_writes[4].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[4].dstSet = _sets[i];
+		descriptor_writes[4].dstBinding = 4;
+		descriptor_writes[4].dstArrayElement = 0;
+		descriptor_writes[4].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptor_writes[4].descriptorCount = 1;
+		descriptor_writes[4].pImageInfo = get_img_info(_occlusion_texture);
 
 		/* Emissive texture */
-		auto emissive_texture = _emissive_texture.lock();
-		if (emissive_texture != nullptr)
-		{
-			descriptor_writes[num_writes].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptor_writes[num_writes].dstSet = _sets[i];
-			descriptor_writes[num_writes].dstBinding = 5;
-			descriptor_writes[num_writes].dstArrayElement = 0;
-			descriptor_writes[num_writes].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptor_writes[num_writes].descriptorCount = 1;
-			descriptor_writes[num_writes].pImageInfo = emissive_texture->get_image_info();
-			++num_writes;
-		}
+		descriptor_writes[5].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptor_writes[5].dstSet = _sets[i];
+		descriptor_writes[5].dstBinding = 5;
+		descriptor_writes[5].dstArrayElement = 0;
+		descriptor_writes[5].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptor_writes[5].descriptorCount = 1;
+		descriptor_writes[5].pImageInfo = get_img_info(_emissive_texture);
 
-		assert(num_writes <= descriptor_writes.size());
-		vkUpdateDescriptorSets(_device.get_handle(), num_writes, descriptor_writes.data(), 0, NULL);
+		vkUpdateDescriptorSets(_device.get_handle(), descriptor_writes.size(), descriptor_writes.data(), 0, NULL);
 	}
 }
 
@@ -221,6 +199,13 @@ void vlk_material::destroy_sets()
 	Descriptor sets are destroyed automatically when the parent descriptor pool
 	is destroyed.
 	*/
+}
+
+/** Gets the image info for a texture. If the texture is null, the default texture is used. */
+VkDescriptorImageInfo* vlk_material::get_img_info(wptr<vlk_texture> tex)
+{
+	auto t = tex.lock();
+	return t ? t->get_image_info() : _default_texture.lock()->get_image_info();
 }
 
 }   /* namespace jetz */

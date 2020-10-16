@@ -9,6 +9,11 @@ layout(set = 1, binding = 0) uniform MaterialUbo {
 	vec3 emissiveFactor;
 	float metallicFactor;
 	float roughnessFactor;
+	bool hasBaseColorTexture;
+	bool hasMetallicRoughnessTexture;
+	bool hasNormalTexture;
+	bool hasOcclusionTexture;
+	bool hasEmissiveTexture;
 } materialUbo;
 
 layout(set = 1, binding = 1) uniform sampler2D baseColorTexture;
@@ -38,9 +43,18 @@ vec4 lambertian();
 
 void main() {
 	//outColor = vec4(1.0, 0.0, 1.0, 1.0);
-	outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	//outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
 	//outColor = lambertian();
 	//outColor = blinnPhong();
+
+	if (materialUbo.hasBaseColorTexture)
+	{
+		outColor = materialUbo.baseColorFactor * texture(baseColorTexture, fragTexCoord);
+	}
+	else
+	{
+		outColor = materialUbo.baseColorFactor;
+	}
 }
 
 /**

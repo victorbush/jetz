@@ -32,6 +32,7 @@ class gpu_frame;
 class vlk;
 class vlk_frame;
 class vlk_pipeline_cache;
+class vlk_texture;
 class vlk_window;
 class window;
 
@@ -92,6 +93,9 @@ public:
 	/* Gets the VMA allocator handle. */
 	VmaAllocator get_allocator() const;
 
+	/* Gets the placeholder texture. */
+	wptr<vlk_texture> get_default_texture() const;
+
 	/** Gets Vulkan frame data from the gpu frame. */
 	vlk_frame& get_frame(const gpu_frame& frame);
 
@@ -141,6 +145,7 @@ private:
 
 	/** Creates the command pool. */
 	void create_command_pool();
+	void create_default_texture();
 
 	/** Creates descriptor set layouts. */
 	void create_layouts();
@@ -161,6 +166,7 @@ private:
 
 	void destroy_allocator();
 	void destroy_command_pool();
+	void destroy_default_texture();
 	void destroy_layouts();
 	void destroy_logical_device();
 	void destroy_picker_render_pass();
@@ -185,6 +191,7 @@ private:
 	*/
 	VmaAllocator					allocator;
 	VkCommandPool					command_pool;
+	sptr<vlk_texture>				_default_texture;		/* default texture */
 	VkDevice						handle;					/* Handle for the logical device */
 	sptr<vlk_pipeline_cache>		_pipeline_cache;
 	VkSurfaceKHR					_surface;

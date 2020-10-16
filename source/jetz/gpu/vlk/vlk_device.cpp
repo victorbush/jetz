@@ -7,6 +7,7 @@ INCLUDES
 =============================================================================*/
 
 #include "jetz/gpu/vlk/vlk_device.h"
+#include "jetz/gpu/vlk/vlk_texture.h"
 #include "jetz/gpu/vlk/vlk_window.h"
 #include "jetz/gpu/vlk/pipelines/vlk_pipeline_cache.h"
 #include "jetz/main/common.h"
@@ -59,10 +60,12 @@ vlk_device::vlk_device
 	create_picker_render_pass();
 	create_pipeline_cache();
 	create_window();
+	create_default_texture();
 }
 
 vlk_device::~vlk_device()
 {
+	destroy_default_texture();
 	destroy_window();
 	destroy_pipeline_cache();
 	destroy_picker_render_pass();
@@ -177,6 +180,8 @@ void vlk_device::end_one_time_cmd_buf(VkCommandBuffer cmd_buf) const
 }
 
 VmaAllocator vlk_device::get_allocator() const { return allocator; }
+
+wptr<vlk_texture> vlk_device::get_default_texture() const { return _default_texture; }
 
 vlk_frame& vlk_device::get_frame(const gpu_frame& frame) { return _window->get_frame(frame); }
 
@@ -354,6 +359,26 @@ void vlk_device::create_command_pool()
 	}
 }
 
+void vlk_device::create_default_texture()
+{
+	unsigned char bmp_data[] = 
+	{
+		120, 135, 245, 255,
+		100, 255, 188, 255,
+		120, 135, 245, 255,
+		100, 255, 188, 255,
+	};
+
+	vlk_texture_create_info info = {};
+	info.data = bmp_data;
+	info.height = 2;
+	info.width = 2;
+	info.size = 2 * 2 * 4;
+
+	auto t = new vlk_texture(*this, info);
+	_default_texture = sptr<vlk_texture>(t);
+}
+
 void vlk_device::create_layouts()
 {
 	per_view_layout = new jetz::vlk_per_view_layout(*this);
@@ -361,10 +386,10 @@ void vlk_device::create_layouts()
 }
 
 void vlk_device::create_logical_device
-(
+	(
 	const std::vector<const char*>& req_dev_ext,		/* required device extensions */
 	const std::vector<const char*>& req_inst_layers		/* required instance layers */
-)
+	)
 {
 	uint32_t i;
 
@@ -678,6 +703,11 @@ void vlk_device::destroy_allocator()
 void vlk_device::destroy_command_pool()
 {
 	vkDestroyCommandPool(handle, command_pool, NULL);
+}
+
+void vlk_device::destroy_default_texture()
+{
+	_default_texture.reset();
 }
 
 void vlk_device::destroy_layouts()

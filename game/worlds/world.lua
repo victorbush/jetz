@@ -8,7 +8,7 @@ world =
             },
             model = 
             {
-                model = "models/cube/cube.gltf",
+                model = "models/f16/f16.gltf",
             }
         },
         {
