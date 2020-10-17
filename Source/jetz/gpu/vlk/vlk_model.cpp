@@ -622,15 +622,16 @@ void vlk_model::render_node
 	}
 	else
 	{
-		// Node either uses translation, rotation, and scale vectors, or has no transform
+		/*
+		Node either uses translation, rotation, and scale vectors, or has no transform
+		M = T * R * S
+		*/
 
-		/* Scale */
-		if (node.scale.size() == 3)
+		/* Translation */
+		if (node.translation.size() == 3)
 		{
-			// TODO : potentially make tinygltf allow float vectors/matrices so don't have to convert all the time.
-			// either that or convert and store manually.
-			auto scale = glm::vec3(glm::make_vec3(node.scale.data()));
-			transform = glm::scale(transform, scale);
+			auto translation = glm::vec3(glm::make_vec3(node.translation.data()));
+			transform = glm::translate(transform, translation);
 		}
 
 		/* Rotation */
@@ -640,11 +641,13 @@ void vlk_model::render_node
 			transform = transform * glm::mat4_cast(rotateQuat);
 		}
 
-		/* Translation */
-		if (node.translation.size() == 3)
+		/* Scale */
+		if (node.scale.size() == 3)
 		{
-			auto translation = glm::vec3(glm::make_vec3(node.translation.data()));
-			transform = glm::translate(transform, translation);
+			// TODO : potentially make tinygltf allow float vectors/matrices so don't have to convert all the time.
+			// either that or convert and store manually.
+			auto scale = glm::vec3(glm::make_vec3(node.scale.data()));
+			transform = glm::scale(transform, scale);
 		}
 	}
 
