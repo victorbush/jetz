@@ -1,6 +1,6 @@
 # Jetz
 
-A simple game.
+A simple game. Work-in-progress.
 
 # Requirements
 
