@@ -35,6 +35,11 @@ ed::~ed()
 PUBLIC METHODS
 =============================================================================*/
 
+ed_camera& ed::get_camera()
+{
+	return _camera;
+}
+
 void ed::think(const gpu_frame& frame)
 {
 	update_camera(frame);
@@ -58,16 +63,15 @@ PRIVATE METHODS
 
 void ed::update_camera(const gpu_frame& frame)
 {
-	auto& camera = _app.get_camera();
 	auto& input = _app.get_world().get_ecs().input_singleton;
 
 	if (input.key_down[GLFW_KEY_W])
 	{
-		camera.move(frame.frame_time_delta * 2.0f);
+		_camera.move(frame.frame_time_delta * 2.0f);
 	}
 	else if (input.key_down[GLFW_KEY_S])
 	{
-		camera.move(frame.frame_time_delta * -2.f);
+		_camera.move(frame.frame_time_delta * -2.f);
 	}
 
 	if (!input.mouse_pos_changed)
@@ -90,7 +94,7 @@ void ed::update_camera(const gpu_frame& frame)
 		float vertDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
 		float horizDelta = ((float)x - prevMouse.x) * moveSen;
 
-		camera.pan(vertDelta, horizDelta);
+		_camera.pan(vertDelta, horizDelta);
 	}
 	/* RIGHT mouse button */
 	else if (rmb)
@@ -99,8 +103,8 @@ void ed::update_camera(const gpu_frame& frame)
 		float rotDeltaX = ((float)y - prevMouse.y) * rotSen * -1.0f;
 		float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
 
-		camera.rot_x(rotDeltaX);
-		camera.rot_y(rotDeltaY);
+		_camera.rot_x(rotDeltaX);
+		_camera.rot_y(rotDeltaY);
 	}
 	/* LEFT mouse button */
 	else if (lmb)
@@ -109,8 +113,8 @@ void ed::update_camera(const gpu_frame& frame)
 		float rotDeltaY = ((float)x - prevMouse.x) * rotSen * -1.0f;
 		float moveDelta = ((float)y - prevMouse.y) * moveSen * -1.0f;
 
-		camera.rot_y(rotDeltaY);
-		camera.move(moveDelta);
+		_camera.rot_y(rotDeltaY);
+		_camera.move(moveDelta);
 	}
 }
 

@@ -1,12 +1,13 @@
 /*=============================================================================
-camera.cpp
+ecs_camera_system.cpp
 =============================================================================*/
 
 /*=============================================================================
 INCLUDES
 =============================================================================*/
 
-#include "jetz/main/camera.h"
+#include "jetz/ecs/ecs.h"
+#include "jetz/ecs/systems/ecs_camera_system.h"
 
 /*=============================================================================
 NAMESPACE
@@ -18,15 +19,11 @@ namespace jetz {
 CONSTRUCTORS
 =============================================================================*/
 
-camera::camera()
+ecs_camera_system::ecs_camera_system()
 {
-	_pos = { 0, 0, 5 };
-	_right = { 1, 0, 0 };
-	_up = { 0, 1, 0 };
-	_dir = { 0, 0, -1 };
 }
 
-camera::~camera()
+ecs_camera_system::~ecs_camera_system()
 {
 }
 
@@ -34,15 +31,22 @@ camera::~camera()
 PUBLIC METHODS
 =============================================================================*/
 
-glm::vec3 camera::get_pos() const
+void ecs_camera_system::run(ecs& ecs, app& app)
 {
-	return _pos;
-}
+	//for (auto it = ecs.cbegin(); it != ecs.cend(); ++it)
+	//{
+	//	auto ent = *it;
 
-glm::mat4 camera::get_view_matrix() const
-{
-	glm::vec3 lookAt = _pos + _dir;
-	return glm::lookAt(_pos, lookAt, _up);
+	//	if (!ecs.models.exists(ent) || !ecs.transforms.exists(ent))
+	//	{
+	//		continue;
+	//	}
+
+	//	auto model = ecs.models.get(ent);
+	//	auto gpu_model = gpu.get_model(model->model_filename).lock();
+	//	auto transform = ecs.transforms.get(ent);
+	//	gpu_model->render(frame, *transform);
+	//}
 }
 
 /*=============================================================================

@@ -49,6 +49,9 @@
     <Filter Include="thirdparty\tinygltf">
       <UniqueIdentifier>{6e781f41-c854-491a-9fbf-d8bf90dffce2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{e4e01445-cd60-4ab3-9bfa-e727b684e5d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\thirdparty\glfw\glfw.h">
@@ -222,6 +225,15 @@
     <ClInclude Include="gpu\vlk\vlk_material.h">
       <Filter>gpu\vlk</Filter>
     </ClInclude>
+    <ClInclude Include="game\chase_camera.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="editor\ed_camera.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\ecs_camera_system.h">
+      <Filter>ecs\systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -379,6 +391,15 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\vlk_material.cpp">
       <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="game\chase_camera.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="editor\ed_camera.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\systems\ecs_camera_system.cpp">
+      <Filter>ecs\systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

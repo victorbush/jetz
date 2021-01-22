@@ -28,7 +28,7 @@ app::app(window& main_window, gpu& gpu) :
 	_window(main_window),
 	_frame_time(0),
 	_frame_time_delta(0),
-	_camera(),
+	_chase_camera(),
 	_should_exit(false),
 	_state(app_state::STARTUP),
 	_loader_system(),
@@ -46,11 +46,6 @@ app::~app()
 PUBLIC METHODS
 =============================================================================*/
 
-camera& app::get_camera()
-{
-	return _camera;
-}
-
 world& app::get_world()
 {
 	return _world;
@@ -66,9 +61,16 @@ void app::run_frame()
 	/* Run input system - needs to be done before start of frame */
 	_input_system.run(&_world.get_ecs());
 
+
+
+
+
+
+	_chase_camera.think();
+
 	/* Begin frame */
 	auto gpu_window = _window.get_gpu_window().lock();
-	gpu_frame& frame = gpu_window->begin_frame(_camera);
+	gpu_frame& frame = gpu_window->begin_frame(_chase_camera);
 	frame.frame_time = _frame_time;
 	frame.frame_time_delta = _frame_time_delta;
 

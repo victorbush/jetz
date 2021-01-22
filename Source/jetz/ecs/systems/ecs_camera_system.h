@@ -1,5 +1,5 @@
 /*=============================================================================
-ed.h
+ecs_camera_system.h
 =============================================================================*/
 
 #pragma once
@@ -8,9 +8,6 @@ ed.h
 INCLUDES
 =============================================================================*/
 
-#include "jetz/editor/ed_file_picker_dialog.h"
-#include "jetz/editor/ed_camera.h"
-
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
@@ -18,40 +15,31 @@ NAMESPACE
 namespace jetz {
 
 class app;
-class gpu_frame;
+class ecs;
 
-class ed {
+class ecs_camera_system {
 
 public:
 
-	ed(app& app);
-	~ed();
+	ecs_camera_system();
+	~ecs_camera_system();
 
 	/*-----------------------------------------------------
-	Public methods
+	Public Methods
 	-----------------------------------------------------*/
 
-	ed_camera& get_camera();
-	void think(const gpu_frame& frame);
-
-	/*-----------------------------------------------------
-	Public variables
-	-----------------------------------------------------*/
+	void run(ecs& ecs, app& app);
 
 private:
 
 	/*-----------------------------------------------------
 	Private variables
 	-----------------------------------------------------*/
-	app&					_app;
-	ed_camera				_camera;
-	bool					_camera_is_moving;		/** The user is moving the camera (don't try to select an entity) */
-	ed_file_picker_dialog	_world_file_picker;
 
 	/*-----------------------------------------------------
 	Private methods
 	-----------------------------------------------------*/
-	void update_camera(const gpu_frame& frame);
+
 };
 
 }   /* namespace jetz */

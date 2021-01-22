@@ -15,6 +15,12 @@ INCLUDES
 #include "jetz/main/camera.h"
 
 /*=============================================================================
+MACROS / CONSTANTS
+=============================================================================*/
+
+#define PI		glm::pi<float>()
+
+/*=============================================================================
 NAMESPACE
 =============================================================================*/
 
@@ -29,29 +35,23 @@ class camera {
 public:
 
 	camera();
-	~camera();
+	virtual ~camera();
 
 	/*-----------------------------------------------------
 	Public methods
 	-----------------------------------------------------*/
 	glm::vec3 get_pos() const;
 	glm::mat4 get_view_matrix() const;
-	void move(float moveDelta);
-	void pan(float vertDelta, float horizDelta);
-	void rot_x(float deltaX);
-	void rot_y(float deltaY);
 
-private:
+protected:
 
 	/*-----------------------------------------------------
-	Private Variables
+	Protected Variables
 	-----------------------------------------------------*/
 	glm::vec3	_dir;
 	glm::vec3	_pos;
 	glm::vec3	_up;
 	glm::vec3	_right;
-	float		_rotX;		/* degrees rotation on x axis */
-	float		_rotY;		/* degrees rotation on y axis */
 };
 
 }   /* namespace jetz */

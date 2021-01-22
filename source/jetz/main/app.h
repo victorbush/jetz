@@ -15,6 +15,7 @@ INCLUDES
 #include "jetz/ecs/systems/ecs_input_system.h"
 #include "jetz/ecs/systems/ecs_loader_system.h"
 #include "jetz/ecs/systems/ecs_render_system.h"
+#include "jetz/game/chase_camera.h"
 #include "jetz/gpu/vlk/vlk_frame.h"
 #include "jetz/main/camera.h"
 #include "jetz/main/common.h"
@@ -57,7 +58,6 @@ public:
 	Public methods
 	-----------------------------------------------------*/
 
-	camera& get_camera();
 	world& get_world();
 	void run_frame();
 	bool should_exit();
@@ -103,7 +103,7 @@ private:
 	/*
 	Other
 	*/
-	camera					_camera;
+	chase_camera			_chase_camera;
 	ed						_ed;				/* Editor */
 	float					_frame_time;		/* Current frame time (in seconds) */
 	float					_frame_time_delta;	/* Delta time since the last frame (in seconds) */
