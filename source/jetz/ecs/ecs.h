@@ -17,6 +17,7 @@ INCLUDES
 #include "jetz/ecs/components/ecs_transform_component.h"
 #include "jetz/ecs/components/ecs_input_singleton.h"
 #include "jetz/ecs/components/ecs_loader_singleton.h"
+#include "jetz/ecs/components/ecs_light_component.h"
 #include "jetz/main/lua.h"
 
 /*=============================================================================
@@ -63,6 +64,7 @@ public:
 	*/
 	ecs_component_manager<ecs_model_component> models;
 	ecs_component_manager<ecs_transform_component> transforms;
+	ecs_component_manager<ecs_light_component> lights;
 
 private:
 

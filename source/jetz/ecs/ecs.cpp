@@ -24,10 +24,12 @@ ecs::ecs()
 	:
 	_next_id(0),
 	models("model"),
-	transforms("transform")
+	transforms("transform"),
+	lights("light")
 {
 	_component_managers[models.get_name()] = (ecs_component_manager_intf*)&models;
 	_component_managers[transforms.get_name()] = (ecs_component_manager_intf*)&transforms;
+	_component_managers[lights.get_name()] = (ecs_component_manager_intf*)&lights;
 }
 
 ecs::~ecs()

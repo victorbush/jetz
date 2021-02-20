@@ -1,5 +1,5 @@
 /*=============================================================================
-ecs_render_system.h
+ecs_light_component.h
 =============================================================================*/
 
 #pragma once
@@ -8,41 +8,40 @@ ecs_render_system.h
 INCLUDES
 =============================================================================*/
 
+#include <glm/glm.hpp>
+#include <string>
+#include <vector>
+
+#include "jetz/ecs/ecs_component.h"
+
 /*=============================================================================
 NAMESPACE
 =============================================================================*/
 
 namespace jetz {
 
-class ecs;
-class gpu;
-class gpu_frame;
-
-class ecs_render_system {
+/**
+A point light.
+*/
+class ecs_light_component : public ecs_component {
 
 public:
 
-	ecs_render_system();
-	~ecs_render_system();
+	/*
+	Property names
+	*/
+	const char*			COLOR = "color";
+
+	/*
+	Property data
+	*/
+	glm::vec3			color;
 
 	/*-----------------------------------------------------
-	Public Methods
+	ecs_component
 	-----------------------------------------------------*/
 
-	void run(ecs& ecs, gpu& gpu, gpu_frame& frame);
-
-private:
-
-	/*-----------------------------------------------------
-	Private variables
-	-----------------------------------------------------*/
-
-	/*-----------------------------------------------------
-	Private methods
-	-----------------------------------------------------*/
-
-	void render_shadows(ecs& ecs, gpu& gpu, gpu_frame& frame);
-	void render_objects(ecs& ecs, gpu& gpu, gpu_frame& frame);
+	virtual void load_lua(ecs& ecs, lua& script) override;
 };
 
 }   /* namespace jetz */

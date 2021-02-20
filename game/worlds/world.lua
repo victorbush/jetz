@@ -13,6 +13,14 @@ world =
         },
         {
             transform = {
+                pos = { 0.0, -10.0, 0.0 }
+            },
+            light = {
+                color = { 1.0, 1.0, 1.0 }
+            }
+        },
+        {
+            transform = {
                 pos = { 0.0, 0.0, -10.0 }
             },
             model = 

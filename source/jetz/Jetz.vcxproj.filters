@@ -222,6 +222,9 @@
     <ClInclude Include="gpu\vlk\vlk_material.h">
       <Filter>gpu\vlk</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\components\ecs_light_component.h">
+      <Filter>ecs\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp">
@@ -379,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="gpu\vlk\vlk_material.cpp">
       <Filter>gpu\vlk</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs\components\ecs_light_component.cpp">
+      <Filter>ecs\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
